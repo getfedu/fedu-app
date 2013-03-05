@@ -5,18 +5,18 @@ var oAuth = require('../../node_modules/oauth').OAuth;
 var app = null;
 var oa = null;
 var lastTweetId = 0;
-var collection = {};
+var collectionVideo = {};
 
 // db handling
 ///////////////////////////////////////////////////////////
 function dbConnector(){
-    mongodb.connect('mongodb://localhost/peep_wall', function(err, db) {
+    mongodb.connect('mongodb://localhost/fedu', function(err, db) {
         if(err){
             throw err;
         }
 
         console.log('connected');
-        collection = db.collection('tweets');
+        collectionVideo = db.collection('video');
 
     });
 
@@ -61,6 +61,33 @@ app.get('/test/:id', function(req, res) {
     console.log('request GET: /test/id' + req.params.id);
     res.send(req.params.id);
 });
+
+app.post('/add-video', function(req, res) {
+    // console.log('server - post - addVideo');
+    var video = {
+        url: req.body.url,
+        title: req.body.title,
+        description: req.body.description,
+    };
+    collectionVideo.insert(video, function() {
+        res.send(JSON.stringify('200')); // success = 200
+    });
+});
+
+app.get('/get-videos', function(req, res) {
+    var theVideos = [];
+    var queryVideos = collectionVideo.find().stream();
+
+    queryVideos.on('data', function(item) {
+        theVideos.push(item);
+    });
+
+    queryVideos.on('end', function() {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(theVideos);
+    });
+});
+
 
 app.get('/old_tweets', function(req, res) {
     var theTweets = [];

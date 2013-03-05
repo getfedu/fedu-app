@@ -2,10 +2,10 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'../collections/collection',
 	'text!../templates/nav_template.html',
 	'text!../templates/detail_page_template.html',
-], function( $, _, Backbone, TheCollection, NavTemplate, DetailPageTemplate) {
+], function( $, _, Backbone, NavTemplate, DetailPageTemplate) {
+
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -33,8 +33,8 @@ define([
 		},
 
 		initialize: function() {
-			this.collection = new TheCollection();
-			this.collection.fetchData(this);
+			// this.collection = new TheCollection();
+			// this.collection.fetchData(this);
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest

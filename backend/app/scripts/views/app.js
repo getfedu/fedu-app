@@ -2,9 +2,8 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'../collections/collection',
 	'text!../templates/example_template.html'
-], function( $, _, Backbone, TheCollection, ExampleTemplate) {
+], function( $, _, Backbone, ExampleTemplate) {
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -23,8 +22,8 @@ define([
 		},
 
 		initialize: function() {
-			this.collection = new TheCollection();
-			this.collection.fetchData(this);
+			// this.collection = new TheCollection();
+			// this.collection.fetchData(this);
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
