@@ -1,7 +1,7 @@
 'use strict';
-var express = require('../node_modules/express');
-var mongodb = require('../node_modules/mongodb').MongoClient;
-var oAuth = require('../node_modules/oauth').OAuth;
+var express = require('../../node_modules/express');
+var mongodb = require('../../node_modules/mongodb').MongoClient;
+var oAuth = require('../../node_modules/oauth').OAuth;
 var app = null;
 var oa = null;
 var lastTweetId = 0;
