@@ -14,3 +14,56 @@ Stylesheet: Main Stylesheet
 @import "sass-bootstrap/lib/bootstrap";
 @import "sass-bootstrap/lib/responsive";
 @import "compass/css3";
+@import "sticky_footer";
+@import "../components/font-awesome/sass/font-awesome";
+
+/* Sticky footer styles -------------------------------------------------- */
+
+html, body {
+    height: 100%;
+/* The html and body elements cannot have any padding or margin. */
+}
+
+/* General -------------------------------------------------- */
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing:    border-box;
+    box-sizing:         border-box;
+}
+
+#wrap {
+    #main {
+        width: 100%;
+        margin-bottom: 50px;
+        > .container {
+            padding-top: 60px;
+        }
+    }
+}
+#footer {
+    background-color: $grayLighter;
+    .span3 {
+        padding: 10px;
+    }
+}
+
+/* Detailpage -------------------------------------------------- */
+
+.detail_page {
+    .video_container {
+        iframe {
+            width: 100%;
+            height: 75%;
+        }
+    }
+    .info_container {
+        .rating {
+            text-align: center;
+        }
+        .meta, .additional {
+            background-color: $grayLighter;
+            padding: 10px;
+        }
+    }
+}
+

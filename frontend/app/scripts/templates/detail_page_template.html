@@ -1,0 +1,23 @@
+<div class="detail_page row-fluid">
+    <div class="video_container span12">
+        <iframe width="1000" height="563" src="<%- video %>" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="info_container row-fluid">
+        <div class="rating span1">
+            <h4><%= rating.number %></h4>
+            <span><%= rating.stars %></span>
+        </div>
+        <div class="right span11">
+            <h1><%= headline %></h1>
+            <p><%= description %></p>
+        </div>
+        <div class="row-fluid">
+            <div class="meta span4 offset1">
+                <%= metaInfo %>
+            </div>
+            <div class="additional span7">
+                <%= additionalInfo %>
+            </div>
+        </div>
+    </div>
+</div>

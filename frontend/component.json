@@ -8,7 +8,8 @@
     "modernizr": "~2.6.2",
     "jquery": "~1.9.1",
     "backbone": "~0.9.10",
-    "underscore": "~1.4.4"
+    "underscore": "~1.4.4",
+    "font-awesome": "~3.0.2"
   },
   "devDependencies": {}
 }

@@ -18,14 +18,15 @@ require.config({
 		jquery: '../components/jquery/jquery',
 		underscore: '../components/underscore/underscore',
 		backbone: '../components/backbone/backbone',
-		text: '../components/requirejs-text/text'
+		text: '../components/requirejs-text/text',
+		bootstrapDropdown: '../components/sass-bootstrap/js/bootstrap-dropdown'
 	}
 });
 
 require([
 	'routers/router',
 	'jquery'
-], function(Router, $) {
+], function(Router, $, bootstrapDropdown) {
 	'use strict';
 	// initialize routing and start Backbone.history()
 	new Router();

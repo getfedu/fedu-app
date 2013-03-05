@@ -1,0 +1,36 @@
+/*
+Sticky Footer Solution
+by Steve Hatcher
+http://stever.ca
+http://www.cssstickyfooter.com
+*/
+
+* {margin:0;padding:0;}
+
+/* Du musst margin auf 0 fÃ¼r alle Elemente setzen und immer padding statt margin
+fÃ¼r vertikale AbstÃ¤nde (top und bottom) verwenden, anderenfalls werden diese margin-
+Werte zur GesamthÃ¶he addiert und der Footer wird zu weit nach unten geschoben, was
+vertikale Scrollbalken im Browser erzeugt. */
+
+html, body, #wrap {height: 100%;}
+
+body > #wrap {height: auto; min-height: 100%;}
+
+#main {padding-bottom: 100px;}  /* Muss genau so hoch sein wie der Footer */
+
+#footer {
+    position: relative;
+    margin-top: -100px; /* Negativer Wert der Footer-HÃ¶he */
+    height: 100px;
+    clear:both;
+}
+
+/* CLEAR FIX */
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix {display: inline-block;}
