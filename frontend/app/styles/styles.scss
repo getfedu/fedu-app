@@ -15,7 +15,8 @@ Stylesheet: Main Stylesheet
 @import "sass-bootstrap/lib/responsive";
 @import "compass/css3";
 @import "sticky_footer";
-@import "../components/font-awesome/sass/font-awesome";
+$fontAwesomePath: "../components/font-awesome/font";
+@import "../components/font-awesome/sass/font-awesome.scss";
 
 /* Sticky footer styles -------------------------------------------------- */
 
