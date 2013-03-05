@@ -5,11 +5,12 @@ define([
 	'use strict';
 
 	var theModel = Backbone.Model.extend({
-		// url: 'url',
+		// url: 'http://localhost:3100/add-video',
 		// Default key/values
 		defaults: {
-			title: 'a Title',
-			author: 'an Author'
+			url: '',
+			title: '',
+			description: ''
 		}
 	});
 
