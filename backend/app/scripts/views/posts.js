@@ -5,8 +5,9 @@ define([
 	'../collections/posts',
 	'../models/posts',
 	'text!../templates/posts/add_template.html',
+	'text!../templates/posts/list_template.html',
 	'text!../templates/posts/list_item_template.html',
-], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate ) {
+], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate ) {
 	'use strict';
 
 	var VideoView = Backbone.View.extend({
@@ -19,12 +20,16 @@ define([
 
 		// delegated events
 		events: {
-			'submit form#add_post' : 'savePost'
+			'submit form#add_post' : 'savePost',
+			'click button.delete' : 'deletePost',
 		},
 
 		initialize: function() {
 			this.model = new TheModel();
 			this.collection = new TheCollection();
+			this.collection.on('change', function(){
+				console.log('hasChanges');
+			});
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -42,14 +47,15 @@ define([
 		},
 
 		listPosts: function(){ // called from collections/video.js
+			this.render(this.el, ListTemplate);
 			var templateItems = '';
 			var that = this;
 			this.collection.fetch({
 			    success: function(collection) {
 					_.each(collection.models, function(value){
-						templateItems += _.template(ListTemplate, {attributes: value.attributes});
+						templateItems += _.template(ListItemTemplate, {attributes: value.attributes});
 			        });
-			        that.render(that.el, templateItems);
+			        that.render('#posts_list', templateItems);
 			    },
 			    error: function(){
 			        console.log('error - no data was fetched');
@@ -63,7 +69,6 @@ define([
 		savePost: function(e){
 			e.preventDefault();
 			var array = $('form').serializeArray();
-			console.log(array);
 			this.model.set({
 				title: array[0].value,
 				videoUrl: array[1].value,
@@ -78,6 +83,10 @@ define([
                     $('#message').text('not saved! something went wrong.');
 				}
 			});
+		},
+
+		deletePost: function(e){
+			var id = $(e.currentTarget).attr('data-id');
 		}
 
 
