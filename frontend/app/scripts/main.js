@@ -34,8 +34,15 @@ require([
 	'bootstrapCollapse'
 ], function(Router, $, BootstrapCollapse) {
 	'use strict';
+
 	// initialize routing and start Backbone.history()
 	new Router();
 	Backbone.history.start();
 	console.log('Running jQuery %s', $().jquery);
 });
+
+
+// config
+window.feduConfig = {
+	nodeUrl: 'http://localhost:3100'
+};

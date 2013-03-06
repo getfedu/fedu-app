@@ -1,5 +1,5 @@
 define([
-    'jquery', 'underscore', 'backbone', '../models/model'
+    'jquery', 'underscore', 'backbone', '../models/posts'
 ], function($, _, Backbone, TheModel) {
     'use strict';
 

@@ -1,12 +1,12 @@
 define([
-    'jquery', 'underscore', 'backbone', '../models/video'
+    'jquery', 'underscore', 'backbone', '../models/posts'
 ], function($, _, Backbone, TheModel) {
     'use strict';
 
     var collection = Backbone.Collection.extend({
         model: TheModel,
         url: function() {
-            return 'http://localhost:3100/get-videos';
+            return  window.feduConfig.nodeUrl + '/get-videos';
         },
 
         parse: function(response){ // manipulate response data

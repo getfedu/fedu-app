@@ -2,13 +2,13 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'text!../templates/video/video.html',
-	'text!../templates/video/video_items.html',
-	'../collections/video'
-], function( $, _, Backbone, VideoTemplate, VideoItemsTemplate, TheCollection) {
+	'../collections/posts',
+	'text!../templates/posts/video.html',
+	'text!../templates/posts/video_items.html'
+], function( $, _, Backbone, TheCollection, VideoTemplate, VideoItemsTemplate) {
 	'use strict';
 
-	var VideoView = Backbone.View.extend({
+	var PostsView = Backbone.View.extend({
 
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
@@ -33,7 +33,10 @@ define([
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
 		// of the app doesn't change.
-		render: function() {
+		render: function(value) {
+
+			console.log(value);
+
 		},
 
 		renderVideos: function(){ // called from collections/video.js
@@ -55,5 +58,5 @@ define([
 
 	});
 
-	return VideoView;
+	return PostsView;
 });
