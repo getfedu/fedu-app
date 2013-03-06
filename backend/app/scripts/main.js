@@ -32,3 +32,8 @@ require([
 	Backbone.history.start();
 	console.log('Running jQuery %s', $().jquery);
 });
+
+// config
+window.feduConfig = {
+	nodeUrl: 'http://localhost:3100'
+};

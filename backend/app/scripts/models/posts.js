@@ -5,7 +5,9 @@ define([
 	'use strict';
 
 	var theModel = Backbone.Model.extend({
-		url: 'http://localhost:3100/add-post',
+		url: function() {
+            return  window.feduConfig.nodeUrl + '/add-post';
+        },
 		// Default key/values
 		defaults: {
 			title: '',
