@@ -28,6 +28,7 @@ define([
 			this.model = new TheModel();
 			this.collection = new TheCollection();
 			this.collection.on('postsFetched', this.getData, this );
+
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
