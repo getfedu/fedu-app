@@ -10,7 +10,7 @@ define([
 ], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate ) {
 	'use strict';
 
-	var VideoView = Backbone.View.extend({
+	var View = Backbone.View.extend({
 
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
@@ -27,9 +27,7 @@ define([
 		initialize: function() {
 			this.model = new TheModel();
 			this.collection = new TheCollection();
-			this.collection.on('change', function(){
-				console.log('hasChanges');
-			});
+			this.collection.on('postsFetched', this.getData, this );
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -47,20 +45,8 @@ define([
 		},
 
 		listPosts: function(){ // called from collections/video.js
-			this.render(this.el, ListTemplate);
-			var templateItems = '';
-			var that = this;
-			this.collection.fetch({
-			    success: function(collection) {
-					_.each(collection.models, function(value){
-						templateItems += _.template(ListItemTemplate, {attributes: value.attributes});
-			        });
-			        that.render('#posts_list', templateItems);
-			    },
-			    error: function(){
-			        console.log('error - no data was fetched');
-			    }
-			});
+			this.render(this.el, _.template(ListTemplate));
+			this.collection.fetchData();
 		},
 
 		// helpers
@@ -87,10 +73,16 @@ define([
 
 		deletePost: function(e){
 			var id = $(e.currentTarget).attr('data-id');
+		},
+
+		getData: function(){
+			var templateItems = '';
+			_.each(this.collection.models, function(value){
+				templateItems += _.template(ListItemTemplate, {attributes: value.attributes});
+			});
+			this.render('#posts_list', templateItems);
 		}
-
-
 	});
 
-	return VideoView;
+	return View;
 });
