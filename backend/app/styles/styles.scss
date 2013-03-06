@@ -14,3 +14,7 @@ Stylesheet: Main Stylesheet
 @import "sass-bootstrap/lib/bootstrap";
 @import "sass-bootstrap/lib/responsive";
 @import "compass/css3";
+
+.page {
+    padding-top: 60px;
+}

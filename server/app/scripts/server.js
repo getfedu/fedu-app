@@ -62,14 +62,14 @@ app.get('/test/:id', function(req, res) {
     res.send(req.params.id);
 });
 
-app.post('/add-video', function(req, res) {
+app.post('/add-post', function(req, res) {
     // console.log('server - post - addVideo');
-    var video = {
-        url: req.body.url,
+    var post = {
         title: req.body.title,
+        videoUrl: req.body.videoUrl,
         description: req.body.description,
     };
-    collectionVideo.insert(video, function() {
+    collectionVideo.insert(post, function() {
         res.send(JSON.stringify('200')); // success = 200
     });
 });

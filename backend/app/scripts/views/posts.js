@@ -2,9 +2,9 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'text!../templates/video.html',
-	'../models/video'
-], function( $, _, Backbone, VideoTemplate, TheModel) {
+	'../models/posts',
+	'text!../templates/posts/add_template.html'
+], function( $, _, Backbone, TheModel, addTemplate ) {
 	'use strict';
 
 	var VideoView = Backbone.View.extend({
@@ -15,12 +15,12 @@ define([
 		model: {},
 
 		// compile template
-		template: _.template(VideoTemplate, { test: 'a Test Value' }),
+		template: _.template(addTemplate, { test: 'a Test Value' }),
 
 		// delegated events
 		events: {
 			'click .test' : 'exampleFunction',
-			'submit form#add-video' : 'addVideo'
+			'submit form#add_post' : 'addPost'
 		},
 
 		initialize: function() {
@@ -41,13 +41,13 @@ define([
 		exampleFunction: function() {
 		},
 
-		addVideo: function(e){
+		addPost: function(e){
 			e.preventDefault();
 			var array = $('form').serializeArray();
-
+			console.log(array);
 			this.model.set({
-				url: array[0].value,
-				title: array[1].value,
+				title: array[0].value,
+				videoUrl: array[1].value,
 				description: array[2].value,
 			});
 

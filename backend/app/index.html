@@ -16,10 +16,64 @@
         <!-- endbuild -->
     </head>
     <body>
-        <div class="container">
-            <div id="app-wrapper">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="brand" href="#">Project name</a>
+                    <div class="nav-collapse collapse">
+                        <p class="navbar-text pull-right">
+                            Logged in as <a href="#" class="navbar-link">Username</a>
+                        </p>
+                        <ul class="nav">
+                            <li class="active"><a href="#">Home</a></li>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                        </ul>
+                    </div><!--/.nav-collapse -->
+                </div>
             </div>
         </div>
+
+        <div class="container-fluid page">
+            <div class="row-fluid">
+                <div class="span3">
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            <li class="nav-header">Posts</li>
+                            <li><a href="#">list Posts</a></li>
+                            <li><a href="#add-post">add a Post</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li class="nav-header">Pages</li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li class="nav-header">Settings</li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                            <li><a href="#">Link</a></li>
+                        </ul>
+                    </div><!--/.well -->
+                </div><!--/span-->
+                <div class="span9">
+                    <div id="app-wrapper">
+                    </div>
+                </div><!--/span-->
+            </div><!--/row-->
+
+            <footer>
+                <p>&copy; Company 2013</p>
+            </footer>
+
+        </div><!--/.fluid-container-->
 
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>

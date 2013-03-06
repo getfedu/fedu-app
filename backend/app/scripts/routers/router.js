@@ -2,21 +2,21 @@ define([
 	'jquery',
 	'backbone',
     '../views/app',
-	'../views/video'
-], function($, Backbone, AppView, VideoView) {
+	'../views/posts'
+], function($, Backbone, AppView, PostsView) {
 	'use strict';
 
     var appView = new AppView();
-	var videoView = new VideoView();
+	var postsView = new PostsView();
 
 	var Router = Backbone.Router.extend({
 		routes:{
-			'add-video' : 'addVideo',
+			'add-post' : 'addPost',
 			'*actions': 'defaultAction'
 		},
 
-		addVideo: function(){
-            videoView.render();
+		addPost: function(){
+            postsView.render();
 		},
 
 		defaultAction: function() {
