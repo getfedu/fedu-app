@@ -26,7 +26,7 @@ define([
 		initialize: function() {
 			// render default template (form)
 			$(this.el).html(this.template);
-			
+
 			this.collection = new TheCollection();
 			this.collection.fetchData(this);
 		},
@@ -48,7 +48,7 @@ define([
 			});
 
 			$('#all-videos').html(templateItems);
-			
+
 		},
 
 		// helper functions

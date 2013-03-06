@@ -4,8 +4,7 @@ var mongodb = require('../../node_modules/mongodb').MongoClient;
 var oAuth = require('../../node_modules/oauth').OAuth;
 var app = null;
 var oa = null;
-var lastTweetId = 0;
-var collectionVideo = {};
+var collectionPosts = {};
 
 // db handling
 ///////////////////////////////////////////////////////////
@@ -16,7 +15,7 @@ function dbConnector(){
         }
 
         console.log('connected');
-        collectionVideo = db.collection('video');
+        collectionPosts = db.collection('posts');
 
     });
 
@@ -52,16 +51,6 @@ init();
 // request/response handling
 ///////////////////////////////////////////////////////////
 
-app.get('/test', function(req, res) {
-    res.send('dd');
-});
-
-app.get('/test/:id', function(req, res) {
-    //mongoose.set(req.params.id, req.params.id)
-    console.log('request GET: /test/id' + req.params.id);
-    res.send(req.params.id);
-});
-
 app.post('/add-post', function(req, res) {
     // console.log('server - post - addVideo');
     var post = {
@@ -69,25 +58,29 @@ app.post('/add-post', function(req, res) {
         videoUrl: req.body.videoUrl,
         description: req.body.description,
     };
-    collectionVideo.insert(post, function() {
+    collectionPosts.insert(post, function() {
         res.send(JSON.stringify('200')); // success = 200
     });
 });
 
-app.get('/get-videos', function(req, res) {
-    var theVideos = [];
-    var queryVideos = collectionVideo.find().stream();
+app.get('/get/:value', function(req, res) {
+    var results = [];
+    var collection = {};
 
-    queryVideos.on('data', function(item) {
-        theVideos.push(item);
+    if(req.params.value === 'posts'){
+        collection = collectionPosts;
+    }
+
+    var query = collection.find().stream();
+    query.on('data', function(item) {
+        results.push(item);
     });
 
-    queryVideos.on('end', function() {
+    query.on('end', function() {
         res.setHeader('Content-Type', 'application/json');
-        res.send(theVideos);
+        res.send(results);
     });
 });
-
 
 app.get('/old_tweets', function(req, res) {
     var theTweets = [];

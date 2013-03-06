@@ -14,6 +14,8 @@ Stylesheet: Main Stylesheet
 @import "sass-bootstrap/lib/bootstrap";
 @import "sass-bootstrap/lib/responsive";
 @import "compass/css3";
+$fontAwesomePath: "../components/font-awesome/font";
+@import "../components/font-awesome/sass/font-awesome.scss";
 
 .page {
     padding-top: 60px;

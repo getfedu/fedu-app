@@ -12,11 +12,16 @@ define([
 	var Router = Backbone.Router.extend({
 		routes:{
 			'add-post' : 'addPost',
+			'list-posts' : 'listPosts',
 			'*actions': 'defaultAction'
 		},
 
 		addPost: function(){
-            postsView.render();
+            postsView.addPost();
+		},
+
+		listPosts: function(){
+			postsView.listPosts();
 		},
 
 		defaultAction: function() {
