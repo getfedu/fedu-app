@@ -73,12 +73,22 @@ define([
 
 		deletePost: function(e){
 			var id = $(e.currentTarget).attr('data-id');
+			var model = this.collection.get(id);
+			var that = this;
+			model.destroy({
+				success: function(model, response) {
+					that.getData();
+				},
+				error: function(){
+				},
+				wait: true
+			});
 		},
 
 		getData: function(){
 			var templateItems = '';
 			_.each(this.collection.models, function(value){
-				templateItems += _.template(ListItemTemplate, {attributes: value.attributes});
+				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, cid: value.cid});
 			});
 			this.render('#posts_list', templateItems);
 		}

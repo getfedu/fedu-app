@@ -1,6 +1,6 @@
 'use strict';
 var express = require('../../node_modules/express');
-var mongodb = require('../../node_modules/mongodb').MongoClient;
+var mongodb = require('../../node_modules/mongodb');
 var oAuth = require('../../node_modules/oauth').OAuth;
 var app = null;
 var oa = null;
@@ -32,7 +32,7 @@ function init(){
     app.use(express.bodyParser());
     app.all('*', function(req, res, next) {
         res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+        res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT');
         res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
         next();
     });
@@ -51,7 +51,7 @@ init();
 // request/response handling
 ///////////////////////////////////////////////////////////
 
-app.post('/add-post', function(req, res) {
+app.post('/post', function(req, res) {
     // console.log('server - post - addVideo');
     var post = {
         title: req.body.title,
@@ -59,8 +59,22 @@ app.post('/add-post', function(req, res) {
         description: req.body.description,
     };
     collectionPosts.insert(post, function() {
-        res.send(JSON.stringify('200')); // success = 200
+        res.send(JSON.stringify('OK'));
     });
+});
+
+app.delete('/post/:id', function(req, res) {
+    var BSON = mongodb.BSONPure;
+    var oId = new BSON.ObjectID(req.params.id);
+    collectionPosts.remove({'_id': oId }, function() {
+        res.send(JSON.stringify('OK'));
+    });
+});
+
+app.put('/post/:id', function(req, res) {
+
+    console.log('put', req.params.id);
+    res.send(JSON.stringify('OK'));
 });
 
 app.get('/get/:value', function(req, res) {
