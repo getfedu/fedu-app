@@ -12,6 +12,11 @@ require.config({
 		},
 		underscore: { // template
 			exports: '_'
+		},
+		bootstrapCollapse: {
+			deps: [
+				'jquery'
+			]
 		}
 	},
 	paths: {
@@ -19,14 +24,15 @@ require.config({
 		underscore: '../components/underscore/underscore',
 		backbone: '../components/backbone/backbone',
 		text: '../components/requirejs-text/text',
-		bootstrapDropdown: '../components/sass-bootstrap/js/bootstrap-dropdown'
+		bootstrapCollapse: '../components/sass-bootstrap/js/bootstrap-collapse'
 	}
 });
 
 require([
 	'routers/router',
-	'jquery'
-], function(Router, $, bootstrapDropdown) {
+	'jquery',
+	'bootstrapCollapse'
+], function(Router, $, BootstrapCollapse) {
 	'use strict';
 	// initialize routing and start Backbone.history()
 	new Router();

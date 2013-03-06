@@ -2,9 +2,8 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'text!../templates/nav_template.html',
-	'text!../templates/detail_page_template.html',
-], function( $, _, Backbone, NavTemplate, DetailPageTemplate) {
+	'text!../templates/detail_view_template.html',
+], function( $, _, Backbone, DetailViewTemplate) {
 
 	'use strict';
 
@@ -15,7 +14,7 @@ define([
 		el: '#app-wrapper',
 		nav: '#nav',
 		collection: {},
-		detailPageData: {
+		detailViewData: {
 			video: 'http://www.youtube.com/embed/f7AU2Ozu8eo',
 			headline: 'Headline',
 			description: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate',
@@ -25,7 +24,6 @@ define([
 		},
 
 		// compile template
-		navTemplate: _.template(NavTemplate),
 
 		// delegated events
 		events: {
@@ -42,8 +40,7 @@ define([
 		render: function() {
 			// render function
 
-			$(this.nav).html(this.navTemplate);
-			$(this.el).html(_.template(DetailPageTemplate, this.detailPageData));
+			$(this.el).html(_.template(DetailViewTemplate, this.detailViewData));
 
 		},
 

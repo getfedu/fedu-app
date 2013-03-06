@@ -49,15 +49,15 @@ define([
 				url: array[0].value,
 				title: array[1].value,
 				description: array[2].value,
-			});			
+			});
 
 			this.model.save(null, {
                 success: function (model, response) {
-                        $('#message').text('saved!');
-                },
+                    $('#message').text('saved!');
+				},
                 error: function (model, response) {
-                        $('#message').text('not saved! something went wrong.');
-                }
+                    $('#message').text('not saved! something went wrong.');
+				}
 			});
 
 		}
