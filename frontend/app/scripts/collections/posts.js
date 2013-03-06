@@ -13,20 +13,7 @@ define([
 
             return response;
 
-        },
-
-        fetchData: function(view){
-            var that = this;
-            this.fetch({
-                success: function(collection) {
-                    console.log('success - data of %s is fetched', collection);
-                    view.renderVideos();
-                },
-                error: function(){
-                    console.log('error - no data was fetched');
-                }
-            });
-        },
+        }
 
     });
 
