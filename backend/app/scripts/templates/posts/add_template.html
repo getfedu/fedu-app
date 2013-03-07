@@ -1,12 +1,17 @@
 <form action="#" id="add_post" method="POST" class="span7">
     <fieldset>
         <legend>Add a Post</legend>
+
+        <div class="controls controls-row">
+            <label>Video url</label>
+            <input type="text" name="videoUrl" class="video_url span10" placeholder="enter Url">
+            <button type="button" class="btn btn-primary span2 search_api"><i class="icon-search"></i></button>
+        </div>
+        <span class="help-block">Add an url of a Video from Youtube, Vimeo, etc..</span>
+        <br/><br/>
+
         <label>Title</label>
         <input type="text" name="title" class="input-xlarge" placeholder="enter the Title">
-
-        <label>Video url</label>
-        <input type="text" name="videoUrl" class="input-xxlarge" placeholder="enter Url">
-        <span class="help-block">Add an url of a Video from Youtube, Vimeo, etc..</span>
 
         <label>Description</label>
         <textarea rows="5" class="input-xxlarge" name="description"></textarea>

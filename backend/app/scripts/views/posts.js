@@ -24,13 +24,14 @@ define([
 
 		// delegated events
 		events: {
-			'submit form#add_post' : 'savePost',
-			'click button.delete' : 'deleteModal',
-			'click button.delete_confirmed' : 'deletePost',
-			'click button.edit' : 'editPost',
-			'submit form#edit_post' : 'updatePost',
-			'click button.cancel' : function(){ Backbone.history.navigate('/list-posts', true); },
-			'change #edit_post :input' : 'changedHandler'
+			'submit form#add_post': 'savePost',
+			'click button.delete': 'deleteModal',
+			'click button.delete_confirmed': 'deletePost',
+			'click button.edit': 'editPost',
+			'submit form#edit_post': 'updatePost',
+			'click button.cancel': function(){ Backbone.history.navigate('/list-posts', true); },
+			'change #edit_post :input': 'changedHandler',
+			'click button.search_api': 'searchApi'
 		},
 
 		initialize: function() {
@@ -160,6 +161,16 @@ define([
 			} else {
 				$(e.currentTarget).addClass('changed');
 			}
+		},
+
+		searchApi: function(e){
+			console.log($(e.currentTarget).siblings('.video_url').val());
+			$.ajax({
+				type: 'GET',
+				url: 'https://www.googleapis.com/youtube/v3/videos?id=f7AU2Ozu8eo&key=AIzaSyB4b8cdEoaJ_rlaKcBU5A3bg012b4id1xU&part=snippet,contentDetails,statistics,status',
+			}).done(function( msg ) {
+				console.log(msg);
+			});
 		}
 	});
 
