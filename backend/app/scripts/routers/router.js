@@ -6,27 +6,32 @@ define([
 ], function($, Backbone, AppView, PostsView) {
 	'use strict';
 
-    var appView = new AppView();
-	var postsView = new PostsView();
-
 	var Router = Backbone.Router.extend({
+		appView: new AppView(),
+		postsView: new PostsView(),
 		routes:{
 			'add-post' : 'addPost',
 			'list-posts' : 'listPosts',
+			'edit-post' : 'editPost',
 			'*actions': 'defaultAction'
 		},
 
 		addPost: function(){
-            postsView.addPost();
+            this.postsView.addPost();
 		},
 
 		listPosts: function(){
-			postsView.listPosts();
+			this.postsView.listPosts();
+		},
+
+		editPost: function(){
+			this.postsView.listPosts();
+			Backbone.history.navigate('/list-posts', false);
 		},
 
 		defaultAction: function() {
 			console.log('routing point - defaultAction');
-			appView.render();
+			this.appView.render();
 		}
 
 	});

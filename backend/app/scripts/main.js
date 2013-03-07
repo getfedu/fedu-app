@@ -12,25 +12,44 @@ require.config({
 		},
 		underscore: { // template
 			exports: '_'
+		},
+		bootstrapAlert: {
+			deps: [
+				'jquery'
+			]
+		},
+		bootstrapTransition: {
+			deps: [
+				'jquery'
+			]
+		},
+		bootstrapModal: {
+			deps: [
+				'jquery'
+			]
 		}
 	},
 	paths: {
 		jquery: '../components/jquery/jquery',
 		underscore: '../components/underscore/underscore',
 		backbone: '../components/backbone/backbone',
-		text: '../components/requirejs-text/text'
+		text: '../components/requirejs-text/text',
+		bootstrapAlert: '../components/sass-bootstrap/js/bootstrap-alert',
+		bootstrapTransition: '../components/sass-bootstrap/js/bootstrap-transition',
+		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',
 	}
 });
 
 require([
 	'routers/router',
-	'jquery'
-], function(Router, $) {
+	'bootstrapAlert',
+	'bootstrapTransition',
+	'bootstrapModal',
+], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal) {
 	'use strict';
 	// initialize routing and start Backbone.history()
 	new Router();
 	Backbone.history.start();
-	console.log('Running jQuery %s', $().jquery);
 });
 
 // config

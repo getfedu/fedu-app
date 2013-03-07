@@ -53,12 +53,7 @@ init();
 
 app.post('/post', function(req, res) {
     // console.log('server - post - addVideo');
-    var post = {
-        title: req.body.title,
-        videoUrl: req.body.videoUrl,
-        description: req.body.description,
-    };
-    collectionPosts.insert(post, function() {
+    collectionPosts.insert(req.body, function() {
         res.send(JSON.stringify('OK'));
     });
 });
@@ -72,9 +67,14 @@ app.delete('/post/:id', function(req, res) {
 });
 
 app.put('/post/:id', function(req, res) {
+    var BSON = mongodb.BSONPure;
+    var oId = new BSON.ObjectID(req.params.id);
+    delete req.body._id;
 
-    console.log('put', req.params.id);
-    res.send(JSON.stringify('OK'));
+    collectionPosts.update({'_id': oId }, req.body, function(){
+        res.send(JSON.stringify('OK'));
+    });
+
 });
 
 app.get('/get/:value', function(req, res) {
