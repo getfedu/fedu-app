@@ -51,8 +51,3 @@ require([
 	new Router();
 	Backbone.history.start();
 });
-
-// config
-window.feduConfig = {
-	nodeUrl: 'http://localhost:3100'
-};

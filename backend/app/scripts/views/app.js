@@ -11,6 +11,7 @@ define([
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
 		el: '#app-wrapper',
+		inner: '#app',
 		collection: {},
 
 		// compile template
@@ -31,7 +32,7 @@ define([
 		render: function() {
 			// render function
 
-			$(this.el).html(this.template);
+			$(this.inner).html(this.template);
 
 		},
 

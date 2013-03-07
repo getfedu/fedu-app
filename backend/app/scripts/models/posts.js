@@ -7,7 +7,7 @@ define([
 	var theModel = Backbone.Model.extend({
 		idAttribute: '_id',
 		urlRoot: function() {
-            return  window.feduConfig.nodeUrl + '/post';
+            return 'http://localhost:3100/post';
         },
 		// Default key/values
 		defaults: {

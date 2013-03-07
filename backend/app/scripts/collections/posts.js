@@ -6,7 +6,7 @@ define([
     var collection = Backbone.Collection.extend({
         model: TheModel,
         url: function() {
-            return  window.feduConfig.nodeUrl + '/get/posts';
+            return  'http://localhost:3100/get/posts';
         },
 
         parse: function(response){ // manipulate response data
