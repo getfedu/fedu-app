@@ -1,7 +1,9 @@
 <tr data-id="<%= attributes._id %>">
     <td><%= attributes.title %></td>
-    <td><%= attributes.videoUrl %></td>
+    <td><%= attributes.videoId %></td>
+    <td><%= attributes.videoType %></td>
     <td><%= attributes.description %></td>
+    <td><img src="<%= attributes.thumbnail %>" alt=""></td>
     <td>
         <button class="btn btn-primary edit" data-id="<%= cid %>"><i class="icon-edit"></i></button>
         <button class="btn btn-danger delete" data-id="<%= cid %>"><i class="icon-trash"></i></button>

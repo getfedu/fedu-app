@@ -4,21 +4,29 @@
 
         <div class="controls controls-row">
             <label>Video url</label>
-            <input type="text" name="videoUrl" class="video_url span10" placeholder="enter Url">
+            <input type="text" name="videoId" class="video_id span6" placeholder="enter id" value="i_qE1iAmjFg">
+            <select class="span4 video_type" name="videoType">
+              <option value="youtube">youtube</option>
+              <option value="vimeo">vimeo</option>
+            </select>
             <button type="button" class="btn btn-primary span2 search_api"><i class="icon-search"></i></button>
         </div>
-        <span class="help-block">Add an url of a Video from Youtube, Vimeo, etc..</span>
+        <span class="help-block">Add an id of a Video from Youtube, Vimeo, etc..</span>
         <br/><br/>
 
         <label>Title</label>
-        <input type="text" name="title" class="input-xlarge" placeholder="enter the Title">
+        <input type="text" name="title" class="input-xxlarge" placeholder="enter the Title">
 
         <label>Description</label>
         <textarea rows="5" class="input-xxlarge" name="description"></textarea>
+
+        <label>Title</label>
+        <input type="text" name="thumbnail" class="input-xxlarge" placeholder="enter the Title">
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Save</button>
             <button type="button" class="btn cancel">Cancel</button>
         </div>
+
     </fieldset>
 </form>

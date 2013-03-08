@@ -10,7 +10,8 @@ define([
 	'text!../templates/posts/edit_template.html',
 	'text!../templates/message_template.html',
 	'text!../templates/modal_template.html',
-], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate ) {
+	'../vendor/fedu/api',
+], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate, TheApi ) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -38,6 +39,7 @@ define([
 			this.model = new TheModel();
 			this.collection = new TheCollection();
 			this.collection.on('postsFetched', this.getData, this );
+			TheApi.on('apiDataFetched', this.setApiData, this );
 
 		},
 
@@ -164,12 +166,15 @@ define([
 		},
 
 		searchApi: function(e){
-			console.log($(e.currentTarget).siblings('.video_url').val());
-			$.ajax({
-				type: 'GET',
-				url: 'https://www.googleapis.com/youtube/v3/videos?id=f7AU2Ozu8eo&key=AIzaSyB4b8cdEoaJ_rlaKcBU5A3bg012b4id1xU&part=snippet,contentDetails,statistics,status',
-			}).done(function( msg ) {
-				console.log(msg);
+			var id = $(e.currentTarget).siblings('.video_id').val();
+			var type = $(e.currentTarget).siblings('.video_type').val();
+
+			TheApi.getData(id, type);
+		},
+
+		setApiData: function(){
+			_.each(TheApi.theData, function(value, key){
+				$('form#add_post :input[name="' + key + '"]').val(value);
 			});
 		}
 	});

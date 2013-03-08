@@ -2,6 +2,7 @@
 var express = require('../../node_modules/express');
 var mongodb = require('../../node_modules/mongodb');
 var oAuth = require('../../node_modules/oauth').OAuth;
+var request = require('../../node_modules/request');
 var app = null;
 var oa = null;
 var collectionPosts = {};
@@ -168,6 +169,35 @@ app.options('/*', function(req, res) {
 app.post('/test', function(req, res) {
     console.log('request POST: /test');
     res.send('request POST: /test/id');
+});
+
+
+app.post('/api-call', function(req, res){
+
+    var optionsVideo = {
+        url: 'https://www.googleapis.com/youtube/v3/videos/?id='+ req.body.id +'&key=' + req.body.key + '&part=snippet,contentDetails,statistics,status'
+    };
+
+    request(optionsVideo, function (error, response, videoData) {
+        if (!error && response.statusCode === 200) {
+
+            videoData = JSON.parse(videoData);
+            var optionsCategory = {
+                url: 'https://www.googleapis.com/youtube/v3/videoCategories?part=snippet&id=' + videoData.items[0].snippet.categoryId + '&key=' + req.body.key
+            };
+
+            request(optionsCategory, function (error, response, categoryData) {
+                if (!error && response.statusCode === 200) {
+                    categoryData = JSON.parse(categoryData);
+                    res.send({ videoData: videoData, categoryData: categoryData });
+                } else {
+                    console.log(error);
+                }
+            });
+        } else {
+            console.log(error);
+        }
+    });
 });
 
 // server listen on port X
