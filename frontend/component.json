@@ -9,7 +9,8 @@
     "jquery": "~1.9.1",
     "backbone": "~0.9.10",
     "underscore": "~1.4.4",
-    "font-awesome": "~3.0.2"
+    "font-awesome": "~3.0.2",
+    "moment": "~2.0.0"
   },
   "devDependencies": {}
 }

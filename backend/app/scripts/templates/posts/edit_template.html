@@ -1,20 +1,25 @@
 <form action="#" id="edit_post" method="POST" class="span7" data-id="<%= cid %>">
     <fieldset>
         <legend>Edit the Post</legend>
-        <label>Title</label>
-        <input type="text" name="title" class="input-xlarge" placeholder="enter the Title" value="<%= attributes.title %>">
 
         <label>Video Id</label>
-        <input type="text" name="videoId" class="input-xxlarge" placeholder="enter the Id" value="<%= attributes.videoId %>">
+        <input type="text" name="videoId" class="input-xxlarge disabled" placeholder="enter the Id" value="<%= attributes.videoId %>" disabled>
         <span class="help-block">Add an id of a Video from Youtube, Vimeo, etc..</span>
+
+        <label>Title</label>
+        <input type="text" name="title" class="input-xxlarge" placeholder="enter the Title" value="<%= attributes.title %>">
+
+        <label>Author/Speaker</label>
+        <input type="text" name="userName" class="input-xxlarge" placeholder="enter the Title" value="<%= attributes.userName %>">
 
         <label>Description</label>
         <textarea rows="5" class="input-xxlarge" name="description"><%= attributes.description %></textarea>
 
-        <label class="checkbox">
-            <input type="hidden" value="0" name="remeber">
-            <input type="checkbox" value="1" name="remeber"> Remember me
-        </label>
+        <label>Tags</label>
+        <input type="text" name="tags" class="input-xxlarge" placeholder="enter some tags" value="<%= attributes.tags %>">
+
+        <label>Category</label>
+        <input type="text" name="category" class="input-xxlarge" placeholder="enter some tags" value="<%= attributes.category %>">
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Save Changes</button>

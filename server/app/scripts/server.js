@@ -1,10 +1,10 @@
 'use strict';
 var express = require('../../node_modules/express');
 var mongodb = require('../../node_modules/mongodb');
-var oAuth = require('../../node_modules/oauth').OAuth;
 var request = require('../../node_modules/request');
+var moment = require('../../node_modules/moment');
+require('../../node_modules/moment-isoduration');
 var app = null;
-var oa = null;
 var collectionPosts = {};
 
 // db handling
@@ -37,47 +37,26 @@ function init(){
         res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
         next();
     });
-
-    oa = new oAuth(
-        'http://twitter.com/oauth/request_token',
-        'http://twitter.com/oauth/access_token',
-        'y127hdBETk3KoJrzQdmw', '9zUx9bK9cFbjqh6bSnvNG7J8uDX9YrCS1h8XvLGYY',
-        '1.0A', null, 'HMAC-SHA1'
-    );
-
 }
 
 init();
 
-// request/response handling
+// CRUD - Backend
 ///////////////////////////////////////////////////////////
 
+//General Options-Handler (no use atm)
+app.options('/*', function(req, res) {
+    res.send(JSON.stringify(res.headers));
+});
+
+// Create Post and save into db
 app.post('/post', function(req, res) {
-    // console.log('server - post - addVideo');
     collectionPosts.insert(req.body, function() {
         res.send(JSON.stringify('OK'));
     });
 });
 
-app.delete('/post/:id', function(req, res) {
-    var BSON = mongodb.BSONPure;
-    var oId = new BSON.ObjectID(req.params.id);
-    collectionPosts.remove({'_id': oId }, function() {
-        res.send(JSON.stringify('OK'));
-    });
-});
-
-app.put('/post/:id', function(req, res) {
-    var BSON = mongodb.BSONPure;
-    var oId = new BSON.ObjectID(req.params.id);
-    delete req.body._id;
-
-    collectionPosts.update({'_id': oId }, req.body, function(){
-        res.send(JSON.stringify('OK'));
-    });
-
-});
-
+// Read Posts from db
 app.get('/get/:value', function(req, res) {
     var results = [];
     var collection = {};
@@ -97,105 +76,99 @@ app.get('/get/:value', function(req, res) {
     });
 });
 
-app.get('/old_tweets', function(req, res) {
-    var theTweets = [];
-    var allTweets = {
-        'theTweets': theTweets,
-        'old': true
-    };
-    var counter = 0;
+// Update Post in db
+app.put('/post/:id', function(req, res) {
+    var BSON = mongodb.BSONPure;
+    var oId = new BSON.ObjectID(req.params.id);
+    delete req.body._id;
 
-    var queryTweets = collection.find().sort( { max_id: -1 } ).stream();
-
-    queryTweets.on('data', function(item) {
-        theTweets.push(item);
-        counter++;
+    collectionPosts.update({'_id': oId }, req.body, function(){
+        res.send(JSON.stringify('OK'));
     });
 
-    queryTweets.on('end', function() {
-        res.setHeader('Content-Type', 'application/json');
-        allTweets.count = counter;
-        res.send(allTweets);
-    });
 });
 
-app.get('/tweet/:hashtag', function(req, res) {
-    oa.get('https://api.twitter.com/1.1/search/tweets.json?q=%23' + req.params.hashtag + '&lang=en&result_type=recent&since_id=' + lastTweetId + '&count=3', '155494201-Errz5Sd3TQQzeXYnr75RXaymFHFlyIfbTZK3XQwJ', 'SX3thT8nwek6cGAYzgilQ3wnbaYbq6A7yS9EqJlI8Y', function(error, data) {
-        res.setHeader('Content-Type', 'application/json');
-        res.send(data);
-        var dataAsJson = JSON.parse(data);
-        lastTweetId = dataAsJson.search_metadata.max_id_str;
+// Delete Post in db
+app.delete('/post/:id', function(req, res) {
+    var BSON = mongodb.BSONPure;
+    var oId = new BSON.ObjectID(req.params.id);
+    collectionPosts.remove({'_id': oId }, function() {
+        res.send(JSON.stringify('OK'));
     });
 });
 
-app.post('/save', function(req, res) {
-    var tweet = {
-        author: req.body.author,
-        title: req.body.title,
-        date: req.body.date,
-        max_id: req.body.max_id,
-        timestamp: req.body.timestamp
-    };
-    collection.insert(tweet, function() {
-        res.send(JSON.stringify(res.headers));
-    });
-});
-
-app.get('/all_tweets', function(req, res){
-    var theTweets = [];
-    var allTweets = {
-        'theTweets': theTweets
-    };
-    var counter = 0;
-
-    var queryTweets = collection.find().stream();
-
-    queryTweets.on('data', function(item) {
-        theTweets.push(item);
-        counter++;
-    });
-
-    queryTweets.on('end', function() {
-        res.setHeader('Content-Type', 'application/json');
-        allTweets.count = counter;
-        res.send(allTweets);
-    });
-});
-
-app.options('/*', function(req, res) {
-    res.send(JSON.stringify(res.headers));
-});
-
-app.post('/test', function(req, res) {
-    console.log('request POST: /test');
-    res.send('request POST: /test/id');
-});
-
+// API Section - Backend
+///////////////////////////////////////////////////////////
 
 app.post('/api-call', function(req, res){
 
-    var optionsVideo = {
-        url: 'https://www.googleapis.com/youtube/v3/videos/?id='+ req.body.id +'&key=' + req.body.key + '&part=snippet,contentDetails,statistics,status'
-    };
+    var optionsVideo = {};
 
-    request(optionsVideo, function (error, response, videoData) {
-        if (!error && response.statusCode === 200) {
+    if(req.body.type === 'youtube'){
+        optionsVideo.url = 'https://www.googleapis.com/youtube/v3/videos/?id=' + req.body.id + '&key=' + req.body.key + '&part=snippet,contentDetails,statistics,status';
+    } else if(req.body.type === 'vimeo') {
+        optionsVideo.url = 'http://vimeo.com/api/v2/video/' + req.body.id + '.json';
+    } else {
+        res.send(500);
+    }
 
-            videoData = JSON.parse(videoData);
-            var optionsCategory = {
-                url: 'https://www.googleapis.com/youtube/v3/videoCategories?part=snippet&id=' + videoData.items[0].snippet.categoryId + '&key=' + req.body.key
-            };
+    var parsedData = {};
 
-            request(optionsCategory, function (error, response, categoryData) {
-                if (!error && response.statusCode === 200) {
-                    categoryData = JSON.parse(categoryData);
-                    res.send({ videoData: videoData, categoryData: categoryData });
-                } else {
-                    console.log(error);
-                }
-            });
-        } else {
-            console.log(error);
+    request(optionsVideo, function (error, response, apiData) {
+        apiData = JSON.parse(apiData);
+        if (req.body.type === 'vimeo') {
+            apiData = apiData[0];
+            if(response.statusCode === 200) {
+                parsedData.title = apiData.title;
+                parsedData.description = apiData.description;
+                parsedData.tags = apiData.tags;
+                parsedData.foreign = {};
+                parsedData.foreign.embedUrl = 'http://player.vimeo.com/video/' + apiData.id;
+                parsedData.foreign.uploadDate = moment(apiData.upload_date).format();
+                parsedData.foreign.duration = apiData.duration;
+                parsedData.foreign.thumbnail = {};
+                parsedData.foreign.thumbnail.small = apiData.thumbnail_small;
+                parsedData.foreign.thumbnail.medium = apiData.thumbnail_medium;
+                parsedData.foreign.thumbnail.large = apiData.thumbnail_large;
+                parsedData.foreign.channelId = apiData.user_id;
+                parsedData.foreign.channelName = apiData.user_name;
+                parsedData.foreign.likeCount = apiData.stats_number_of_likes;
+                parsedData.foreign.playCount = apiData.stats_number_of_plays;
+                parsedData.foreign.commentCount = apiData.stats_number_of_comments;
+                parsedData.foreign.caption = false;
+
+                res.send(parsedData);
+            } else {
+                res.status(204);
+                res.send('no content');
+            }
+
+        } else if (req.body.type === 'youtube'){
+            if(apiData.items.length > 0){
+                apiData = apiData.items[0];
+                parsedData.title = apiData.snippet.title;
+                parsedData.description = apiData.snippet.description;
+                parsedData.tags = '';
+                parsedData.foreign = {};
+                parsedData.foreign.videoUrl = 'http://www.youtube.com/embed/' + apiData.id;
+                parsedData.foreign.uploadDate = moment(apiData.snippet.publishedAt).format();
+                parsedData.foreign.duration = moment.duration.fromIsoduration(apiData.contentDetails.duration).asSeconds();
+                parsedData.foreign.thumbnail = {};
+                parsedData.foreign.thumbnail.small = apiData.snippet.thumbnails.default.url;
+                parsedData.foreign.thumbnail.medium = apiData.snippet.thumbnails.medium.url;
+                parsedData.foreign.thumbnail.large = apiData.snippet.thumbnails.high.url;
+                parsedData.foreign.channelId = apiData.snippet.channelId;
+                parsedData.foreign.channelName = apiData.snippet.channelTitle;
+                parsedData.foreign.likeCount = apiData.statistics.likeCount;
+                parsedData.foreign.playCount = apiData.statistics.viewCount;
+                parsedData.foreign.commentCount = apiData.statistics.commentCount;
+                parsedData.foreign.caption = apiData.contentDetails.caption;
+
+                res.send(parsedData);
+            } else {
+                res.status(204);
+                res.send('no content');
+            }
         }
     });
 });

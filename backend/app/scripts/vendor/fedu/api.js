@@ -14,20 +14,18 @@ define([
                 type: 'POST',
                 url: TheConfig.nodeUrl + '/api-call',
                 data: { key: TheConfig.youtubeApiKey, id: id, type: type }
-            }).done(function(result){
-                that.parseData(result);
+            }).done(function(result, textStatus, jqXHR){
+                if(jqXHR.status === 204){
+                    console.log('Für diese ID haben wir kein Video gefunden...');
+                } else {
+                    that.parseData(result);
+                }
             });
         },
 
         parseData: function(data){
 
-            console.log(data);
-
-            var title = data.videoData.items[0].snippet.title;
-            var description = data.videoData.items[0].snippet.description;
-            var thumbnail = data.videoData.items[0].snippet.thumbnails.high.url;
-
-            this.theData = { title: title, description: description, thumbnail: thumbnail };
+            this.theData = data;
             this.trigger('apiDataFetched');
         }
     };

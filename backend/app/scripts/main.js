@@ -37,6 +37,7 @@ require.config({
 		bootstrapAlert: '../components/sass-bootstrap/js/bootstrap-alert',
 		bootstrapTransition: '../components/sass-bootstrap/js/bootstrap-transition',
 		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',
+		moment: '../components/moment/moment'
 	}
 });
 

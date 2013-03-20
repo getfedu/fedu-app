@@ -12,10 +12,31 @@ define([
         },
 		// Default key/values
 		defaults: {
-			title: '',
 			videoId: '',
 			videoType: '',
-			description: ''
+			title: '',
+			description: '',
+			userName: '',
+			category: '',
+			tags: '',
+			publishDate: '',
+			updateDate: '',
+			foreign: {
+				embedUrl: '',
+				uploadDate: '',
+				duration: '',
+				thumbnail: {
+					small: '',
+					medium: '',
+					large: ''
+				},
+				channelId: '',
+				channelName: '',
+				likeCount: '',
+				playCount: '',
+				commentCount: '',
+				caption: ''
+			}
 		}
 	});
 

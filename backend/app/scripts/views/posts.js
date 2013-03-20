@@ -11,7 +11,8 @@ define([
 	'text!../templates/message_template.html',
 	'text!../templates/modal_template.html',
 	'../vendor/fedu/api',
-], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate, TheApi ) {
+	'moment'
+], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate, TheApi, Moment ) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -21,7 +22,6 @@ define([
 		el: '#app-wrapper',
 		inner: '#app',
 		collection: {},
-		model: {},
 
 		// delegated events
 		events: {
@@ -36,7 +36,6 @@ define([
 		},
 
 		initialize: function() {
-			this.model = new TheModel();
 			this.collection = new TheCollection();
 			this.collection.on('postsFetched', this.getData, this );
 			TheApi.on('apiDataFetched', this.setApiData, this );
@@ -74,21 +73,29 @@ define([
 
 		savePost: function(e){
 			e.preventDefault();
+			var model = new TheModel();
 			var array = $('form').serializeArray();
-			var data = {};
+			var data = {
+				publishDate: new Moment().format(),
+				updateDate: new Moment().format()
+			};
+
+			if(TheApi.theData){
+				data.foreign = TheApi.theData.foreign;
+			}
 			_.each(array, function(value){
 				data[value.name] = value.value;
 			});
-			this.model.set(data);
-
+			model.set(data);
 			var that = this;
-			this.model.save(null, {
+			model.save(null, {
                 success: function(){
 					Backbone.history.navigate('/list-posts', true);
                     that.render('#message', _.template(MessageTemplate, { message: 'saved', type: 'success'}));
                     setTimeout(function() {
 						$('.alert').alert('close');
                     }, 5000);
+                    TheApi.theData = {};
 				},
                 error: function(){
                     that.render('#message', _.template(MessageTemplate, { message: 'not saved! something went wrong.', type: 'error'}));
@@ -100,7 +107,9 @@ define([
 			e.preventDefault();
 
 			var array = $(':input.changed').serializeArray();
-			var data = {};
+			var data = {
+				updateDate: new Moment().format()
+			};
 			_.each(array, function(value){
 				data[value.name] = value.value;
 			});
