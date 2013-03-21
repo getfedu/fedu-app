@@ -16,7 +16,7 @@ define([
 		},
 
 		overViewPosts : function(){
-			this.postsView.getPosts();
+			this.postsView.defaultStructure();
 		},
 
 		defaultAction: function() {

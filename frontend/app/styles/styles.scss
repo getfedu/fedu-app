@@ -68,3 +68,40 @@ html, body {
     }
 }
 
+.over_view {
+    .grid_video_item {
+        list-style: none;
+        width: 30%;
+        float: left;
+        margin: 0 1% 1% 0;
+        height: 18em;
+    }
+
+    .info_video_item {
+        list-style: none;
+        width: 100%;
+        .left {
+            float: left;
+            width: 30%;
+            padding: 0 2% 0 0;
+            img {
+                width: 100%;
+            }
+        }
+        .right {
+            float: left;
+            width: 70%;
+            p {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                line-height: 20px;
+                max-height: 100px;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 5; /* number of lines to show */
+                -webkit-box-orient: vertical;
+            }
+        }
+    }
+}
+

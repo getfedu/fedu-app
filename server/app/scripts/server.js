@@ -152,7 +152,7 @@ app.post('/api-call', function(req, res){
                 parsedData.description = apiData.snippet.description;
                 parsedData.tags = '';
                 parsedData.foreign = {};
-                parsedData.foreign.videoUrl = 'http://www.youtube.com/embed/' + apiData.id;
+                parsedData.foreign.embedUrl = 'http://www.youtube.com/embed/' + apiData.id;
                 parsedData.foreign.uploadDate = moment(apiData.snippet.publishedAt).format();
                 parsedData.foreign.duration = moment.duration.fromIsoduration(apiData.contentDetails.duration).asSeconds();
                 parsedData.foreign.thumbnail = {};

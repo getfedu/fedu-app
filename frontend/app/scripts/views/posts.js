@@ -4,8 +4,10 @@ define([
 	'backbone',
 	'../collections/posts',
 	'text!../templates/posts/video.html',
-	'text!../templates/posts/video_items.html'
-], function( $, _, Backbone, TheCollection, VideoTemplate, VideoItemsTemplate) {
+	'text!../templates/posts/grid_video_items.html',
+	'text!../templates/posts/info_video_items.html',
+	'text!../templates/posts/player_video_items.html'
+], function( $, _, Backbone, TheCollection, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate, PlayerVideoItemsTemplate) {
 	'use strict';
 
 	var PostsView = Backbone.View.extend({
@@ -14,35 +16,42 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		collection: {},
-
-		// compile template
-		template: _.template(VideoTemplate),
+		viewType: 'info',
 
 		// delegated events
 		events: {
-			'click .test' : 'exampleFunction'
+			'click .type' : 'setViewType'
 		},
 
 		initialize: function() {
 			// render default template (form)
-			$(this.el).html(this.template);
 			this.collection = new TheCollection();
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
 		// of the app doesn't change.
 		render: function(target, value) {
-
 			$(target).html(value);
-
 		},
 
-		listPosts: function(){ // called from collections/video.js
+		defaultStructure: function(){
+			this.render(this.el, VideoTemplate);
+			$('.type[data-type=' + this.viewType + ']').addClass('active'); // set type button active-state
+			this.getPosts();
+		},
+
+		listPosts: function(){
 
 			var templateItems = '';
-
+			var that = this;
 			_.each(this.collection.models, function(value){
-				templateItems += _.template(VideoItemsTemplate, {attributes: value.attributes});
+				if(that.viewType === 'grid'){
+					templateItems += _.template(GridVideoItemsTemplate, {attributes: value.attributes});
+				} else if(that.viewType === 'player'){
+					templateItems += _.template(PlayerVideoItemsTemplate, {attributes: value.attributes});
+				} else if(that.viewType === 'info'){
+					templateItems += _.template(InfoVideoItemsTemplate, {attributes: value.attributes});
+				}
 			});
 
 			this.render('#all-videos', templateItems);
@@ -50,20 +59,24 @@ define([
 
 		// helper functions
 		////////////////////////////////////////
-		exampleFunction: function() {
-		},
 
 		getPosts: function(){
 			var that = this;
 			this.collection.fetch({
-			    success: function(collection) {
-			        console.log('success - data of %s is fetched', collection);
+			    success: function() {
 			        that.listPosts();
 			    },
 			    error: function(){
 			        console.log('error - no data was fetched');
 			    }
 			});
+		},
+
+		setViewType: function(e) {
+			$('.type').removeClass('active');
+			$(e.currentTarget).addClass('active');
+			this.viewType = $(e.currentTarget).attr('data-type');
+			this.listPosts();
 		}
 
 	});
