@@ -6,22 +6,22 @@ define([
 ], function($, Backbone, AppView, PostsView) {
 	'use strict';
 
-	var appView = new AppView();
-	var postsView = new PostsView();
-
 	var Router = Backbone.Router.extend({
+		appView: new AppView(),
+		postsView: new PostsView(),
+
 		routes:{
 			'over-view-posts' : 'overViewPosts',
 			'*actions': 'defaultAction'
 		},
 
 		overViewPosts : function(){
-			postsView.render('over-view-posts');
+			this.postsView.getPosts();
 		},
 
 		defaultAction: function() {
 			console.log('routing point - defaultAction');
-			appView.render();
+			this.appView.render();
 		}
 
 	});

@@ -1,4 +1,6 @@
-<h2><%=attributes.url %></h2>
-<p><%=attributes.title %></p>
-<p><%=attributes.description %></p>
-<hr size="1">
+<li class="span4">
+    <a href="<%=attributes.foreign.embedUrl %>" target="_blank">
+        <img src="<%=attributes.foreign.thumbnail.large %>"/>
+        <h4><%=attributes.title %></h4>
+    </a>
+</li>

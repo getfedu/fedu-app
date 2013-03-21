@@ -146,6 +146,8 @@ app.post('/api-call', function(req, res){
         } else if (req.body.type === 'youtube'){
             if(apiData.items.length > 0){
                 apiData = apiData.items[0];
+                console.log(apiData);
+                console.log(optionsVideo.url);
                 parsedData.title = apiData.snippet.title;
                 parsedData.description = apiData.snippet.description;
                 parsedData.tags = '';

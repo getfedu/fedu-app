@@ -26,43 +26,45 @@ define([
 		initialize: function() {
 			// render default template (form)
 			$(this.el).html(this.template);
-			var that = this;
 			this.collection = new TheCollection();
-			this.collection.fetch({
-			    success: function(collection) {
-			        console.log('success - data of %s is fetched', collection);
-			        that.renderVideos();
-			    },
-			    error: function(){
-			        console.log('error - no data was fetched');
-			    }
-			});
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
 		// of the app doesn't change.
-		render: function(value) {
+		render: function(target, value) {
 
-			console.log(value);
+			$(target).html(value);
 
 		},
 
-		renderVideos: function(){ // called from collections/video.js
+		listPosts: function(){ // called from collections/video.js
 
 			var templateItems = '';
 
-			_.each(this.collection.models, function(value, key){
+			_.each(this.collection.models, function(value){
 				templateItems += _.template(VideoItemsTemplate, {attributes: value.attributes});
 			});
 
-			$('#all-videos').html(templateItems);
-
+			this.render('#all-videos', templateItems);
 		},
 
 		// helper functions
 		////////////////////////////////////////
 		exampleFunction: function() {
 		},
+
+		getPosts: function(){
+			var that = this;
+			this.collection.fetch({
+			    success: function(collection) {
+			        console.log('success - data of %s is fetched', collection);
+			        that.listPosts();
+			    },
+			    error: function(){
+			        console.log('error - no data was fetched');
+			    }
+			});
+		}
 
 	});
 
