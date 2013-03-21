@@ -61,6 +61,7 @@ define([
 		////////////////////////////////////////
 
 		getPosts: function(){
+
 			var that = this;
 			this.collection.fetch({
 			    success: function() {
