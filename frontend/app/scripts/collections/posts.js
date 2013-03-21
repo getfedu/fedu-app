@@ -1,12 +1,12 @@
 define([
-    'jquery', 'underscore', 'backbone', '../models/posts'
-], function($, _, Backbone, TheModel) {
+    'jquery', 'underscore', 'backbone', '../models/posts', '../vendor/fedu/config'
+], function($, _, Backbone, TheModel, TheConfig) {
     'use strict';
 
     var collection = Backbone.Collection.extend({
         model: TheModel,
         url: function() {
-            return  window.feduConfig.nodeUrl + '/get/posts';
+            return  TheConfig.nodeUrl + '/get/posts';
         },
 
         parse: function(response){ // manipulate response data

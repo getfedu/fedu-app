@@ -15,9 +15,6 @@ define([
 		el: '#app-wrapper',
 		collection: {},
 
-		// compile template
-		template: _.template(VideoTemplate),
-
 		// delegated events
 		events: {
 			'click .test' : 'exampleFunction'
@@ -38,6 +35,7 @@ define([
 		},
 
 		listPosts: function(){ // called from collections/video.js
+			this.render(this.el, VideoTemplate);
 
 			var templateItems = '';
 
@@ -54,6 +52,7 @@ define([
 		},
 
 		getPosts: function(){
+
 			var that = this;
 			this.collection.fetch({
 			    success: function(collection) {
