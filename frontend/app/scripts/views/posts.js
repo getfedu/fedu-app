@@ -6,8 +6,10 @@ define([
 	'text!../templates/posts/video.html',
 	'text!../templates/posts/grid_video_items.html',
 	'text!../templates/posts/info_video_items.html',
-	'text!../templates/posts/player_video_items.html'
-], function( $, _, Backbone, TheCollection, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate, PlayerVideoItemsTemplate) {
+	'text!../templates/posts/player_video_items.html',
+	'text!../templates/posts/detail_video_view.html',
+	'text!../templates/posts/detail_video_content.html'
+], function( $, _, Backbone, TheCollection, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate, PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate) {
 	'use strict';
 
 	var PostsView = Backbone.View.extend({
@@ -34,7 +36,7 @@ define([
 			$(target).html(value);
 		},
 
-		defaultStructure: function(){
+		listDefault: function(){
 			this.render(this.el, VideoTemplate);
 			$('.type[data-type=' + this.viewType + ']').addClass('active'); // set type button active-state
 			this.getPosts();
@@ -57,20 +59,32 @@ define([
 			this.render('#all-videos', templateItems);
 		},
 
+		detailDefault: function(id){
+			this.render(this.el, DetailVideoViewTemplate);
+			this.getPost(id);
+		},
+
+		listPost: function(id){
+			var templateDetailView = '';
+			var post = this.collection.where({_id: id});
+			post = post[0].attributes;
+
+			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: post});
+
+			this.render('.detail_view', templateDetailView);
+
+		},
+
 		// helper functions
 		////////////////////////////////////////
 
 		getPosts: function(){
+			if(this.collection.length > 0){ // check, if collection already exists
+				this.listPosts();
+			} else {
+				this.fetchData('getPosts');
+			}
 
-			var that = this;
-			this.collection.fetch({
-			    success: function() {
-			        that.listPosts();
-			    },
-			    error: function(){
-			        console.log('error - no data was fetched');
-			    }
-			});
 		},
 
 		setViewType: function(e) {
@@ -78,6 +92,37 @@ define([
 			$(e.currentTarget).addClass('active');
 			this.viewType = $(e.currentTarget).attr('data-type');
 			this.listPosts();
+		},
+
+		getPost: function(id){
+			if(this.collection.length > 0){  // check, if collection already exists
+				this.listPost(id);
+			} else {
+				this.fetchData('getPost', id);
+			}
+
+		},
+
+		fetchData: function(targetFunction, id){
+			var that = this;
+			this.collection.fetch({
+			    success: function(collection) {
+					that.collection = collection;
+
+					switch(targetFunction){
+					case 'getPost':
+						that.listPost(id);
+						break;
+					case 'getPosts':
+						that.listPosts();
+						break;
+					}
+
+			    },
+			    error: function(){
+			        console.log('error - no data was fetched');
+			    }
+			});
 		}
 
 	});
