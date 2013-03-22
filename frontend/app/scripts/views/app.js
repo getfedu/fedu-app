@@ -1,9 +1,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'text!../templates/detail_view_template.html',
-], function( $, _, Backbone, DetailViewTemplate) {
+	'backbone'
+], function( $, _, Backbone) {
 
 	'use strict';
 
@@ -40,7 +39,7 @@ define([
 		render: function() {
 			// render function
 
-			$(this.el).html(_.template(DetailViewTemplate, this.detailViewData));
+			// $(this.el).html(_.template(DetailViewTemplate, this.detailViewData));
 
 		},
 

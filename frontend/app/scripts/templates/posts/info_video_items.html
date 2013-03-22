@@ -1,9 +1,11 @@
 <li class="info_video_item clearfix">
-    <div class="left">
-        <img src="<%=attributes.foreign.thumbnail.medium %>"/>
-    </div>
-    <div class="right">
-        <h4><%=attributes.title %></h4>
-        <p><%=attributes.description %></p>
-    </div>
+	<a href="#detail-view-post/<%=attributes._id %>" target="_self">
+	    <div class="left">
+	        <img src="<%=attributes.foreign.thumbnail.medium %>"/>
+	    </div>
+	    <div class="right">
+	        <h4><%=attributes.title %></h4>
+	        <p><%=attributes.description %></p>
+	    </div>
+	</a>
 </li>

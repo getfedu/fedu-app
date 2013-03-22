@@ -1,6 +1,8 @@
 <li class="player_video_item clearfix">
     <div class="left">
-        <h4><%=attributes.title %></h4>
+        <a href="#detail-view-post/<%=attributes._id %>" target="_self">
+            <h4><%=attributes.title %></h4>
+        </a>
     </div>
     <div class="right">
         <img class="video_container" src="<%=attributes.foreign.thumbnail.large %>" data-video="<%=attributes.foreign.embedUrl %>"/>
