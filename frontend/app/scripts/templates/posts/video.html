@@ -22,14 +22,22 @@
     </div><!--/span-->
     <div class="span9">
       <!--Body content-->
-      <div class="btn-group">
-            <button class="btn type" data-type="grid"><i class="icon-th-large"></i></button>
-            <button class="btn type" data-type="info"><i class="icon-list"></i></button>
-            <button class="btn type" data-type="player"><i class="icon-th-list"></i></button>
-      </div>
-      <ul id="all-videos" class="row-fluid">
+        <header class="row-fluid">
+            <form class="form-search span8">
+                <div class="input-append span10">
+                    <input type="text" class="span12 search-query">
+                    <button type="submit" class="btn">Search</button>
+                </div>
+            </form>
+            <div class="btn-group span4">
+                <button class="btn type" data-type="grid"><i class="icon-th-large"></i></button>
+                <button class="btn type" data-type="info"><i class="icon-list"></i></button>
+                <button class="btn type" data-type="player"><i class="icon-th-list"></i></button>
+            </div>
+        </header>
+        <ul id="all_videos" class="row-fluid">
             all videos rendered here
-      </ul>
+        </ul>
     </div>
   </div>
 </div>

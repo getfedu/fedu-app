@@ -1,4 +1,8 @@
-<li class="player_video_item">
-    <h4><%=attributes.title %></h4>
-    <iframe src="<%=attributes.foreign.embedUrl %>" frameborder="0" allowfullscreen></iframe>
+<li class="player_video_item clearfix">
+    <div class="left">
+        <h4><%=attributes.title %></h4>
+    </div>
+    <div class="right">
+        <img class="video_container" src="<%=attributes.foreign.thumbnail.large %>" data-video="<%=attributes.foreign.embedUrl %>"/>
+    </div>
 </li>

@@ -69,6 +69,9 @@ html, body {
 }
 
 .over_view {
+    #all_videos {
+        margin: 0;
+    }
     .grid_video_item {
         list-style: none;
         width: 30%;
@@ -100,6 +103,40 @@ html, body {
                 display: -webkit-box;
                 -webkit-line-clamp: 5; /* number of lines to show */
                 -webkit-box-orient: vertical;
+            }
+        }
+    }
+
+    .player_video_item {
+        list-style: none;
+        margin: 0 0 2em 0;
+        width: 100%;
+        .left {
+            float: left;
+            width: 20%;
+            padding: 0 1em 0 0;
+            h4 {
+                font-weight: normal;
+            }
+        }
+        .right {
+            float: left;
+            width: 80%;
+            position: relative;
+            img {
+                width: 100%;
+                cursor: pointer;
+            }
+            iframe {
+                width: 100%;
+                position: absolute;
+                top: 0;
+                display: none;
+            }
+            &:after {
+                content: "HANS!";
+                position: absolute;
+                top: 0;
             }
         }
     }

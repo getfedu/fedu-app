@@ -16,11 +16,16 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		collection: {},
-		viewType: 'info',
+		viewType: 'player',
 
 		// delegated events
 		events: {
-			'click .type' : 'setViewType'
+			'click .type' : 'setViewType',
+			'click .video_container' : function(e){
+				var videoUrl = $(e.currentTarget).attr('data-video');
+				$(e.currentTarget).parent().append('<iframe src="' + videoUrl + '" frameborder="0" allowfullscreen height="380"></iframe>');
+				$(e.currentTarget).parent().find('iframe').fadeIn();
+			}
 		},
 
 		initialize: function() {
@@ -54,7 +59,7 @@ define([
 				}
 			});
 
-			this.render('#all-videos', templateItems);
+			this.render('#all_videos', templateItems);
 		},
 
 		// helper functions
