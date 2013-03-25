@@ -57,24 +57,31 @@ app.post('/post', function(req, res) {
 });
 
 // Read Posts from db
-app.get('/get/:value/:id', function(req, res) {
+app.get('/post', function(req, res) {
     var results = [];
-    var collection = {};
+    var query = '';
+    query = collectionPosts.find().stream();
 
-    if(req.params.value === 'posts'){
-        collection = collectionPosts;
-        var query = '';
+    query.on('data', function(item) {
+        results.push(item);
+    });
 
-        // first load detail view --> response only one video
-        if(req.params.id !== 'no-single-request'){
-            var BSON = mongodb.BSONPure;
-            var oId = new BSON.ObjectID(req.params.id);
+    query.on('end', function() {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(results);
+    });
 
-            query = collection.find({'_id': oId }).stream();
+});
 
-        } else {
-            query = collection.find().stream();
-        }
+// Read a single Post from db
+app.get('/post/:id', function(req, res) {
+    var results = [];
+    var query = '';
+
+    if(req.params.id.length === 24){
+        var BSON = mongodb.BSONPure;
+        var oId = new BSON.ObjectID(req.params.id);
+        query = collectionPosts.find({'_id': oId }).stream();
 
         query.on('data', function(item) {
             results.push(item);
@@ -84,11 +91,7 @@ app.get('/get/:value/:id', function(req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.send(results);
         });
-
-
-
     }
-
 });
 
 // Update Post in db

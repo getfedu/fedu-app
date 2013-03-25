@@ -1,11 +1,14 @@
 define([
 	'underscore',
-	'backbone'
-], function( _, Backbone) {
+	'backbone',
+	'../vendor/fedu/config'
+], function( _, Backbone, TheConfig) {
 	'use strict';
 
 	var theModel = Backbone.Model.extend({
-		// url: 'http://localhost:3100/add-video',
+		urlRoot: TheConfig.nodeUrl + '/post',
+		idAttribute: '_id',
+
 		// Default key/values
 		defaults: {
 			videoId: '',

@@ -5,10 +5,8 @@ define([
 
     var collection = Backbone.Collection.extend({
         model: TheModel,
-        videoId: 'no-single-request',
-
         url: function() {
-            return  TheConfig.nodeUrl + '/get/posts/' + this.videoId;
+            return  TheConfig.nodeUrl + '/post';
         },
 
         parse: function(response){ // manipulate response data

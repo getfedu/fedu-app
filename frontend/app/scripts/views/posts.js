@@ -3,13 +3,14 @@ define([
 	'underscore',
 	'backbone',
 	'../collections/posts',
+	'../models/posts',
 	'text!../templates/posts/video.html',
 	'text!../templates/posts/grid_video_items.html',
 	'text!../templates/posts/info_video_items.html',
 	'text!../templates/posts/player_video_items.html',
 	'text!../templates/posts/detail_video_view.html',
 	'text!../templates/posts/detail_video_content.html'
-], function( $, _, Backbone, TheCollection, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate, PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate) {
+], function( $, _, Backbone, TheCollection, TheModel, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate, PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate) {
 	'use strict';
 
 	var PostsView = Backbone.View.extend({
@@ -65,12 +66,9 @@ define([
 			this.getPost(id);
 		},
 
-		listPost: function(id){
+		listPost: function(results){
 			var templateDetailView = '';
-			var post = this.collection.where({_id: id});
-			post = post[0].attributes;
-
-			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: post});
+			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0]});
 
 			this.render('.detail_view', templateDetailView);
 
@@ -80,7 +78,16 @@ define([
 		////////////////////////////////////////
 
 		getPosts: function(){
-				this.fetchData('getPosts');
+			var that = this;
+			this.collection.fetch({
+			    success: function(collection) {
+					that.collection = collection;
+					that.listPosts();
+			    },
+			    error: function(){
+			        console.log('error - no data was fetched');
+			    }
+			});
 		},
 
 		setViewType: function(e) {
@@ -91,40 +98,12 @@ define([
 		},
 
 		getPost: function(id){
-			if(this.collection.length > 0){  // check, if collection already exists
-				this.listPost(id);
-			} else {
-				this.fetchData('getPost', id);
-			}
-
-		},
-
-		fetchData: function(targetFunction, id){
+			var model = new TheModel({_id: id});
 			var that = this;
-
-			if(id){ // single request 
-				this.collection.videoId = id;
-			}
-
-			this.collection.fetch({
-			    success: function(collection) {
-					that.collection = collection;
-
-					switch(targetFunction){
-					case 'getPost':
-						that.listPost(id);
-						break;
-					case 'getPosts':
-						that.listPosts();
-						break;
-					}
-
-					that.collection.videoId = 'no-single-request'; // set default value again
-
-			    },
-			    error: function(){
-			        console.log('error - no data was fetched');
-			    }
+			model.fetch({
+				success: function(model, response){
+					that.listPost(response);
+				}
 			});
 		},
 
