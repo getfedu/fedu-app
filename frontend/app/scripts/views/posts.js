@@ -18,16 +18,12 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		collection: {},
-		viewType: 'player',
+		viewType: 'grid',
 
 		// delegated events
 		events: {
 			'click .type' : 'setViewType',
-			'click .video_container' : function(e){
-				var videoUrl = $(e.currentTarget).attr('data-video');
-				$(e.currentTarget).parent().append('<iframe src="' + videoUrl + '" frameborder="0" allowfullscreen height="380"></iframe>');
-				$(e.currentTarget).parent().find('iframe').fadeIn();
-			}
+			'click .video_container' : 'addVideoIframe'
 		},
 
 		initialize: function() {
@@ -128,6 +124,12 @@ define([
 			        console.log('error - no data was fetched');
 			    }
 			});
+		},
+
+		addVideoIframe: function(e){
+			var videoUrl = $(e.currentTarget).attr('data-video');
+			$(e.currentTarget).removeClass('no_player').append('<iframe src="' + videoUrl + '?portrait=0&byline=0&title=0&autoplay=1&color=00adef&showinfo=0&theme=light&autohide=0&fs=1" frameborder="0" allowfullscreen></iframe>');
+			$(e.currentTarget).find('iframe').fadeIn();
 		}
 
 	});

@@ -10,24 +10,23 @@ define([
 		appView: new AppView(),
 		postsView: new PostsView(),
 
-		routes:{
+		routes: {
 			'over-view-posts' : 'overViewPosts',
-			'detail-view-post' : function(){ Backbone.history.navigate('/over-view-posts', true); },
 			'detail-view-post/:id' : 'detailViewPost',
 			'*actions': 'defaultAction'
 		},
 
-		overViewPosts : function(){
+		overViewPosts: function(){
 			this.postsView.listDefault();
 		},
 
-		detailViewPost : function(id){
+		detailViewPost: function(id){
 			this.postsView.detailDefault(id);
 		},
 
 		defaultAction: function() {
-			console.log('routing point - defaultAction');
-			//this.appView.render();
+			Backbone.history.navigate('/404');
+			this.appView.errorDefault();
 		}
 
 	});

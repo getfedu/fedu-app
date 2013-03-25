@@ -1,9 +1,9 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone'
-], function( $, _, Backbone) {
-
+	'backbone',
+	'text!../templates/404.html'
+], function( $, _, Backbone, The404Template) {
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -11,43 +11,28 @@ define([
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
 		el: '#app-wrapper',
-		nav: '#nav',
-		collection: {},
-		detailViewData: {
-			video: 'http://www.youtube.com/embed/f7AU2Ozu8eo',
-			headline: 'Headline',
-			description: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate',
-			rating: { number: 4.5, stars: '<i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class=" icon-star-half"></i>' },
-			metaInfo: 'Metainfo',
-			additionalInfo: 'additional info'
-		},
-
 		// compile template
 
 		// delegated events
 		events: {
-			'click .test' : 'exampleFunction'
 		},
 
 		initialize: function() {
-			// this.collection = new TheCollection();
-			// this.collection.fetchData(this);
-		},
-
-		// Re-rendering the App just means refreshing the statistics -- the rest
-		// of the app doesn't change.
-		render: function() {
-			// render function
-
-			// $(this.el).html(_.template(DetailViewTemplate, this.detailViewData));
 
 		},
 
-		// helper functions
-		////////////////////////////////////////
-		exampleFunction: function() {
+		render: function(target, value) {
+			$(target).html(value);
 		},
 
+		errorDefault: function(){
+			var errorView = '';
+			var errorHash = '';
+			errorHash = window.location.hash;
+			errorView = _.template(The404Template, {errorHash: errorHash});
+
+			this.render(this.el, errorView);
+		}
 	});
 
 	return AppView;

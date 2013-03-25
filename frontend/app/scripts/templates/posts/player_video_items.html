@@ -4,7 +4,7 @@
             <h4><%=attributes.title %></h4>
         </a>
     </div>
-    <div class="right">
-        <img class="video_container" src="<%=attributes.foreign.thumbnail.large %>" data-video="<%=attributes.foreign.embedUrl %>"/>
+    <div class="right video_container no_player" data-video="<%=attributes.foreign.embedUrl %>">
+        <img src="<%=attributes.foreign.thumbnail.large %>"/>
     </div>
 </li>
