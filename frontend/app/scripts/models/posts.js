@@ -8,9 +8,31 @@ define([
 		// url: 'http://localhost:3100/add-video',
 		// Default key/values
 		defaults: {
-			url: '',
+			videoId: '',
+			videoType: '',
 			title: '',
-			description: ''
+			description: '',
+			userName: '',
+			category: '',
+			tags: '',
+			publishDate: '',
+			updateDate: '',
+			foreign: {
+				embedUrl: '',
+				uploadDate: '',
+				duration: '',
+				thumbnail: {
+					small: '',
+					medium: '',
+					large: ''
+				},
+				channelId: '',
+				channelName: '',
+				likeCount: '',
+				playCount: '',
+				commentCount: '',
+				caption: ''
+			}
 		}
 	});
 

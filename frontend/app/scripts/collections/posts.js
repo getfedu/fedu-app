@@ -5,8 +5,10 @@ define([
 
     var collection = Backbone.Collection.extend({
         model: TheModel,
+        videoId: 'no-single-request',
+
         url: function() {
-            return  TheConfig.nodeUrl + '/get/posts';
+            return  TheConfig.nodeUrl + '/get/posts/' + this.videoId;
         },
 
         parse: function(response){ // manipulate response data

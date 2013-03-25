@@ -57,23 +57,38 @@ app.post('/post', function(req, res) {
 });
 
 // Read Posts from db
-app.get('/get/:value', function(req, res) {
+app.get('/get/:value/:id', function(req, res) {
     var results = [];
     var collection = {};
 
     if(req.params.value === 'posts'){
         collection = collectionPosts;
+        var query = '';
+
+        // first load detail view --> response only one video
+        if(req.params.id !== 'no-single-request'){
+            var BSON = mongodb.BSONPure;
+            var oId = new BSON.ObjectID(req.params.id);
+
+            query = collection.find({'_id': oId }).stream();
+
+        } else {
+            query = collection.find().stream();
+        }
+
+        query.on('data', function(item) {
+            results.push(item);
+        });
+
+        query.on('end', function() {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(results);
+        });
+
+
+
     }
 
-    var query = collection.find().stream();
-    query.on('data', function(item) {
-        results.push(item);
-    });
-
-    query.on('end', function() {
-        res.setHeader('Content-Type', 'application/json');
-        res.send(results);
-    });
 });
 
 // Update Post in db
