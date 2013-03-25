@@ -84,12 +84,7 @@ define([
 		////////////////////////////////////////
 
 		getPosts: function(){
-			if(this.collection.length > 0){ // check, if collection already exists
-				this.listPosts();
-			} else {
 				this.fetchData('getPosts');
-			}
-
 		},
 
 		setViewType: function(e) {
@@ -110,6 +105,11 @@ define([
 
 		fetchData: function(targetFunction, id){
 			var that = this;
+
+			if(id){ // single request 
+				this.collection.videoId = id;
+			}
+
 			this.collection.fetch({
 			    success: function(collection) {
 					that.collection = collection;
@@ -122,6 +122,8 @@ define([
 						that.listPosts();
 						break;
 					}
+
+					that.collection.videoId = 'no-single-request'; // set default value again
 
 			    },
 			    error: function(){
