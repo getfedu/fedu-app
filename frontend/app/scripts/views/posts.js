@@ -42,6 +42,8 @@ define([
 		listDefault: function(){
 			this.render(this.el, VideoTemplate);
 			$('.type[data-type=' + this.viewType + ']').addClass('active'); // set type button active-state
+			// set page start to 0
+			this.collection.goTo(0);
 			this.getPosts();
 		},
 
@@ -80,7 +82,7 @@ define([
 
 		getPosts: function(){
 			var that = this;
-			
+
 			this.collection.fetch({
 			    success: function(collection) {
 					that.collection = collection;
