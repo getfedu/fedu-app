@@ -10,7 +10,8 @@
     "backbone": "~0.9.10",
     "underscore": "~1.4.4",
     "font-awesome": "~3.0.2",
-    "moment": "~2.0.0"
+    "moment": "~2.0.0",
+    "backbone.paginator": ""
   },
   "devDependencies": {}
 }

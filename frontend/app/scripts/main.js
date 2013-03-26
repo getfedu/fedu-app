@@ -23,6 +23,7 @@ require.config({
 		jquery: '../components/jquery/jquery',
 		underscore: '../components/underscore/underscore',
 		backbone: '../components/backbone/backbone',
+		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator',
 		text: '../components/requirejs-text/text',
 		bootstrapCollapse: '../components/sass-bootstrap/js/bootstrap-collapse'
 	}
