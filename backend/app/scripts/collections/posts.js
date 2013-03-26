@@ -6,7 +6,7 @@ define([
     var collection = Backbone.Collection.extend({
         model: TheModel,
         url: function() {
-            return  TheConfig.nodeUrl + '/get/posts';
+            return  TheConfig.nodeUrl + '/post';
         },
 
         parse: function(response){ // manipulate response data
