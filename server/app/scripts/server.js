@@ -58,9 +58,12 @@ app.post('/post', function(req, res) {
 
 // Read Posts from db
 app.get('/post', function(req, res) {
+    var top = parseInt(req.query.top, 0);
+    var skip = parseInt(req.query.skip, 0);
     var results = [];
     var query = '';
-    query = collectionPosts.find().stream();
+
+    query = collectionPosts.find().skip(skip).limit(top).sort({ _id: 1}).stream();
 
     query.on('data', function(item) {
         results.push(item);

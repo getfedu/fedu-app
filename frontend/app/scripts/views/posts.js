@@ -24,7 +24,8 @@ define([
 		// delegated events
 		events: {
 			'click .type' : 'setViewType',
-			'click .video_container' : 'addVideoIframe'
+			'click .video_container' : 'addVideoIframe',
+			'click .load_more' : 'infiniteLoad'
 		},
 
 		initialize: function() {
@@ -79,6 +80,7 @@ define([
 
 		getPosts: function(){
 			var that = this;
+			
 			this.collection.fetch({
 			    success: function(collection) {
 					that.collection = collection;
@@ -111,6 +113,19 @@ define([
 			var videoUrl = $(e.currentTarget).attr('data-video');
 			$(e.currentTarget).removeClass('no_player').append('<iframe src="' + videoUrl + '?portrait=0&byline=0&title=0&autoplay=1&color=00adef&showinfo=0&theme=light&autohide=0&fs=1" frameborder="0" allowfullscreen></iframe>');
 			$(e.currentTarget).find('iframe').fadeIn();
+		},
+
+		infiniteLoad: function(e){
+			e.preventDefault();
+			var that = this;
+
+			this.collection.nextPage({
+				update: true, // add to collection
+				remove: false,
+				success: function(){
+					that.listPosts();
+				}
+			});
 		}
 
 	});
