@@ -17,6 +17,38 @@ Stylesheet: Main Stylesheet
 $fontAwesomePath: "../components/font-awesome/font";
 @import "../components/font-awesome/sass/font-awesome.scss";
 
+* {
+    @include box-sizing(border-box);
+}
+
 .page {
     padding-top: 60px;
+}
+
+.tags {
+    cursor: auto;
+    width: 100%;
+    margin-left: 0;
+    height: 30px;
+    padding: 3px 4px;
+    div {
+        display: inline-block;
+        @include border-radius(3px);
+        margin: 0;
+        padding: 0 7px 0 7px;
+        &:after {
+            content: "";
+            font-family: "FontAwesome";
+            padding: 0 0 0 5px;
+        }
+    }
+    input {
+        padding: 0;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+        &:focus {
+            box-shadow: none;
+        }
+    }
 }

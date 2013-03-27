@@ -1,5 +1,5 @@
 <form action="#" id="add_post" method="POST" class="span7">
-    <fieldset>
+    <fieldset class="row-fluid">
         <legend>Add a Post</legend>
 
         <div class="controls controls-row">
@@ -15,19 +15,22 @@
         <br/><br/>
 
         <label>Title</label>
-        <input type="text" name="title" class="input-xxlarge" placeholder="enter the Title">
+        <input type="text" name="title" class="span12" placeholder="enter the Title">
 
         <label>Author/Speaker</label>
-        <input type="text" name="userName" class="input-xxlarge" placeholder="enter the Title">
+        <input type="text" name="userName" class="span12" placeholder="enter the Title">
 
         <label>Description</label>
-        <textarea rows="5" class="input-xxlarge" name="description"></textarea>
+        <textarea rows="5" class="span12" name="description"></textarea>
 
         <label>Tags</label>
-        <input type="text" name="tags" class="input-xxlarge" placeholder="enter some tags">
+        <div class="tags uneditable-input">
+            <div class="btn">javascript</div>
+            <input type="text" name="tags" class="typeahead" placeholder="enter some tags" data-provide="typeahead" autocomplete="off">
+        </div>
 
         <label>Category</label>
-        <input type="text" name="category" class="input-xxlarge" placeholder="enter some tags">
+        <input type="text" name="category" class="span12" placeholder="enter some tags">
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Save</button>

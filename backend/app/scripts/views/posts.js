@@ -32,7 +32,8 @@ define([
 			'submit form#edit_post': 'updatePost',
 			'click button.cancel': function(){ Backbone.history.navigate('/list-posts', true); },
 			'change #edit_post :input': 'changedHandler',
-			'click button.search_api': 'searchApi'
+			'click button.search_api': 'searchApi',
+			'keypress :input.typeahead': 'logKey'
 		},
 
 		initialize: function() {
@@ -54,6 +55,9 @@ define([
 
 		addPost: function(){
 			this.render(this.inner, _.template(AddTemplate));
+			$('.typeahead').typeahead({
+				source: ['css', 'html']
+			});
 		},
 
 		listPosts: function(){ // called from collections/video.js
@@ -185,6 +189,14 @@ define([
 			_.each(TheApi.theData, function(value, key){
 				$('form#add_post :input[name="' + key + '"]').val(value);
 			});
+		},
+
+		logKey: function(e){
+			console.log(e);
+			if(e.keyCode === 13){
+				e.preventDefault();
+				console.log(e.currentTarget.value);
+			}
 		}
 	});
 

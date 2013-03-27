@@ -27,6 +27,11 @@ require.config({
 			deps: [
 				'jquery'
 			]
+		},
+		bootstrapTypeahead: {
+			deps: [
+				'jquery'
+			]
 		}
 	},
 	paths: {
@@ -37,6 +42,7 @@ require.config({
 		bootstrapAlert: '../components/sass-bootstrap/js/bootstrap-alert',
 		bootstrapTransition: '../components/sass-bootstrap/js/bootstrap-transition',
 		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',
+		bootstrapTypeahead: '../components/sass-bootstrap/js/bootstrap-typeahead',
 		moment: '../components/moment/moment'
 	}
 });
@@ -45,8 +51,9 @@ require([
 	'routers/router',
 	'bootstrapAlert',
 	'bootstrapTransition',
+	'bootstrapTypeahead',
 	'bootstrapModal',
-], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal) {
+], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, bootstrapTypeahead) {
 	'use strict';
 	// initialize routing and start Backbone.history()
 	new Router();
