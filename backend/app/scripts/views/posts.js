@@ -11,8 +11,9 @@ define([
 	'text!../templates/message_template.html',
 	'text!../templates/modal_template.html',
 	'../vendor/fedu/api',
-	'moment'
-], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate, TheApi, Moment ) {
+	'moment',
+	'../collections/tags'
+], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate, TheApi, Moment, TagsCollection ) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -33,7 +34,7 @@ define([
 			'click button.cancel': function(){ Backbone.history.navigate('/list-posts', true); },
 			'change #edit_post :input': 'changedHandler',
 			'click button.search_api': 'searchApi',
-			'keypress :input.typeahead': function(e){ if(e.keyCode === 13){ e.preventDefault(); this.addTag(e.currentTarget, e.currentTarget.value); }},
+			'keydown :input.typeahead': function(e){ if(e.keyCode === 13 && e.currentTarget.value !== '' || e.keyCode === 9 && e.currentTarget.value !== ''){ e.preventDefault(); this.addTag(e.currentTarget, e.currentTarget.value); }},
 			'click .tag': 'removeTag'
 		},
 
@@ -56,12 +57,21 @@ define([
 
 		addPost: function(){
 			this.render(this.inner, _.template(AddTemplate));
+
 			var that = this;
-			$('.typeahead').typeahead({
-				source: ['css', 'html'],
-				updater: function(value){
-					console.log(this);
-					that.addTag(this.$element[0], value);
+			var tagsCollection = new TagsCollection();
+			tagsCollection.fetch({
+				success: function(response){
+					var array = [];
+					_.each(response.models, function(value){
+					    array.push(value.attributes.tagName);
+					});
+					$('.typeahead').typeahead({
+						source: array,
+						updater: function(value){
+							that.addTag(this.$element[0], value);
+						}
+					});
 				}
 			});
 		},

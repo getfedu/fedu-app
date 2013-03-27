@@ -6,55 +6,101 @@ var moment = require('../../node_modules/moment');
 require('../../node_modules/moment-isoduration');
 var app = null;
 var collectionPosts = {};
-
-// db handling
-///////////////////////////////////////////////////////////
-function dbConnector(){
-    mongodb.connect('mongodb://localhost/fedu', function(err, db) {
-        if(err){
-            throw err;
-        }
-
-        console.log('connected');
-        collectionPosts = db.collection('posts');
-
-    });
-
-}
+var collectionTags = {};
 
 // init
 ///////////////////////////////////////////////////////////
-function init(){
-    // init db
-    dbConnector();
+var init = {
 
-    // init express
-    app = express();
-    app.use(express.bodyParser());
-    app.all('*', function(req, res, next) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT');
-        res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
-        next();
-    });
-}
+    db: function(){
+        mongodb.connect('mongodb://localhost/fedu', function(err, db) {
+            if(err){
+                throw err;
+            }
 
-init();
+            console.log('connected');
+            collectionPosts = db.collection('posts');
+            collectionTags = db.collection('tags');
 
-// CRUD - Backend
+        });
+    },
+
+    express: function(){
+        app = express();
+        app.use(express.bodyParser());
+        app.all('*', function(req, res, next) {
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT');
+            res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+            next();
+        });
+    }
+};
+
+init.db();
+init.express();
+
+// Helper Functions
 ///////////////////////////////////////////////////////////
+
+var checkTags = {
+    init: function(tags){
+        if(tags !== ''){
+            var array = tags.split(',');
+            array.pop(); //remove empty/last element
+
+            for (var i = 0; i < array.length; i++){
+                this.queryTags(array[i]);
+            }
+        }
+    },
+
+    queryTags: function(value){
+        var that = this;
+        collectionTags.findOne({tagName: value}, function(err, result){
+            if(result){
+                that.updateTags(result);
+            } else {
+                that.addTag(value);
+            }
+        });
+    },
+
+    updateTags: function(result){
+        result.counter = result.counter + 1;
+        collectionTags.update({'_id': result._id }, result);
+    },
+
+    addTag: function(value){
+
+        var tag = {
+            tagName: value,
+            description: '',
+            counter: 1,
+            createDate: moment().format(),
+            updateDate: moment().format()
+        };
+
+        collectionTags.insert(tag);
+    }
+};
 
 //General Options-Handler (no use atm)
 app.options('/*', function(req, res) {
     res.send(JSON.stringify(res.headers));
 });
 
+// CRUD - Backend Posts
+///////////////////////////////////////////////////////////
+
 // Create Post and save into db
 app.post('/post', function(req, res) {
     collectionPosts.insert(req.body, function() {
+        checkTags.init(req.body.tags);
         res.send(JSON.stringify('OK'));
     });
 });
+
 
 // Read Posts from db
 app.get('/post', function(req, res) {
@@ -116,6 +162,34 @@ app.delete('/post/:id', function(req, res) {
     collectionPosts.remove({'_id': oId }, function() {
         res.send(JSON.stringify('OK'));
     });
+});
+
+// CRUD - Backend Tags
+///////////////////////////////////////////////////////////
+
+// Create Tags and save into db
+app.post('/tag', function(req, res) {
+    collectionTags.insert(req.body, function() {
+        res.send(JSON.stringify('OK'));
+    });
+});
+
+// Read Posts from db
+app.get('/tag', function(req, res) {
+    var results = [];
+    var query = '';
+
+    query = collectionTags.find().stream();
+
+    query.on('data', function(item) {
+        results.push(item);
+    });
+
+    query.on('end', function() {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(results);
+    });
+
 });
 
 // API Section - Backend
