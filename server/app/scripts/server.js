@@ -142,7 +142,7 @@ app.post('/api-call', function(req, res){
             if(response.statusCode === 200) {
                 parsedData.title = apiData.title;
                 parsedData.description = apiData.description;
-                parsedData.tags = apiData.tags;
+                parsedData.tags = ''; //apiData.tags;
                 parsedData.foreign = {};
                 parsedData.foreign.embedUrl = 'http://player.vimeo.com/video/' + apiData.id;
                 parsedData.foreign.uploadDate = moment(apiData.upload_date).format();
@@ -167,8 +167,6 @@ app.post('/api-call', function(req, res){
         } else if (req.body.type === 'youtube'){
             if(apiData.items.length > 0){
                 apiData = apiData.items[0];
-                console.log(apiData);
-                console.log(optionsVideo.url);
                 parsedData.title = apiData.snippet.title;
                 parsedData.description = apiData.snippet.description;
                 parsedData.tags = '';

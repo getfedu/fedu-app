@@ -11,7 +11,7 @@ define([
 		postsView: new PostsView(),
 
 		routes: {
-			'over-view-posts' : 'overViewPosts',
+			'' : 'overViewPosts',
 			'detail-view-post/:id' : 'detailViewPost',
 			'*actions': 'defaultAction'
 		},

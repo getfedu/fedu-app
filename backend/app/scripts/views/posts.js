@@ -33,7 +33,8 @@ define([
 			'click button.cancel': function(){ Backbone.history.navigate('/list-posts', true); },
 			'change #edit_post :input': 'changedHandler',
 			'click button.search_api': 'searchApi',
-			'keypress :input.typeahead': 'logKey'
+			'keypress :input.typeahead': function(e){ if(e.keyCode === 13){ e.preventDefault(); this.addTag(e.currentTarget, e.currentTarget.value); }},
+			'click .tag': 'removeTag'
 		},
 
 		initialize: function() {
@@ -55,8 +56,13 @@ define([
 
 		addPost: function(){
 			this.render(this.inner, _.template(AddTemplate));
+			var that = this;
 			$('.typeahead').typeahead({
-				source: ['css', 'html']
+				source: ['css', 'html'],
+				updater: function(value){
+					console.log(this);
+					that.addTag(this.$element[0], value);
+				}
 			});
 		},
 
@@ -191,13 +197,19 @@ define([
 			});
 		},
 
-		logKey: function(e){
-			console.log(e);
-			if(e.keyCode === 13){
-				e.preventDefault();
-				console.log(e.currentTarget.value);
-			}
-		}
+		addTag: function(target, value){
+			var val = $(target).siblings('[type=hidden]').val();
+			$(target).siblings('[type=hidden]').val(value + ',' + val);
+			$(target).before('<div class="btn tag">' + value + '</div>').val('');
+		},
+
+		removeTag: function(e){
+			var value = $(e.currentTarget).text();
+			var valueList = $(e.currentTarget).siblings('[type=hidden]').val();
+			valueList = valueList.replace(value + ',', '');
+			$(e.currentTarget).siblings('[type=hidden]').val(valueList);
+			$(e.currentTarget).remove();
+		},
 	});
 
 	return View;
