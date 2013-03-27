@@ -19,18 +19,24 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		collection: {},
-		viewType: 'grid',
+		viewType: 'info',
 
 		// delegated events
 		events: {
 			'click .type' : 'setViewType',
-			'click .video_container' : 'addVideoIframe',
-			'click .load_more' : 'infiniteLoad'
+			'click .video_container' : 'addVideoIframe'
 		},
 
 		initialize: function() {
 			// render default template (form)
 			this.collection = new TheCollection();
+
+			// listen to scroll event
+			var that = this;
+		    $(window).scroll(function(){
+				that.scrolling();
+		    });
+
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -87,6 +93,7 @@ define([
 			    success: function(collection) {
 					that.collection = collection;
 					that.listPosts();
+					that.autoLoad();
 			    },
 			    error: function(){
 			        console.log('error - no data was fetched');
@@ -99,6 +106,9 @@ define([
 			$(e.currentTarget).addClass('active');
 			this.viewType = $(e.currentTarget).attr('data-type');
 			this.listPosts();
+
+			// check if more videos needed at this view type
+			this.autoLoad();
 		},
 
 		getPost: function(id){
@@ -117,17 +127,42 @@ define([
 			$(e.currentTarget).find('iframe').fadeIn();
 		},
 
-		infiniteLoad: function(e){
-			e.preventDefault();
+		currentCollectionLength: 0,
+
+		infiniteLoad: function(){
 			var that = this;
 
-			this.collection.nextPage({
-				update: true, // add to collection
-				remove: false,
-				success: function(){
-					that.listPosts();
-				}
-			});
+			// send request only if new data exists
+			if(this.collection.length !== this.currentCollectionLength){
+				this.collection.nextPage({
+					update: true, // add to collection
+					remove: false,
+					success: function(){
+						that.listPosts();
+						that.autoLoad();
+					}
+				});
+
+				this.currentCollectionLength = this.collection.length;
+
+			}
+
+		},
+
+		autoLoad: function(){
+			// load until scrollbar exists
+			if($(document).height() === $(window).height()){
+				this.infiniteLoad();
+			} 
+		},
+
+		scrolling: function(){
+			var scrollPosition = $(window).scrollTop() + $(window).height();
+
+			if(scrollPosition === $(document).height()){
+				this.infiniteLoad();
+			}
+
 		}
 
 	});
