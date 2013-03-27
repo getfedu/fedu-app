@@ -34,8 +34,8 @@ define([
 			'click button.cancel': function(){ Backbone.history.navigate('/list-posts', true); },
 			'change #edit_post :input': 'changedHandler',
 			'click button.search_api': 'searchApi',
-			'keydown :input.typeahead': function(e){ if(e.keyCode === 13 && e.currentTarget.value !== '' || e.keyCode === 9 && e.currentTarget.value !== ''){ e.preventDefault(); this.addTag(e.currentTarget, e.currentTarget.value); }},
-			'click .tag': 'removeTag'
+			'keydown :input.typeahead': 'autoCompleteKeyHandler',
+			'click .tag': function(e){ this.removeTag($(e.currentTarget)); }
 		},
 
 		initialize: function() {
@@ -207,18 +207,31 @@ define([
 			});
 		},
 
+		autoCompleteKeyHandler: function(e){
+			if(e.keyCode === 13 && e.currentTarget.value !== '' || e.keyCode === 9 && e.currentTarget.value !== ''){
+				e.preventDefault();
+				this.addTag(e.currentTarget, e.currentTarget.value);
+			} else if(e.keyCode === 8 && e.currentTarget.value === '') {
+				e.preventDefault();
+				this.removeTag($(e.currentTarget).prev('.tag'), 'backspace');
+			}
+		},
+
 		addTag: function(target, value){
 			var val = $(target).siblings('[type=hidden]').val();
 			$(target).siblings('[type=hidden]').val(value + ',' + val);
 			$(target).before('<div class="btn tag">' + value + '</div>').val('');
 		},
 
-		removeTag: function(e){
-			var value = $(e.currentTarget).text();
-			var valueList = $(e.currentTarget).siblings('[type=hidden]').val();
+		removeTag: function(target, type){
+			var value = target.text();
+			var valueList = target.siblings('[type=hidden]').val();
 			valueList = valueList.replace(value + ',', '');
-			$(e.currentTarget).siblings('[type=hidden]').val(valueList);
-			$(e.currentTarget).remove();
+			target.siblings('[type=hidden]').val(valueList);
+			if(type){
+				target.siblings('[type=text]').val(value);
+			}
+			target.remove();
 		},
 	});
 
