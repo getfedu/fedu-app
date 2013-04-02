@@ -154,11 +154,13 @@ app.put('/post/:id', function(req, res) {
     var BSON = mongodb.BSONPure;
     var oId = new BSON.ObjectID(req.params.id);
     delete req.body._id;
-
+    collectionPosts.findOne({'_id': oId }, function(err, result){
+        checkTags.init(result.tags, false);
+    });
     collectionPosts.update({'_id': oId }, req.body, function(){
+        checkTags.init(req.body.tags, true);
         res.send(JSON.stringify('OK'));
     });
-
 });
 
 // Delete Post in db
