@@ -1,11 +1,21 @@
 <li class="info_video_item clearfix">
-	<a href="#detail-view-post/<%=attributes._id %>" target="_self">
-	    <div class="left">
-	        <img src="<%=attributes.foreign.thumbnail.medium %>" class="img-polaroid"/>
-	    </div>
+        <div class="left">
+	        <a href="#detail-view-post/<%=attributes._id %>" target="_self">
+	            <img src="<%=attributes.foreign.thumbnail.medium %>" class="img-polaroid"/>
+            </a>
+        </div>
 	    <div class="right">
-	        <h4><%=attributes.title %></h4>
-	        <p><%=attributes.description %></p>
+            <a href="#detail-view-post/<%=attributes._id %>" target="_self">
+	            <h4><%=attributes.title %></h4>
+                <p><%=attributes.description %></p>
+            </a>
+            <ul>
+    	        <%
+                    _.each(attributes.tags, function(value){
+                        print('<li><span class="label label-inverse">' + value + '</span></li>');
+                    });
+                %>
+            </ul>
 	    </div>
-	</a>
+
 </li>

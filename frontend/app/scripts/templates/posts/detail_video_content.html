@@ -13,7 +13,15 @@
 	<div class="row-fluid">
 		<div class="meta span4 offset1">
 			META<br />
-			ID: <%=attributes.videoId %>
+			ID: <%=attributes.videoId %><br/>
+			TAGS:<br/>
+	        <ul>
+		        <%
+	                _.each(attributes.tags, function(value){
+	                    print('<li><span class="label label-inverse">' + value + '</span></li>');
+	                });
+	            %>
+	        </ul>
 		</div>
 		<div class="additional span7">
 			additionals info

@@ -64,6 +64,14 @@ html, body {
         .meta, .additional {
             background-color: $grayLighter;
             padding: 10px;
+            ul {
+                margin: 0;
+                li {
+                    list-style: none;
+                    display: inline-block;
+                    margin: 0 1% 0 0;
+                }
+            }
         }
     }
 }
@@ -120,6 +128,14 @@ html, body {
                 -webkit-line-clamp: 5; /* number of lines to show */
                 -webkit-box-orient: vertical;
             }
+            ul {
+                margin: 0;
+                li {
+                    list-style: none;
+                    display: inline-block;
+                    margin: 0 1% 0 0;
+                }
+            }
         }
     }
 
@@ -134,6 +150,13 @@ html, body {
             padding: 0 1em 0 0;
             h4 {
                 font-weight: normal;
+            }
+            ul {
+                margin: 0;
+                li {
+                    list-style: none;
+                    margin: 0 1% 0 0;
+                }
             }
         }
         .right {
