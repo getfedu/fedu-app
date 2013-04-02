@@ -58,22 +58,7 @@ define([
 		addPost: function(){
 			this.render(this.inner, _.template(AddTemplate));
 
-			var that = this;
-			var tagsCollection = new TagsCollection();
-			tagsCollection.fetch({
-				success: function(response){
-					var array = [];
-					_.each(response.models, function(value){
-					    array.push(value.attributes.tagName);
-					});
-					$('.typeahead').typeahead({
-						source: array,
-						updater: function(value){
-							that.addTag(this.$element[0], value);
-						}
-					});
-				}
-			});
+			this.initAutoComplete();
 		},
 
 		listPosts: function(){ // called from collections/video.js
@@ -86,6 +71,17 @@ define([
 			var model = this.collection.get(id);
 			this.render(this.inner, _.template(EditTemplate, { attributes: model.attributes, cid: model.cid }));
 			Backbone.history.navigate('/edit-post', false);
+
+			this.initAutoComplete();
+
+			var string = $('.tags [type=hidden]').val();
+			if(string !== ''){
+				var tags = string.split(',');
+				_.each(tags, function(value){
+					$('.tags [type=text]').before('<div class="btn tag">' + value + '</div>');
+				});
+			}
+
 		},
 
 		// helpers
@@ -99,7 +95,6 @@ define([
 				publishDate: new Moment().format(),
 				updateDate: new Moment().format()
 			};
-
 			if(TheApi.theData){
 				data.foreign = TheApi.theData.foreign;
 			}
@@ -112,7 +107,7 @@ define([
 					data[value.name] = value.value;
 				}
 			});
-			console.log(data);
+
 			model.set(data);
 			var that = this;
 			model.save(null, {
@@ -138,9 +133,14 @@ define([
 				updateDate: new Moment().format()
 			};
 			_.each(array, function(value){
-				data[value.name] = value.value;
+				if(value.name === 'tags'){
+					var array = value.value.split(',');
+					array.pop();
+					data[value.name] = array;
+				} else {
+					data[value.name] = value.value;
+				}
 			});
-
 			var that = this;
 			var id = $(e.currentTarget).attr('data-id');
 			var model = this.collection.get(id);
@@ -214,6 +214,25 @@ define([
 			});
 		},
 
+		initAutoComplete: function(){
+			var that = this;
+			var tagsCollection = new TagsCollection();
+			tagsCollection.fetch({
+				success: function(response){
+					var array = [];
+					_.each(response.models, function(value){
+					    array.push(value.attributes.tagName);
+					});
+					$('.typeahead').typeahead({
+						source: array,
+						updater: function(value){
+							that.addTag(this.$element[0], value);
+						}
+					});
+				}
+			});
+		},
+
 		autoCompleteKeyHandler: function(e){
 			if(e.keyCode === 13 && e.currentTarget.value !== '' || e.keyCode === 9 && e.currentTarget.value !== ''){
 				e.preventDefault();
@@ -226,7 +245,7 @@ define([
 
 		addTag: function(target, value){
 			var val = $(target).siblings('[type=hidden]').val();
-			$(target).siblings('[type=hidden]').val(value + ',' + val);
+			$(target).siblings('[type=hidden]').val(value + ',' + val).addClass('changed');
 			$(target).before('<div class="btn tag">' + value + '</div>').val('');
 		},
 
@@ -234,7 +253,7 @@ define([
 			var value = target.text();
 			var valueList = target.siblings('[type=hidden]').val();
 			valueList = valueList.replace(value + ',', '');
-			target.siblings('[type=hidden]').val(valueList);
+			target.siblings('[type=hidden]').val(valueList).addClass('changed');
 			if(type){
 				target.siblings('[type=text]').val(value);
 			}
