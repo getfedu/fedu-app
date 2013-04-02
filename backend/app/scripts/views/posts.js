@@ -104,8 +104,15 @@ define([
 				data.foreign = TheApi.theData.foreign;
 			}
 			_.each(array, function(value){
-				data[value.name] = value.value;
+				if(value.name === 'tags'){
+					var array = value.value.split(',');
+					array.pop();
+					data[value.name] = array;
+				} else {
+					data[value.name] = value.value;
+				}
 			});
+			console.log(data);
 			model.set(data);
 			var that = this;
 			model.save(null, {

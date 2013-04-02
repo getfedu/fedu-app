@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "express": "~3.1.0",
-    "mongodb": "~1.2.13",
+    "mongodb": "~1.2.14",
     "oauth": "~0.9.8",
     "request": "",
     "moment": "~2.0.0",

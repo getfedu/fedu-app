@@ -153,7 +153,7 @@ define([
 			// load until scrollbar exists
 			if($(document).height() === $(window).height()){
 				this.infiniteLoad();
-			} 
+			}
 		},
 
 		scrolling: function(){

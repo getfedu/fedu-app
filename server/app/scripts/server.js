@@ -44,30 +44,36 @@ init.express();
 ///////////////////////////////////////////////////////////
 
 var checkTags = {
-    init: function(tags){
-        if(tags !== ''){
-            var array = tags.split(',');
-            array.pop(); //remove empty/last element
-
-            for (var i = 0; i < array.length; i++){
-                this.queryTags(array[i]);
+    init: function(tags, increaseOrDecrease){ // true = increase, false = decrease
+        if(tags.length > 0){
+            for (var i = 0; i < tags.length; i++){
+                this.queryTags(tags[i], increaseOrDecrease);
             }
         }
     },
 
-    queryTags: function(value){
+    queryTags: function(value, increaseOrDecrease){
         var that = this;
         collectionTags.findOne({tagName: value}, function(err, result){
             if(result){
-                that.updateTags(result);
+                if(increaseOrDecrease) {
+                    that.increaseCounter(result);
+                } else {
+                    that.decreaseCounter(result);
+                }
             } else {
                 that.addTag(value);
             }
         });
     },
 
-    updateTags: function(result){
+    increaseCounter: function(result){
         result.counter = result.counter + 1;
+        collectionTags.update({'_id': result._id }, result);
+    },
+
+    decreaseCounter: function(result){
+        result.counter = result.counter - 1;
         collectionTags.update({'_id': result._id }, result);
     },
 
@@ -96,7 +102,7 @@ app.options('/*', function(req, res) {
 // Create Post and save into db
 app.post('/post', function(req, res) {
     collectionPosts.insert(req.body, function() {
-        checkTags.init(req.body.tags);
+        checkTags.init(req.body.tags, true);
         res.send(JSON.stringify('OK'));
     });
 });
@@ -159,6 +165,9 @@ app.put('/post/:id', function(req, res) {
 app.delete('/post/:id', function(req, res) {
     var BSON = mongodb.BSONPure;
     var oId = new BSON.ObjectID(req.params.id);
+    collectionPosts.findOne({'_id': oId }, function(err, result){
+        checkTags.init(result.tags, false);
+    });
     collectionPosts.remove({'_id': oId }, function() {
         res.send(JSON.stringify('OK'));
     });
