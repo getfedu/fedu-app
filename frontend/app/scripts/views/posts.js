@@ -158,8 +158,9 @@ define([
 
 		scrolling: function(){
 			var scrollPosition = $(window).scrollTop() + $(window).height();
-
-			if(scrollPosition === $(document).height()){
+			var documentHeight = $(document).height();
+			
+			if(scrollPosition === documentHeight){
 				this.infiniteLoad();
 			}
 
