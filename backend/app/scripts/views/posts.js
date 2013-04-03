@@ -27,11 +27,11 @@ define([
 		// delegated events
 		events: {
 			'submit form#add_post': 'savePost',
-			'click button.delete': 'deleteModal',
-			'click button.delete_confirmed': 'deletePost',
-			'click button.edit': 'editPost',
+			'click button.delete_post': 'deleteModal',
+			'click button.delete_post_confirmed': 'deletePost',
+			'click button.edit_post': 'editPost',
 			'submit form#edit_post': 'updatePost',
-			'click button.cancel': function(){ Backbone.history.navigate('/list-posts', true); },
+			'click button.cancel_post': function(){ Backbone.history.navigate('/list-posts', true); },
 			'change #edit_post :input': 'changedHandler',
 			'click button.search_api': 'searchApi',
 			'keydown :input.typeahead': 'autoCompleteKeyHandler',
@@ -75,6 +75,9 @@ define([
 			this.initAutoComplete();
 
 			var string = $('.tags [type=hidden]').val();
+			if(string){
+				$('.tags [type=hidden]').val(string + ',');
+			}
 			if(string !== ''){
 				var tags = string.split(',');
 				_.each(tags, function(value){
@@ -179,7 +182,7 @@ define([
 			this.render('#modal', _.template(ModalTemplate, {
 				title: 'Delete a Post',
 				description: 'Do you really want to delete ' + title + '?',
-				buttons: '<button class="btn" data-dismiss="modal">Cancel</button><button class="btn btn-danger delete_confirmed" data-dismiss="modal" data-id="' + id + '" aria-hidden="true">delete forever</button>'
+				buttons: '<button class="btn" data-dismiss="modal">Cancel</button><button class="btn btn-danger delete_post_confirmed" data-dismiss="modal" data-id="' + id + '" aria-hidden="true">delete forever</button>'
 			}));
 			$('#the_modal').modal();
 		},
@@ -210,7 +213,11 @@ define([
 
 		setApiData: function(){
 			_.each(TheApi.theData, function(value, key){
-				$('form#add_post :input[name="' + key + '"]').val(value);
+				if(key === 'tags' && value){
+					$('form#add_post .suggestions').append(value).show();
+				} else {
+					$('form#add_post :input[name="' + key + '"]').val(value);
+				}
 			});
 		},
 

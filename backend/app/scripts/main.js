@@ -52,7 +52,7 @@ require([
 	'bootstrapAlert',
 	'bootstrapTransition',
 	'bootstrapTypeahead',
-	'bootstrapModal',
+	'bootstrapModal'
 ], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, bootstrapTypeahead) {
 	'use strict';
 	// initialize routing and start Backbone.history()

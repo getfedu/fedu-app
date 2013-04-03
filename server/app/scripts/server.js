@@ -115,7 +115,7 @@ app.get('/post', function(req, res) {
     var results = [];
     var query = '';
 
-    query = collectionPosts.find().skip(skip).limit(top).sort({ _id: 1}).stream();
+    query = collectionPosts.find().skip(skip).limit(top).sort({ _id: -1}).stream();
 
     query.on('data', function(item) {
         results.push(item);
@@ -158,6 +158,7 @@ app.put('/post/:id', function(req, res) {
         checkTags.init(result.tags, false);
     });
     collectionPosts.update({'_id': oId }, req.body, function(){
+        console.log(req.body);
         checkTags.init(req.body.tags, true);
         res.send(JSON.stringify('OK'));
     });
@@ -190,7 +191,7 @@ app.get('/tag', function(req, res) {
     var results = [];
     var query = '';
 
-    query = collectionTags.find().stream();
+    query = collectionTags.find().sort({ counter: -1}).stream();
 
     query.on('data', function(item) {
         results.push(item);
@@ -201,6 +202,15 @@ app.get('/tag', function(req, res) {
         res.send(results);
     });
 
+});
+
+app.put('/tag/:id', function(req, res) {
+    var BSON = mongodb.BSONPure;
+    var oId = new BSON.ObjectID(req.params.id);
+    delete req.body._id;
+    collectionTags.update({'_id': oId }, req.body, function(){
+        res.send(JSON.stringify('OK'));
+    });
 });
 
 // API Section - Backend
@@ -227,7 +237,7 @@ app.post('/api-call', function(req, res){
             if(response.statusCode === 200) {
                 parsedData.title = apiData.title;
                 parsedData.description = apiData.description;
-                parsedData.tags = ''; //apiData.tags;
+                parsedData.tags = apiData.tags;
                 parsedData.foreign = {};
                 parsedData.foreign.embedUrl = 'http://player.vimeo.com/video/' + apiData.id;
                 parsedData.foreign.uploadDate = moment(apiData.upload_date).format();

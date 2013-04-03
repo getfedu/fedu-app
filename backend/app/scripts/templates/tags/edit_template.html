@@ -1,0 +1,16 @@
+<form action="#" id="edit_tag" method="POST" class="span7" data-id="<%= cid %>">
+    <fieldset class="row-fluid">
+        <legend>Edit the Tag</legend>
+
+        <label>Tag Name</label>
+        <input type="text" name="title" class="span12 disabled" placeholder="enter the tag name" value="<%= attributes.tagName %>" disabled>
+
+        <label>Description</label>
+        <textarea rows="5" class="span12" name="description"><%= attributes.description %></textarea>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" class="btn cancel_tag">Cancel</button>
+        </div>
+    </fieldset>
+</form>
