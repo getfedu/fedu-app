@@ -19,7 +19,7 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		collection: {},
-		viewType: 'info',
+		viewType: 'player',
 
 		// delegated events
 		events: {
@@ -159,7 +159,7 @@ define([
 		scrolling: function(){
 			var scrollPosition = $(window).scrollTop() + $(window).height();
 			var documentHeight = $(document).height();
-			
+
 			if(scrollPosition === documentHeight){
 				this.infiniteLoad();
 			}
