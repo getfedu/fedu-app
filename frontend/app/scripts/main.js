@@ -32,11 +32,10 @@ require.config({
 require([
 	'routers/router',
 	'jquery',
-	'bootstrapCollapse'
+	'bootstrapCollapse',
 ], function(Router, $, BootstrapCollapse) {
 	'use strict';
 
-	// initialize routing and start Backbone.history()
 	new Router();
 	Backbone.history.start();
 	console.log('Running jQuery %s', $().jquery);

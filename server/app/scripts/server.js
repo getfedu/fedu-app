@@ -1,5 +1,6 @@
 'use strict';
 var express = require('../../node_modules/express');
+var io = require('../../node_modules/socket.io');
 var mongodb = require('../../node_modules/mongodb');
 var request = require('../../node_modules/request');
 var moment = require('../../node_modules/moment');
@@ -34,11 +35,29 @@ var init = {
             res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
             next();
         });
+    },
+
+    socketIo: function(){
+        var appSocketIo = express();
+        var serverSocketIo = require('http').createServer(appSocketIo);
+        var io = require('socket.io').listen(serverSocketIo);
+        serverSocketIo.listen(4321);
+        var i = 0;
+        io.sockets.on("connection",function(socket){
+            
+            setInterval(function() {
+                socket.emit('notification', i++);
+            }, 1*5000);
+
+            socket.emit('anotherEvent', 'sdfsdf');
+        
+        });
     }
 };
 
 init.db();
 init.express();
+init.socketIo();
 
 // Helper Functions
 ///////////////////////////////////////////////////////////

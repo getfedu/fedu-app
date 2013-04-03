@@ -7,7 +7,8 @@
     "oauth": "~0.9.8",
     "request": "",
     "moment": "~2.0.0",
-    "moment-isoduration": ""
+    "moment-isoduration": "",
+    "socket.io": "0.9.14"
     },
   "devDependencies": {
     "grunt": "~0.4.0",

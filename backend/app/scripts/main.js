@@ -43,7 +43,8 @@ require.config({
 		bootstrapTransition: '../components/sass-bootstrap/js/bootstrap-transition',
 		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',
 		bootstrapTypeahead: '../components/sass-bootstrap/js/bootstrap-typeahead',
-		moment: '../components/moment/moment'
+		moment: '../components/moment/moment',
+		socketIo: '../components/socket.io-client/dist/socket.io'
 	}
 });
 
@@ -52,9 +53,24 @@ require([
 	'bootstrapAlert',
 	'bootstrapTransition',
 	'bootstrapTypeahead',
-	'bootstrapModal'
-], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, bootstrapTypeahead) {
+	'bootstrapModal',
+	'socketIo'
+], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, bootstrapTypeahead, SocketIo) {
 	'use strict';
+
+
+	var socket = io.connect('http://localhost:4321');
+
+	socket.on("notification", function(data){
+		console.log(data);
+	});
+
+	socket.on("anotherEvent", function(data){
+		console.log(data);
+	});
+	socket.emit('anotherEvent', 'sfdsf');
+
+
 	// initialize routing and start Backbone.history()
 	new Router();
 	Backbone.history.start();
