@@ -43,21 +43,20 @@ var init = {
         var io = require('socket.io').listen(serverSocketIo);
         serverSocketIo.listen(4321);
         var i = 0;
-        io.sockets.on("connection",function(socket){
-            
+        io.sockets.on('connection',function(socket){
+
             setInterval(function() {
                 socket.emit('notification', i++);
             }, 1*5000);
 
             socket.emit('anotherEvent', 'sdfsdf');
-        
         });
     }
 };
 
 init.db();
 init.express();
-init.socketIo();
+//init.socketIo();
 
 // Helper Functions
 ///////////////////////////////////////////////////////////
@@ -177,7 +176,6 @@ app.put('/post/:id', function(req, res) {
         checkTags.init(result.tags, false);
     });
     collectionPosts.update({'_id': oId }, req.body, function(){
-        console.log(req.body);
         checkTags.init(req.body.tags, true);
         res.send(JSON.stringify('OK'));
     });
@@ -231,6 +229,59 @@ app.put('/tag/:id', function(req, res) {
         res.send(JSON.stringify('OK'));
     });
 });
+
+
+// Search
+///////////////////////////////////////////////////////////
+
+var search = {
+    generateQuery: function(query){
+        var titleArray = [];
+        var titleObject = {};
+        titleObject.$and = titleArray;
+        if(query.query){
+            var split = query.query.split(' ');
+            for (var i = 0; i < split.length; i++) {
+                var obj = {};
+                obj.title = {};
+                obj.title.$regex = '^.*' + split[i] + '.*$';
+                obj.title.$options = 'i';
+                titleArray.push(obj);
+            }
+        }
+        var queryObj = {};
+        if(query.tag && query.query){
+            queryObj =  { $and: [{ tags: query.tag }, titleObject] };
+        } else if(query.query && !query.tag) {
+            queryObj = { $or: [{ tags: query.query }, titleObject] };
+        } else if(query.tag && !query.query) {
+            queryObj = { tags: query.tag };
+        }
+        return queryObj;
+    }
+};
+
+// Search Posts in db
+app.get('/search', function(req, res) {
+
+    var queryObj = search.generateQuery(req.query);
+    var skip = parseInt(req.query.skip, 0);
+    var top = parseInt(req.query.top, 0);
+
+    var results = [];
+    var query = '';
+    query = collectionPosts.find(queryObj).skip(skip).limit(top).sort({ _id: -1}).stream();
+    query.on('data', function(item) {
+        results.push(item);
+    });
+
+    query.on('end', function() {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(results);
+    });
+
+});
+
 
 // API Section - Backend
 ///////////////////////////////////////////////////////////

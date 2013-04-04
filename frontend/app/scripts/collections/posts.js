@@ -40,6 +40,7 @@ define([
             // page * number of results per page was necessary.
             'skip': function() { return this.currentPage * this.perPage; },
         },
+
         parse: function(response){
             return response;
         }

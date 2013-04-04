@@ -19,12 +19,14 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		collection: {},
-		viewType: 'player',
+		viewType: 'info',
+		currentCollectionLength: 0,
 
 		// delegated events
 		events: {
 			'click .type' : 'setViewType',
-			'click .video_container' : 'addVideoIframe'
+			'click .video_container' : 'addVideoIframe',
+			'submit form#search' : 'search',
 		},
 
 		initialize: function() {
@@ -83,6 +85,19 @@ define([
 
 		},
 
+		search: function(e){
+			e.preventDefault();
+			var results = $('form#search').serializeArray();
+			var query = this.searchQuery(results[0].value);
+
+			this.collection.paginator_core.url = 'http://localhost:3100/search/';
+			this.collection.server_api.query = query.query;
+			this.collection.server_api.tag = query.tag;
+
+			this.collection.goTo(0);
+			this.getPosts();
+		},
+
 		// helper functions
 		////////////////////////////////////////
 
@@ -127,11 +142,8 @@ define([
 			$(e.currentTarget).find('iframe').fadeIn();
 		},
 
-		currentCollectionLength: 0,
-
 		infiniteLoad: function(){
 			var that = this;
-
 			// send request only if new data exists
 			if(this.collection.length !== this.currentCollectionLength){
 				this.collection.nextPage({
@@ -164,6 +176,28 @@ define([
 				this.infiniteLoad();
 			}
 
+		},
+
+		searchQuery: function(query){
+			var tag = '';
+			query.toLowerCase();
+			var withQueryRegexString = '(\\[)' + '((?:[a-z -][a-z0-9_ -]*))' + '(\\])'+ '((?:[a-z -][a-z0-9_ -]*))';
+			var tagRegexString = '(\\[)' + '((?:[a-z -][a-z0-9_ -]*))' + '(\\])';
+
+			var withQueryRegex = new RegExp(withQueryRegexString,['i']);
+			var tagRegex = new RegExp(tagRegexString,['i']);
+			var withQueryRegexResult = withQueryRegex.exec(query);
+			var tagRegexResult = tagRegex.exec(query);
+
+			if (withQueryRegexResult !== null) {
+				tag = withQueryRegexResult[2];
+				query = withQueryRegexResult[4];
+			} else if (tagRegexResult !== null){
+				tag = tagRegexResult[2];
+				query = '';
+			}
+
+			return {query: query, tag: tag};
 		}
 
 	});
