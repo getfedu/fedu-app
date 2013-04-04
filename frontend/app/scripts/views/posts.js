@@ -28,7 +28,7 @@ define([
 			'click .type' : 'setViewType',
 			'click .video_container' : 'addVideoIframe',
 			'submit form#search' : 'searchPrepare',
-			'click form#flag_post .flag_submit': 'flagPost',
+			'click form#flag_post .flag_submit': 'flagPost'
 		},
 
 		initialize: function() {
