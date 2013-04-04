@@ -4,13 +4,14 @@ define([
 	'backbone',
 	'../collections/posts',
 	'../models/posts',
+	'../vendor/fedu/config',
 	'text!../templates/posts/video.html',
 	'text!../templates/posts/grid_video_items.html',
 	'text!../templates/posts/info_video_items.html',
 	'text!../templates/posts/player_video_items.html',
 	'text!../templates/posts/detail_video_view.html',
 	'text!../templates/posts/detail_video_content.html'
-], function( $, _, Backbone, TheCollection, TheModel, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate, PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate) {
+], function( $, _, Backbone, TheCollection, TheModel, TheConfig, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate, PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate) {
 	'use strict';
 
 	var PostsView = Backbone.View.extend({
@@ -26,8 +27,8 @@ define([
 		events: {
 			'click .type' : 'setViewType',
 			'click .video_container' : 'addVideoIframe',
-			'submit form#search' : 'search',
-			'click form#flag_post .flag_submit': 'flagPost'
+			'submit form#search' : 'searchPrepare',
+			'click form#flag_post .flag_submit': 'flagPost',
 		},
 
 		initialize: function() {
@@ -49,6 +50,7 @@ define([
 		},
 
 		listDefault: function(){
+			this.collection.paginator_core.url = TheConfig.nodeUrl + '/post';
 			this.render(this.el, VideoTemplate);
 			$('.type[data-type=' + this.viewType + ']').addClass('active'); // set type button active-state
 			// set page start to 0
@@ -86,12 +88,17 @@ define([
 
 		},
 
-		search: function(e){
-			e.preventDefault();
-			var results = $('form#search').serializeArray();
-			var query = this.searchQuery(results[0].value);
+		search: function(result){
 
-			this.collection.paginator_core.url = 'http://localhost:3100/search/';
+			if(!$('#all_videos').length){
+				this.render(this.el, VideoTemplate);
+			}
+
+			var query = this.searchQuery(result);
+			var searchForm = $('form#search .search-query');
+			searchForm.val(result);
+
+			this.collection.paginator_core.url = TheConfig.nodeUrl + '/search';
 			this.collection.server_api.query = query.query;
 			this.collection.server_api.tag = query.tag;
 
@@ -197,6 +204,14 @@ define([
 				this.infiniteLoad();
 			}
 
+		},
+
+		searchPrepare: function(e){
+			e.preventDefault();
+			var results = $('form#search').serializeArray();
+			var result = results[0].value;
+			Backbone.history.navigate('/search/' + encodeURI(result), false);
+			this.search(result);
 		},
 
 		searchQuery: function(query){

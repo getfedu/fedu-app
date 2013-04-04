@@ -12,7 +12,7 @@
             <ul>
     	        <%
                     _.each(attributes.tags, function(value){
-                        print('<li><span class="label label-inverse">' + value + '</span></li>');
+                        print('<li><span class="label label-inverse tag"><a href="' + encodeURI('#search/[' + value + ']')  + '">' + value + '</a></span></li>');
                     });
                 %>
             </ul>

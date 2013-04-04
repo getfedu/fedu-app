@@ -13,6 +13,7 @@ define([
 		routes: {
 			'' : 'overViewPosts',
 			'detail-view-post/:id' : 'detailViewPost',
+			'search/:params' : 'searchAction',
 			'*actions': 'defaultAction'
 		},
 
@@ -24,10 +25,14 @@ define([
 			this.postsView.detailDefault(id);
 		},
 
+		searchAction: function(params){
+			this.postsView.search(decodeURI(params));
+		},
+
 		defaultAction: function() {
 			Backbone.history.navigate('/404');
 			this.appView.errorDefault();
-		}
+		},
 
 	});
 

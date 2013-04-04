@@ -49,7 +49,7 @@ var init = {
 
 init.db();
 init.express();
-//init.socketIo();
+init.socketIo();
 
 // Helper Functions
 ///////////////////////////////////////////////////////////
@@ -257,6 +257,7 @@ var search = {
 // Search Posts in db
 app.get('/search', function(req, res) {
 
+    console.log(req.query);
     var queryObj = search.generateQuery(req.query);
     var skip = parseInt(req.query.skip, 0);
     var top = parseInt(req.query.top, 0);
