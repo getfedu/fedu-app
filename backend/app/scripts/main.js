@@ -54,22 +54,12 @@ require([
 	'bootstrapTransition',
 	'bootstrapTypeahead',
 	'bootstrapModal',
-	'socketIo'
-], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, bootstrapTypeahead, SocketIo) {
+	'vendor/fedu/websocket'
+], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, bootstrapTypeahead, TheWebsocket) {
 	'use strict';
 
-
-	var socket = io.connect('http://localhost:4321');
-
-	socket.on("notification", function(data){
-		console.log(data);
-	});
-
-	socket.on("anotherEvent", function(data){
-		console.log(data);
-	});
-	socket.emit('anotherEvent', 'sfdsf');
-
+	// init websocket
+	TheWebsocket.init();
 
 	// initialize routing and start Backbone.history()
 	new Router();

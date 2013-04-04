@@ -24,7 +24,8 @@ define([
 		// delegated events
 		events: {
 			'click .type' : 'setViewType',
-			'click .video_container' : 'addVideoIframe'
+			'click .video_container' : 'addVideoIframe',
+			'click form#flag_post .flag_submit': 'flagPost'
 		},
 
 		initialize: function() {
@@ -80,6 +81,27 @@ define([
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0]});
 
 			this.render('.detail_view', templateDetailView);
+
+		},
+
+		flagPost: function(e){
+			e.preventDefault();
+			var locateFlagForm = $('form#flag_post');
+			var array = locateFlagForm.serializeArray();
+			var flagDescription = array[0].value;
+			var flagId = array[1].value;
+			var flagTitle = array[2].value;
+
+			$.ajax({
+				url: 'http://localhost:3100/notifyPost',
+				data: {
+					id: flagId,
+					title: flagTitle,
+					description: flagDescription
+				}
+			}).done(function (data) {
+				//locateFlagForm.hide();
+			});
 
 		},
 
