@@ -1,11 +1,13 @@
 'use strict';
 var express = require('../../node_modules/express');
-var io = require('../../node_modules/socket.io');
 var mongodb = require('../../node_modules/mongodb');
 var request = require('../../node_modules/request');
 var moment = require('../../node_modules/moment');
 require('../../node_modules/moment-isoduration');
+require('../../node_modules/socket.io');
 var app = null;
+var appSocketIo = null;
+var socketIo = null;
 var collectionPosts = {};
 var collectionTags = {};
 
@@ -38,19 +40,10 @@ var init = {
     },
 
     socketIo: function(){
-        var appSocketIo = express();
+        appSocketIo = express();
         var serverSocketIo = require('http').createServer(appSocketIo);
-        var io = require('socket.io').listen(serverSocketIo);
+        socketIo = require('socket.io').listen(serverSocketIo);
         serverSocketIo.listen(4321);
-        var i = 0;
-        io.sockets.on('connection',function(socket){
-
-            setInterval(function() {
-                socket.emit('notification', i++);
-            }, 1*5000);
-
-            socket.emit('anotherEvent', 'sdfsdf');
-        });
     }
 };
 
@@ -357,6 +350,20 @@ app.post('/api-call', function(req, res){
             }
         }
     });
+});
+
+// websocket notify post
+///////////////////////////////////////////////////////////
+app.get('/notifyPost', function(req, res) {
+    var data = {
+        id: req.query.id,
+        title: req.query.title,
+        description: req.query.description
+    };
+
+    socketIo.sockets.emit ('notifyPost', data);
+    res.send(JSON.stringify('OK'));
+
 });
 
 // server listen on port X

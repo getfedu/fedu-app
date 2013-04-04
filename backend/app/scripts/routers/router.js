@@ -22,7 +22,6 @@ define([
 		},
 
 		// Post
-
 		addPost: function(){
             this.postsView.addPost();
 		},
@@ -37,7 +36,6 @@ define([
 		},
 
 		// Tag
-
 		addTag: function(){
 			this.tagsView.addTag();
 		},
@@ -52,7 +50,6 @@ define([
 		},
 
 		defaultAction: function() {
-			console.log('routing point - defaultAction');
 			this.appView.render();
 		}
 

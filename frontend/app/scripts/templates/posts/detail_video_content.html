@@ -25,6 +25,12 @@
 		</div>
 		<div class="additional span7">
 			additionals info
+			<form id="flag_post">
+				<textarea name="flag-description" placeholder="Write your flag post description here..." rows="3"></textarea>
+				<input type="hidden" name="flag-id" value="<%=attributes._id %>" />
+				<input type="hidden" name="flag-title" value="<%=attributes.title %>" />
+				<input type="submit" class="btn flag_submit" value="flag it">
+			</form>
 		</div>
 	</div>
 </div>
