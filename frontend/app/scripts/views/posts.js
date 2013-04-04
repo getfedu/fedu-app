@@ -115,14 +115,14 @@ define([
 			var flagTitle = array[2].value;
 
 			$.ajax({
-				url: 'http://localhost:3100/notifyPost',
+				url: 'http://localhost:3100/flagPost',
 				data: {
 					id: flagId,
 					title: flagTitle,
 					description: flagDescription
 				}
 			}).done(function (data) {
-				//locateFlagForm.hide();
+				locateFlagForm.find('.flag_submit').val('post was flagged, thank you!').addClass('disabled');
 			});
 		},
 

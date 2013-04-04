@@ -1,0 +1,13 @@
+<tr data-id="<%= attributes._id %>">
+    <td><a href="<%= frontendUrl%>/#detail-view-post/<%= attributes.id %>" target="_blank"><%= attributes.title %></a></td>
+    <td><%= attributes.description %></td>
+    <td><%= attributes.publishDate %></td>
+    <td><%= attributes.updateDate %></td>
+    <td><% 
+    if(attributes.checked){
+    	print('<i class="icon-ok"></i>');
+    } else {
+    	print('<button type="button" class="btn btn-primary" data-notification-id="' + attributes._id + '">checked</button>');
+    }
+    %></td>
+</tr>

@@ -4,13 +4,15 @@ define([
     '../views/app',
 	'../views/posts',
 	'../views/tags',
-], function($, Backbone, AppView, PostsView, TagsView) {
+	'../views/notifications'
+], function($, Backbone, AppView, PostsView, TagsView, NotificationsView) {
 	'use strict';
 
 	var Router = Backbone.Router.extend({
 		appView: new AppView(),
 		postsView: new PostsView(),
 		tagsView: new TagsView(),
+		notificationsView: new NotificationsView(),
 		routes:{
 			'add-post' : 'addPost',
 			'list-posts' : 'listPosts',
@@ -18,6 +20,7 @@ define([
 			'add-tag' : 'addTag',
 			'list-tags' : 'listTags',
 			'edit-tag' : 'editTag',
+			'list-notifications' : 'listNotifications',
 			'*actions': 'defaultAction'
 		},
 
@@ -47,6 +50,12 @@ define([
 		editTag: function(){
 			this.tagsView.listTags();
 			Backbone.history.navigate('/list-tags', false);
+		},
+
+		// Notifications
+		listNotifications: function(){
+			this.notificationsView.listNotifications();
+
 		},
 
 		defaultAction: function() {

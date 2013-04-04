@@ -10,7 +10,7 @@ define([
 	'text!../templates/tags/edit_template.html',
 	'text!../templates/message_template.html',
 	'text!../templates/modal_template.html',
-	'moment',
+	'moment'
 ], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate, Moment ) {
 	'use strict';
 
@@ -28,7 +28,7 @@ define([
 			'click button.edit_tag': 'editTag',
 			'submit form#edit_tag': 'updateTag',
 			'click button.cancel_tag': function(){ Backbone.history.navigate('/list-tags', true); },
-			'change #edit_tag :input': 'changedHandler',
+			'change #edit_tag :input': 'changedHandler'
 		},
 
 		initialize: function() {

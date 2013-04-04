@@ -26,7 +26,7 @@ define([
 
 			that.notification.text('');
 
-			this.socket.on('notifyPost', function(data){
+			this.socket.on('flagPost', function(data){
 				that.notificationWrapper.fadeIn();
 				description = (data.description !== '') ? '(' + data.description + ')' : '';
 				notification = 'Post: <a href="' + TheConfig.frontendUrl + '/#detail-view-post/' + data.id + '" target="_blank">' + data.title + '</a> ' + description + '<br />';

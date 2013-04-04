@@ -10,6 +10,7 @@ var appSocketIo = null;
 var socketIo = null;
 var collectionPosts = {};
 var collectionTags = {};
+var collectionNotifications = {};
 
 // init
 ///////////////////////////////////////////////////////////
@@ -24,6 +25,7 @@ var init = {
             console.log('connected');
             collectionPosts = db.collection('posts');
             collectionTags = db.collection('tags');
+            collectionNotifications = db.collection('notifications');
 
         });
     },
@@ -353,17 +355,49 @@ app.post('/api-call', function(req, res){
     });
 });
 
-// websocket notify post
+// notification
 ///////////////////////////////////////////////////////////
-app.get('/notifyPost', function(req, res) {
+app.get('/flagPost', function(req, res) {
     var data = {
         id: req.query.id,
         title: req.query.title,
-        description: req.query.description
+        description: req.query.description,
+        checked: false,
+        publishDate: moment().format(),
+        updateDate: moment().format()
     };
 
-    socketIo.sockets.emit ('notifyPost', data);
+    socketIo.sockets.emit ('flagPost', data); // websocket
+    collectionNotifications.insert(data, function() {});
+
     res.send(JSON.stringify('OK'));
+
+});
+
+app.get('/notification', function(req, res) {
+    var results = [];
+    var query = '';
+
+    query = collectionNotifications.find().sort({ _id: -1}).stream();
+
+    query.on('data', function(item) {
+        results.push(item);
+    });
+
+    query.on('end', function() {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(results);
+    });
+});
+
+app.put('/notification/:id', function(req, res) {
+    var BSON = mongodb.BSONPure;
+    var oId = new BSON.ObjectID(req.params.id);
+
+    delete req.body._id;
+    collectionNotifications.update({'_id': oId }, req.body, function(){
+        res.send(JSON.stringify('OK'));
+    });
 
 });
 
