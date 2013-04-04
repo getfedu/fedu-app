@@ -38,5 +38,4 @@ require([
 
 	new Router();
 	Backbone.history.start();
-	console.log('Running jQuery %s', $().jquery);
 });

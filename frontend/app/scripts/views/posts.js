@@ -20,7 +20,7 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		collection: {},
-		viewType: 'info',
+		viewType: 'player',
 		currentCollectionLength: 0,
 
 		// delegated events
@@ -172,6 +172,7 @@ define([
 
 		infiniteLoad: function(){
 			var that = this;
+
 			// send request only if new data exists
 			if(this.collection.length !== this.currentCollectionLength){
 				this.collection.nextPage({
@@ -180,10 +181,9 @@ define([
 					success: function(){
 						that.listPosts();
 						that.autoLoad();
+						that.currentCollectionLength = that.collection.length;
 					}
 				});
-
-				this.currentCollectionLength = this.collection.length;
 
 			}
 
@@ -199,7 +199,6 @@ define([
 		scrolling: function(){
 			var scrollPosition = $(window).scrollTop() + $(window).height();
 			var documentHeight = $(document).height();
-
 			if(scrollPosition === documentHeight){
 				this.infiniteLoad();
 			}
