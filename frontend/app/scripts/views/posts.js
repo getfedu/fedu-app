@@ -208,7 +208,8 @@ define([
 
 		handleSearchEvents: function(e){
 			var doNotTriggerKeys = [
-				37, 38, 39, 40 //arrowkeys
+				37, 38, 39, 40, //arrowkeys
+				46 // delete
 			];
 
 			var results = $('form#search').serializeArray();
@@ -238,8 +239,8 @@ define([
 		searchQuery: function(query){
 			var tag = '';
 			query.toLowerCase();
-			var withQueryRegexString = '(\\[)' + '((?:[a-z -][a-z0-9_ -]*))' + '(\\])'+ '((?:[a-z -][a-z0-9_ -]*))';
-			var tagRegexString = '(\\[)' + '((?:[a-z -][a-z0-9_ -]*))' + '(\\])';
+			var withQueryRegexString = '(\\[)' + '((?:[\u0000-\u00FF]*))' + '(\\])'+ '((?:[\u0000-\u00FF]*))';
+			var tagRegexString = '(\\[)' + '((?:[\u00FF-\u00FF]*))' + '(\\])';
 
 			var withQueryRegex = new RegExp(withQueryRegexString,['i']);
 			var tagRegex = new RegExp(tagRegexString,['i']);

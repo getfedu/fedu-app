@@ -5,6 +5,7 @@ var request = require('../../node_modules/request');
 var moment = require('../../node_modules/moment');
 require('../../node_modules/moment-isoduration');
 require('../../node_modules/socket.io');
+// var removeDiacritics = require('diacritics').remove;
 var app = null;
 var appSocketIo = null;
 var socketIo = null;
