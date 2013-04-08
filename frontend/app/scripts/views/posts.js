@@ -20,14 +20,15 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		collection: {},
-		viewType: 'player',
+		viewType: 'info',
 		currentCollectionLength: 0,
 
 		// delegated events
 		events: {
 			'click .type' : 'setViewType',
 			'click .video_container' : 'addVideoIframe',
-			'submit form#search' : 'searchPrepare',
+			'keyup form#search' : 'handleSearchEvents',
+			'submit form#search' : 'handleSearchEvents',
 			'click form#flag_post .flag_submit': 'flagPost'
 		},
 
@@ -121,7 +122,7 @@ define([
 					title: flagTitle,
 					description: flagDescription
 				}
-			}).done(function (data) {
+			}).done(function() {
 				locateFlagForm.find('.flag_submit').val('post was flagged, thank you!').addClass('disabled');
 			});
 		},
@@ -205,12 +206,33 @@ define([
 
 		},
 
-		searchPrepare: function(e){
-			e.preventDefault();
+		handleSearchEvents: function(e){
+			var doNotTriggerKeys = [
+				37, 38, 39, 40 //arrowkeys
+			];
+
 			var results = $('form#search').serializeArray();
 			var result = results[0].value;
-			Backbone.history.navigate('/search/' + encodeURI(result), false);
-			this.search(result);
+
+			if(e.type === 'submit'){
+				e.preventDefault();
+				this.searchPrepare(result, true);
+			} else if(doNotTriggerKeys.indexOf(e.keyCode) === -1){
+				this.searchPrepare(result, false);
+			}
+		},
+
+		searchPrepare: function(result, submit){
+			if(result.length === 0){
+				Backbone.history.navigate('/', true);
+				$('.search-query').focus();
+			} else if(result.length >= 3){
+				Backbone.history.navigate('/search/' + encodeURI(result), false);
+				this.search(result);
+			} else if(submit){
+				Backbone.history.navigate('/search/' + encodeURI(result), false);
+				this.search(result);
+			}
 		},
 
 		searchQuery: function(query){
