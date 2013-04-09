@@ -42,7 +42,7 @@ require.config({
 		bootstrapAlert: '../components/sass-bootstrap/js/bootstrap-alert',
 		bootstrapTransition: '../components/sass-bootstrap/js/bootstrap-transition',
 		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',
-		bootstrapTypeahead: '../components/sass-bootstrap/js/bootstrap-typeahead',
+		bootstrapTypeahead: '../components/typeahead.js/dist/typeahead',
 		moment: '../components/moment/moment',
 		socketIo: '../components/socket.io-client/dist/socket.io'
 	}

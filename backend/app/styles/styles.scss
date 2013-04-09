@@ -16,6 +16,7 @@ Stylesheet: Main Stylesheet
 @import "compass/css3";
 $fontAwesomePath: "../components/font-awesome/font";
 @import "../components/font-awesome/sass/font-awesome.scss";
+@import "typeahead";
 
 * {
     @include box-sizing(border-box);
@@ -31,7 +32,8 @@ $fontAwesomePath: "../components/font-awesome/font";
     margin-left: 0;
     height: 30px;
     padding: 3px 4px;
-    div {
+    overflow: visible;
+    .tag {
         display: inline-block;
         @include border-radius(3px);
         margin: 0 5px 0 0;

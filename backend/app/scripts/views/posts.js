@@ -23,6 +23,17 @@ define([
 		el: '#app-wrapper',
 		inner: '#app',
 		collection: {},
+		engine: {
+			//Workaround for unsing underscore templating engine
+			compile: function(template) {
+				var compiled = _.template(template);
+				return {
+					render: function(context) {
+						return compiled(context);
+					}
+				};
+			}
+		},
 
 		// delegated events
 		events: {
@@ -35,7 +46,9 @@ define([
 			'change #edit_post :input': 'changedHandler',
 			'click button.search_api': 'searchApi',
 			'keydown :input.typeahead': 'autoCompleteKeyHandler',
-			'click .tag': function(e){ this.removeTag($(e.currentTarget)); }
+			'click .tag': function(e){ this.removeTag($(e.currentTarget)); },
+			'typeahead:selected': function(e){ this.addTag(e.target, e.target.value); },
+			'typeahead:autocompleted': function(e){ this.addTag(e.target, e.target.value); $('.tt-dropdown-menu').css('display', 'none'); },
 		},
 
 		initialize: function() {
@@ -223,26 +236,25 @@ define([
 
 		initAutoComplete: function(){
 			var that = this;
-			var tagsCollection = new TagsCollection();
-			tagsCollection.fetch({
-				success: function(response){
-					var array = [];
-					_.each(response.models, function(value){
-					    array.push(value.attributes.tagName);
-					});
-					$('.typeahead').typeahead({
-						source: array,
-						updater: function(value){
-							that.addTag(this.$element[0], value);
-						}
-					});
-				}
+			$('.typeahead').typeahead({
+				name: 'autocomplete-tags',
+				valueKey: 'tagName',
+				prefetch: {
+					url: 'http://localhost:3100/tag',
+					ttl: 0
+				},
+				template: [
+					'<p class="repo-name"><%= tagName %></p>',
+					'<p class="repo-description"><%= description %></p>',
+				].join(''),
+				engine: that.engine
 			});
 		},
 
 		autoCompleteKeyHandler: function(e){
 			if(e.keyCode === 13 && e.currentTarget.value !== '' || e.keyCode === 9 && e.currentTarget.value !== ''){
 				e.preventDefault();
+				$('.tt-dropdown-menu').css('display', 'none');
 				this.addTag(e.currentTarget, e.currentTarget.value);
 			} else if(e.keyCode === 8 && e.currentTarget.value === '') {
 				e.preventDefault();
@@ -251,18 +263,20 @@ define([
 		},
 
 		addTag: function(target, value){
-			var val = $(target).siblings('[type=hidden]').val();
-			$(target).siblings('[type=hidden]').val(value + ',' + val).addClass('changed');
+			var val = $(target).parent().siblings('[type=hidden]').val();
+			$(target).parent().siblings('[type=hidden]').val(value + ',' + val).addClass('changed');
 			$(target).before('<div class="btn tag">' + value + '</div>').val('');
 		},
 
 		removeTag: function(target, type){
 			var value = target.text();
-			var valueList = target.siblings('[type=hidden]').val();
+			var valueList = target.parent().siblings('[type=hidden]').val();
 			valueList = valueList.replace(value + ',', '');
-			target.siblings('[type=hidden]').val(valueList).addClass('changed');
+			target.parent().siblings('[type=hidden]').val(valueList).addClass('changed');
 			if(type){
 				target.siblings('[type=text]').val(value);
+			} else {
+				target.siblings('[type=text]').val('');
 			}
 			target.remove();
 		},

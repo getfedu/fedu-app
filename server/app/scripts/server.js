@@ -199,7 +199,7 @@ app.post('/tag', function(req, res) {
     });
 });
 
-// Read Posts from db
+// Read Tags from db
 app.get('/tag', function(req, res) {
     var results = [];
     var query = '';
