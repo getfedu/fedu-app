@@ -24,7 +24,7 @@ define([
 		inner: '#app',
 		collection: {},
 		engine: {
-			//Workaround for unsing underscore templating engine
+			//Workaround for using underscore templating engine
 			compile: function(template) {
 				var compiled = _.template(template);
 				return {
@@ -46,9 +46,10 @@ define([
 			'change #edit_post :input': 'changedHandler',
 			'click button.search_api': 'searchApi',
 			'keydown :input.typeahead': 'autoCompleteKeyHandler',
+			'focus :input.typeahead': function(e) { if(!$(e.currentTarget).hasClass('tt-query')){ this.initAutoComplete(); }},
 			'click .tag': function(e){ this.removeTag($(e.currentTarget)); },
+			'typeahead:autocompleted': function(e){ this.addTag(e.target, e.target.value); },
 			'typeahead:selected': function(e){ this.addTag(e.target, e.target.value); },
-			'typeahead:autocompleted': function(e){ this.addTag(e.target, e.target.value); $('.tt-dropdown-menu').css('display', 'none'); },
 		},
 
 		initialize: function() {
@@ -70,8 +71,6 @@ define([
 
 		addPost: function(){
 			this.render(this.inner, _.template(AddTemplate));
-
-			this.initAutoComplete();
 		},
 
 		listPosts: function(){ // called from collections/video.js
@@ -84,8 +83,6 @@ define([
 			var model = this.collection.get(id);
 			this.render(this.inner, _.template(EditTemplate, { attributes: model.attributes, cid: model.cid }));
 			Backbone.history.navigate('/edit-post', false);
-
-			this.initAutoComplete();
 
 			var string = $('.tags [type=hidden]').val();
 			if(string){
@@ -240,7 +237,7 @@ define([
 				name: 'autocomplete-tags',
 				valueKey: 'tagName',
 				prefetch: {
-					url: 'http://localhost:3100/tag',
+					url: 'http://localhost:3100/tag', // @todo config file
 					ttl: 0
 				},
 				template: [
@@ -249,34 +246,34 @@ define([
 				].join(''),
 				engine: that.engine
 			});
+			$('.typeahead').focus();
 		},
 
 		autoCompleteKeyHandler: function(e){
-			if(e.keyCode === 13 && e.currentTarget.value !== '' || e.keyCode === 9 && e.currentTarget.value !== ''){
+			if(e.keyCode === 188 && e.currentTarget.value !== ''){
 				e.preventDefault();
-				$('.tt-dropdown-menu').css('display', 'none');
 				this.addTag(e.currentTarget, e.currentTarget.value);
 			} else if(e.keyCode === 8 && e.currentTarget.value === '') {
 				e.preventDefault();
-				this.removeTag($(e.currentTarget).prev('.tag'), 'backspace');
+				this.removeTag($(e.currentTarget).parents('.tags').children('.tag').last(), 'backspace');
 			}
 		},
 
 		addTag: function(target, value){
 			var val = $(target).parent().siblings('[type=hidden]').val();
 			$(target).parent().siblings('[type=hidden]').val(value + ',' + val).addClass('changed');
-			$(target).before('<div class="btn tag">' + value + '</div>').val('');
+			$(target).val('').parent().before('<div class="btn tag">' + value + '</div>');
+			$(target).typeahead('destroy');
+			$('.typeahead').focus();
 		},
 
 		removeTag: function(target, type){
 			var value = target.text();
-			var valueList = target.parent().siblings('[type=hidden]').val();
+			var valueList = target.siblings('[type=hidden]').val();
 			valueList = valueList.replace(value + ',', '');
-			target.parent().siblings('[type=hidden]').val(valueList).addClass('changed');
+			target.siblings('[type=hidden]').val(valueList).addClass('changed');
 			if(type){
-				target.siblings('[type=text]').val(value);
-			} else {
-				target.siblings('[type=text]').val('');
+				$('.typeahead').val(value);
 			}
 			target.remove();
 		},
