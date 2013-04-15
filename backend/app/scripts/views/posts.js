@@ -52,7 +52,7 @@ define([
 			'typeahead:selected': function(e){ this.addTag(e.target, e.target.value); },
 		},
 
-		initialize: function() {
+		initialize: function(){
 			this.collection = new TheCollection();
 			this.collection.on('postsFetched', this.getData, this );
 			TheApi.on('apiDataFetched', this.setApiData, this );
@@ -61,7 +61,7 @@ define([
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
 		// of the app doesn't change.
-		render: function(target, value) {
+		render: function(target, value){
 			// render function
 			$(target).html(value);
 		},

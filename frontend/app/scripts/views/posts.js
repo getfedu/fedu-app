@@ -93,15 +93,16 @@ define([
 
 			if(!$('#all_videos').length){
 				this.render(this.el, VideoTemplate);
+				var searchForm = $('form#search .search-query');
+				searchForm.val(result);
 			}
 
 			var query = this.searchQuery(result);
-			var searchForm = $('form#search .search-query');
-			searchForm.val(result);
 
 			this.collection.paginator_core.url = TheConfig.nodeUrl + '/search';
 			this.collection.server_api.query = query.query;
 			this.collection.server_api.tag = query.tag;
+			this.collection.server_api.duration = query.duration;
 
 			this.collection.goTo(0);
 			this.getPosts();
@@ -238,24 +239,32 @@ define([
 
 		searchQuery: function(query){
 			var tag = '';
+			var duration = '';
+			var queryString = '';
 			query.toLowerCase();
-			var withQueryRegexString = '(\\[)' + '((?:[\u0000-\u00FF]*))' + '(\\])'+ '((?:[\u0000-\u00FF]*))';
-			var tagRegexString = '(\\[)' + '((?:[\u00FF-\u00FF]*))' + '(\\])';
+			var queryArray = query.split(' ');
 
-			var withQueryRegex = new RegExp(withQueryRegexString,['i']);
-			var tagRegex = new RegExp(tagRegexString,['i']);
-			var withQueryRegexResult = withQueryRegex.exec(query);
-			var tagRegexResult = tagRegex.exec(query);
+			var tagRegexString = '(\\[)' + '((?:[\u0000-\u00FF]*))' + '(\\])';
+			var durationRegexString = '((d:))'+ '((\\d+))';
+			var unicodeAreaRegexString = '((?:[\u0000-\u00FF]*))';
 
-			if (withQueryRegexResult !== null) {
-				tag = withQueryRegexResult[2];
-				query = withQueryRegexResult[4];
-			} else if (tagRegexResult !== null){
-				tag = tagRegexResult[2];
-				query = '';
+			var tagRegex = new RegExp(tagRegexString, ['i']);
+			var durationRegex = new RegExp(durationRegexString, ['i']);
+			var unicodeAreaRegex = new RegExp(unicodeAreaRegexString, ['i']);
+
+			for (var i = 0; i < queryArray.length; i++) {
+				if(tagRegex.test(queryArray[i])){
+					var tagRegexResult = tagRegex.exec(query);
+					tag = tagRegexResult[2];
+				} else if(durationRegex.test(queryArray[i])){
+					var durationRegexResult = durationRegex.exec(query);
+					duration = durationRegexResult[4] * 60;
+				} else if(unicodeAreaRegex.test(queryArray[i])){
+					queryString += queryArray[i] + ' ';
+				}
 			}
 
-			return {query: query, tag: tag};
+			return {query: queryString, tag: tag, duration: duration};
 		}
 
 	});

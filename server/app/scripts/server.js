@@ -234,6 +234,7 @@ var search = {
     generateQuery: function(query){
         var titleArray = [];
         var titleObject = {};
+        var durationObject = {};
         titleObject.$and = titleArray;
         if(query.query){
             var split = query.query.split(' ');
@@ -245,8 +246,22 @@ var search = {
                 titleArray.push(obj);
             }
         }
+        if(query.duration){
+            durationObject = {
+                'foreign.duration': {
+                    '$gte': parseInt(query.duration, 10) - 300,
+                    '$lte': parseInt(query.duration, 10) + 300
+                }
+            };
+        }
         var queryObj = {};
-        if(query.tag && query.query){
+        if(query.query && query.duration && !query.tag){
+            queryObj = { $and: [durationObject, titleObject]};
+        } else if(query.tag && query.duration && !query.query){
+            queryObj =  { $and: [durationObject, { tags: query.tag }] };
+        } else if(query.query && query.tag && query.duration){
+            queryObj =  { $and: [durationObject, { tags: query.tag }, titleObject] };
+        } else if(query.tag && query.query){
             queryObj =  { $and: [{ tags: query.tag }, titleObject] };
         } else if(query.query && !query.tag) {
             queryObj = { $or: [{ tags: query.query }, titleObject] };
