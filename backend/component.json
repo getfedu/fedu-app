@@ -12,7 +12,8 @@
     "font-awesome": "~3.0.2",
     "moment": "~2.0.0",
     "socket.io-client": "~0.9.11",
-    "typeahead.js": "~0.9.1"
+    "typeahead.js": "~0.9.1",
+    "backbone.paginator": ""
   },
   "devDependencies": {}
 }

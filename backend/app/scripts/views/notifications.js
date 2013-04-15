@@ -39,6 +39,7 @@ define([
 		////////////////////////////////////////
 		listNotifications: function(){
 			this.render(this.inner, _.template(ListTemplate));
+			this.collection.server_api.filter = 'all';
 			this.collection.fetchData();
 		},
 
@@ -46,7 +47,7 @@ define([
 			e.preventDefault();
 			var id = $(e.currentTarget).attr('data-notification-id');
 			var model = this.collection.get(id);
-			
+
 			var data = {
 				updateDate: new Moment().format(),
 				checked: true
@@ -58,7 +59,7 @@ define([
                     Backbone.history.loadUrl( Backbone.history.fragment ); // refresh site without any hash changes
 				},
                 error: function(){
-                	//console.log('sorry');
+					//console.log('sorry');
                 }
 			});
 

@@ -55,10 +55,29 @@ $fontAwesomePath: "../components/font-awesome/font";
     }
 }
 
-.suggestions {
-    display: none;
-}
-
 .notification_wrapper{
-    display: none;
+
+    .notification_counter{
+        display: none;
+    }
+
+    .notifications{
+        .no_notifications{
+            padding-left:15px;
+        }
+
+        .notification_item{
+            &.latest{
+                background-color:$grayLighter;
+            }
+
+            &.description{
+                padding-left:20px;
+                font-size: 0.9em;
+            }
+
+        }
+
+    }
+
 }
