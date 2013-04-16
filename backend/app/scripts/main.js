@@ -37,6 +37,11 @@ require.config({
 			deps: [
 				'jquery'
 			]
+		},
+		backbonePaginator: {
+			deps: [
+				'backbone'
+			]			
 		}
 	},
 	paths: {
