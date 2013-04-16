@@ -63,19 +63,40 @@ $fontAwesomePath: "../components/font-awesome/font";
 
     .notifications{
         .no_notifications{
-            padding-left:15px;
+            padding:5px 10px 5px 15px;
         }
 
         .notification_item{
+            border-bottom:1px dotted gray;
+            min-width: 300px;
+            
             &.latest{
                 background-color:$grayLighter;
+                border-left: 2px solid gray;
             }
 
-            &.description{
-                padding-left:20px;
+            .description{
                 font-size: 0.9em;
+                display: block;
             }
 
+            h6{
+                color:$grayLight;
+            }
+
+        }
+
+        .show_all{
+            display: block;
+            text-align: center;
+            line-height: 20px;
+            padding: 5px;
+            margin-bottom:-5px;
+            color: white;
+
+            a:link, a:focus, a:hover, a:active{
+                color: white;
+            };
         }
 
     }

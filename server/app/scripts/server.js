@@ -126,16 +126,8 @@ app.post('/post', function(req, res) {
 app.get('/post', function(req, res) {
     var top = parseInt(req.query.top, 0);
     var skip = parseInt(req.query.skip, 0);
-    var results = [];
-    var query = '';
 
-    query = collectionPosts.find().skip(skip).limit(top).sort({ _id: -1}).stream();
-
-    query.on('data', function(item) {
-        results.push(item);
-    });
-
-    query.on('end', function() {
+    collectionPosts.find().skip(skip).limit(top).sort({ _id: -1}).toArray(function(err, results){
         res.setHeader('Content-Type', 'application/json');
         res.send(results);
     });
@@ -144,19 +136,11 @@ app.get('/post', function(req, res) {
 
 // Read a single Post from db
 app.get('/post/:id', function(req, res) {
-    var results = [];
-    var query = '';
 
     if(req.params.id.length === 24){
         var BSON = mongodb.BSONPure;
         var oId = new BSON.ObjectID(req.params.id);
-        query = collectionPosts.find({'_id': oId }).stream();
-
-        query.on('data', function(item) {
-            results.push(item);
-        });
-
-        query.on('end', function() {
+        collectionPosts.find({'_id': oId }).toArray(function(err, results){
             res.setHeader('Content-Type', 'application/json');
             res.send(results);
         });
@@ -201,16 +185,8 @@ app.post('/tag', function(req, res) {
 
 // Read Tags from db
 app.get('/tag', function(req, res) {
-    var results = [];
-    var query = '';
 
-    query = collectionTags.find().sort({ counter: -1}).stream();
-
-    query.on('data', function(item) {
-        results.push(item);
-    });
-
-    query.on('end', function() {
+    collectionTags.find().sort({ counter: -1}).toArray(function(err, results){
         res.setHeader('Content-Type', 'application/json');
         res.send(results);
     });
@@ -279,14 +255,7 @@ app.get('/search', function(req, res) {
     var skip = parseInt(req.query.skip, 0);
     var top = parseInt(req.query.top, 0);
 
-    var results = [];
-    var query = '';
-    query = collectionPosts.find(queryObj).skip(skip).limit(top).sort({ _id: -1}).stream();
-    query.on('data', function(item) {
-        results.push(item);
-    });
-
-    query.on('end', function() {
+    collectionPosts.find(queryObj).skip(skip).limit(top).sort({ _id: -1}).toArray(function(err, results){
         res.setHeader('Content-Type', 'application/json');
         res.send(results);
     });
@@ -390,19 +359,27 @@ app.get('/flagPost', function(req, res) {
 });
 
 app.get('/notification', function(req, res) {
-    var results = [];
-    var query = '';
+    if(req.query.filter === 'all'){
+        collectionNotifications.find().sort({'_id': -1}).toArray(function(err, results){
+            res.setHeader('Content-Type', 'application/json');
+            res.send(results);
+        });
 
-    query = collectionNotifications.find().sort({ _id: -1}).stream();
+    } else if(req.query.filter === 'partial'){
+        collectionNotifications.find({ checked: false}).limit(3).sort({ _id: -1}).toArray(function(err, results){
+            res.setHeader('Content-Type', 'application/json');
+            res.send(results);
+        });
 
-    query.on('data', function(item) {
-        results.push(item);
-    });
+    } else if(req.query.filter === 'countUnchecked'){
+        collectionNotifications.find({ checked: false}).count(function(e, count){
+            res.setHeader('Content-Type', 'application/json');
+            var object = {uncheckedNotifications: count};
+            res.send(object);
+        });
 
-    query.on('end', function() {
-        res.setHeader('Content-Type', 'application/json');
-        res.send(results);
-    });
+    }
+
 });
 
 app.put('/notification/:id', function(req, res) {

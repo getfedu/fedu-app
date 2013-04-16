@@ -16,7 +16,6 @@ define([
             this.fetch({
                 success: function(collection) {
                     that.collection = collection;
-                    console.log('sdf');
                     that.trigger('notificationsFetched');
                 },
                 error: function(){
@@ -49,7 +48,7 @@ define([
 
         server_api: {
             // the query field in the request
-            'filter': 'all',
+            filter: 'all',
         },
 
         parse: function(response){

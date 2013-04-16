@@ -5,8 +5,11 @@ define([
 	'../collections/notifications',
 	'../models/notifications',
 	'socketIo',
-	'vendor/fedu/config'
-], function($, _, Backbone, TheCollection, TheModel, SocketIo, TheConfig) {
+	'vendor/fedu/config',
+	'moment',
+	'text!../templates/notification_center/list_item_template.html',
+	'text!../templates/notification_center/latest_list_item_template.html'
+], function($, _, Backbone, TheCollection, TheModel, SocketIo, TheConfig, Moment, ListItemTemplate, LatestListItemTemplate) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -16,12 +19,12 @@ define([
 		notification: $('.notification_wrapper .notifications'),
 		notificationCounter: $('.notification_wrapper .notification_counter'),
 		currentNotifications: 0,
-		firstNotification: true,
+		oldNotifications: false,
 		collection: {},
 
 		// delegated events
 		events: {
-			'click .notifications .notification_item': 'removeNotification',
+			'click .notifications .notification_item': 'readNotification',
 		},
 
 		initialize: function(){
@@ -29,6 +32,8 @@ define([
 			this.collection.on('notificationsFetched', this.getData, this);
 			this.collection.server_api.filter = 'partial';
 			this.collection.fetchData();
+
+			this.getUncheckedNotificationsCounted();
 
 			var that = this;
 			this.socket = SocketIo.connect(TheConfig.websocketUrl);
@@ -40,34 +45,29 @@ define([
 
 		notifyPost: function(){
 			var that = this;
-			var notification = '',
-				description = '';
+			var	description = '',
+				publishDate = '',
+				templateItems = '';
 
 			this.socket.on('flagPost', function(data){
 
-				if(that.firstNotification){ // clear default message
-					that.notification.html('');
-					that.firstNotification = false;
-				}
-
 				that.countedNotifications(+1);
-
-				description = (data.description !== '') ? '<span class="notification_item description">' + data.description + '</span>' : '';
-				notification = '<li class="notification_item latest"><a href="' + TheConfig.frontendUrl + '/#detail-view-post/' + data.id + '" target="_blank">' + data.title + '</a>' + description + '</li>';
-				that.notification.prepend(notification);
+				that.notification.find('.no_notifications').remove();
+				publishDate = new Moment(data.publishDate).format('H:m:s [ Uhr - ] DD.MM.YY');
+				description = (data.description !== '') ? '<span class="description">' + data.description + '</span>' : '';
+				templateItems = _.template(LatestListItemTemplate, {attributes: data, description: description, publishDate: publishDate, frontendUrl: TheConfig.frontendUrl});
+				that.notification.prepend(templateItems);
 
 			});
 
 		},
 
-		removeNotification: function(e){
-			console.log('kdsksd');
-			$(e.currentTarget).remove();
-			this.countedNotifications(-1);
+		readNotification: function(e){
+			var locateCurrentTarget = $(e.currentTarget);
 
-			if(this.currentNotifications === 0){
-				this.notification.html('<li><span class="no_notifications">No new notifications!</span></li>');
-				this.firstNotification = true;
+			if(locateCurrentTarget.hasClass('latest')){
+				locateCurrentTarget.removeClass('latest');
+				this.countedNotifications(-1);
 			}
 
 		},
@@ -79,6 +79,8 @@ define([
 				this.currentNotifications += 1;
 			} else if(count === -1) {
 				this.currentNotifications -= 1;
+			} else {
+				this.currentNotifications = count;
 			}
 
 			this.notificationCounter.show().html(this.currentNotifications);
@@ -92,13 +94,39 @@ define([
 		// helpers
 		////////////////////////////////////////
 		getData: function(){
-			var templateItems = '';
-			// this.notification.html('<li class="divider"></li>');
-			// this.notification.append('<li><span class="notification_item_description">LAST NOFTIFICAIONS</span></li>');
+			var that = this;
+			var description = '',
+				templateItems = '',
+				publishDate = '';
+
 			_.each(this.collection.models, function(value){
-				console.log(value);
-				// templateItems += _.template(ListItemTemplate, {attributes: value.attributes, frontendUrl: TheConfig.frontendUrl});
+				that.oldNotifications = true;
+				publishDate = new Moment(value.attributes.publishDate).format('H:m:s [ Uhr - ] DD.MM.YY');
+				description = (value.attributes.description !== '') ? '<span class="description">' + value.attributes.description + '</span>' : '';
+				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, description: description, publishDate: publishDate, frontendUrl: TheConfig.frontendUrl});
 			});
+
+			this.notification.append(templateItems);
+
+			if(!this.oldNotifications){
+				this.notification.html('<li class="no_notifications"><span>No old Notifications exists!</span></li>');
+				this.oldNotifications = true;
+			} else {
+				this.notification.append('<li class="show_all"><a href="' + TheConfig.backendUrl + '/#list-notifications">List all Notifications</a></li>');
+			}
+		},
+
+		getUncheckedNotificationsCounted: function(){
+			var that = this;
+			this.collection.server_api.filter = 'countUnchecked';
+			this.collection.fetch({
+                success: function(collection) {
+                	that.countedNotifications(collection.models[0].attributes.uncheckedNotifications);
+                },
+                error: function(){
+                    console.log('error - no data was fetched');
+                }
+            });
 		}
     });
 
