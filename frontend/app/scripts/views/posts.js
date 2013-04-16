@@ -95,11 +95,15 @@ define([
 
 			if(!$('#all_videos').length){
 				this.render(this.el, VideoTemplate);
-				var searchForm = $('form#search .search-query');
+			}
+			var searchForm = $('form#search .search-query');
+
+			if(searchForm.val() !== result){
 				searchForm.val(result);
 			}
 
 			var query = this.searchQuery(result);
+			console.log(query);
 
 			this.collection.paginator_core.url = TheConfig.nodeUrl + '/search';
 			this.collection.server_api.query = query.query;
