@@ -32,6 +32,11 @@ require.config({
 			deps: [
 				'jquery'
 			]
+		},
+		bootstrapDropdown: {
+			deps: [
+				'jquery'
+			]
 		}
 	},
 	paths: {
@@ -44,7 +49,9 @@ require.config({
 		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',
 		bootstrapTypeahead: '../components/typeahead.js/dist/typeahead',
 		moment: '../components/moment/moment',
-		socketIo: '../components/socket.io-client/dist/socket.io'
+		socketIo: '../components/socket.io-client/dist/socket.io',
+		bootstrapDropdown: '../components/sass-bootstrap/js/bootstrap-dropdown',
+		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator'
 	}
 });
 
@@ -54,14 +61,14 @@ require([
 	'bootstrapTransition',
 	'bootstrapTypeahead',
 	'bootstrapModal',
-	'vendor/fedu/websocket'
-], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, BootstrapTypeahead, TheWebsocket) {
+	'views/notification_center',
+	'bootstrapDropdown'
+], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, BootstrapTypeahead, NotificationCenter, BootstrapDropdown) {
 	'use strict';
 
-	// init websocket
-	TheWebsocket.init();
-
-	// initialize routing and start Backbone.history()
+	// initialize routing, notifciation center and start Backbone.history()
+	new NotificationCenter();
 	new Router();
 	Backbone.history.start();
+
 });

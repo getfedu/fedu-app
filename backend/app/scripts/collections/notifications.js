@@ -1,36 +1,61 @@
 define([
-    'jquery', 
-    'underscore', 
-    'backbone', 
-    '../models/notifications', 
+    'jquery',
+    'underscore',
+    'backbone',
+    'backbonePaginator',
+    '../models/notifications',
     '../vendor/fedu/config'
-], function($, _, Backbone, TheModel, TheConfig) {
+], function($, _, Backbone, Paginator, TheModel, TheConfig) {
     'use strict';
 
-    var collection = Backbone.Collection.extend({
+    var paginatedCollection = Backbone.Paginator.requestPager.extend({
         model: TheModel,
-        url: function() {
-            return  TheConfig.nodeUrl + '/notification';
-        },
-
-        parse: function(response){ // manipulate response data
-            return response;
-        },
 
         fetchData: function(){
             var that = this;
             this.fetch({
                 success: function(collection) {
                     that.collection = collection;
+                    console.log('sdf');
                     that.trigger('notificationsFetched');
                 },
                 error: function(){
                     console.log('error - no data was fetched');
                 }
             });
-        }
+        },
 
+        paginator_core: {
+            // the type of reply
+            dataType: 'json',
+
+            url: function() {
+                return  TheConfig.nodeUrl + '/notification';
+            }
+        },
+
+        paginator_ui: {
+            // the lowest page index your API allows to be accessed
+            firstPage: 0,
+
+            // which page should the paginator start from
+            // (also, the actual page the paginator is on)
+            currentPage: 0,
+
+            // how many items per page should be shown
+            perPage: 3
+
+        },
+
+        server_api: {
+            // the query field in the request
+            'filter': 'all',
+        },
+
+        parse: function(response){
+            return response;
+        }
     });
 
-    return collection;
+    return paginatedCollection;
 });

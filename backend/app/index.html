@@ -26,20 +26,24 @@
                     </button>
                     <a class="brand" href="#">fedu</a>
                     <div class="nav-collapse collapse">
-                        <p class="navbar-text pull-right">
-                            Logged in as <a href="#" class="navbar-link">Username</a>
-                        </p>
                         <ul class="nav">
                             <li class="active"><a href="#">Home</a></li>
+                            <li class="divider-vertical"></li>
                             <li><a href="#about">About</a></li>
+                            <li class="divider-vertical"></li>
                             <li><a href="#contact">Contact</a></li>
+                        </ul>
+                        <ul class="nav pull-right notification_wrapper">
+                            <li class="divider-vertical"></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Notifications <span class="badge badge-important notification_counter">0</span> <b class="caret"></b></a>
+                                <ul class="dropdown-menu nav-stacked notifications">
+                                    <li><span class="no_notifications">No new notifications!</span></li>
+                                </ul>
+                            </li>
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>
-            </div>
-            <div class="alert notification_wrapper text-center">
-                <strong>Notification:</strong><br />
-                <span class="notification">Notifications rendered here</span>
             </div>
         </div>
         <div class="container-fluid page">
