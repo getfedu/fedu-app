@@ -10,8 +10,9 @@ define([
 	'text!../templates/posts/info_video_items.html',
 	'text!../templates/posts/player_video_items.html',
 	'text!../templates/posts/detail_video_view.html',
-	'text!../templates/posts/detail_video_content.html'
-], function( $, _, Backbone, TheCollection, TheModel, TheConfig, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate, PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate) {
+	'text!../templates/posts/detail_video_content.html',
+], function( $, _, Backbone, TheCollection, TheModel, TheConfig, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
+	PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate) {
 	'use strict';
 
 	var PostsView = Backbone.View.extend({
@@ -29,7 +30,9 @@ define([
 			'click .video_container' : 'addVideoIframe',
 			'keyup form#search' : 'handleSearchEvents',
 			'submit form#search' : 'handleSearchEvents',
-			'click form#flag_post .flag_submit': 'flagPost'
+			'click form#flag_post .flag_submit': 'flagPost',
+			'click .search_hint': 'searchHints',
+			'click .popover .icon-remove': function(e){ e.stopPropagation(); $('.icon-question-sign').popover('hide');},
 		},
 
 		initialize: function() {
@@ -41,7 +44,6 @@ define([
 		    $(window).scroll(function(){
 				that.scrolling();
 		    });
-
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -205,6 +207,14 @@ define([
 				this.infiniteLoad();
 			}
 
+		},
+
+		searchHints: function(){
+			$('.icon-question-sign').popover({
+				placement: 'bottom',
+				html: true
+			});
+			$('.icon-question-sign').popover('show');
 		},
 
 		handleSearchEvents: function(e){

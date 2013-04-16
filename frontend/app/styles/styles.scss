@@ -82,6 +82,26 @@ html, body {
 }
 
 .over_view {
+    .search_hint {
+        position: relative;
+        cursor: pointer;
+        .icon-question-sign {
+            position: absolute;
+            font-size: 14px;
+            left: -20px;
+            line-height: 30px;
+            color: $grayLight;
+            z-index: 9999;
+        }
+    }
+    .popover {
+        min-width: 20em;
+        .icon-remove {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+        }
+    }
     #all_videos {
         margin: 0;
     }

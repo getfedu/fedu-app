@@ -17,6 +17,17 @@ require.config({
 			deps: [
 				'jquery'
 			]
+		},
+		bootstrapTooltip: {
+			deps: [
+				'jquery'
+			]
+		},
+		bootstrapPopover: {
+			deps: [
+				'jquery',
+				'bootstrapTooltip'
+			]
 		}
 	},
 	paths: {
@@ -25,7 +36,9 @@ require.config({
 		backbone: '../components/backbone/backbone',
 		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator',
 		text: '../components/requirejs-text/text',
-		bootstrapCollapse: '../components/sass-bootstrap/js/bootstrap-collapse'
+		bootstrapCollapse: '../components/sass-bootstrap/js/bootstrap-collapse',
+		bootstrapTooltip: '../components/sass-bootstrap/js/bootstrap-tooltip',
+		bootstrapPopover: '../components/sass-bootstrap/js/bootstrap-popover'
 	}
 });
 
@@ -33,7 +46,9 @@ require([
 	'routers/router',
 	'jquery',
 	'bootstrapCollapse',
-], function(Router, $, BootstrapCollapse) {
+	'bootstrapTooltip',
+	'bootstrapPopover',
+], function(Router, $, BootstrapCollapse, BootstrapTooltip, BootstrapPopover) {
 	'use strict';
 
 	new Router();

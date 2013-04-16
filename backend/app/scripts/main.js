@@ -55,7 +55,7 @@ require([
 	'bootstrapTypeahead',
 	'bootstrapModal',
 	'vendor/fedu/websocket'
-], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, bootstrapTypeahead, TheWebsocket) {
+], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, BootstrapTypeahead, TheWebsocket) {
 	'use strict';
 
 	// init websocket
