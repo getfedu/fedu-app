@@ -168,7 +168,7 @@ app.delete('/post/:id', function(req, res) {
     collectionPosts.findOne({'_id': oId }, function(err, result){
         checkTags.init(result.tags, false);
     });
-    collectionPosts.remove({'_id': oId }, function() {
+    collectionPosts.remove({'_id': oId }, function(){
         res.send(JSON.stringify('OK'));
     });
 });
@@ -207,10 +207,10 @@ app.put('/tag/:id', function(req, res) {
 ///////////////////////////////////////////////////////////
 
 var search = {
-    generateQuery: function(query){
-        var titleArray = [];
+
+    generateTitleObject: function(query){
         var titleObject = {};
-        var durationObject = {};
+        var titleArray = [];
         titleObject.$and = titleArray;
         if(query.query){
             var split = query.query.split(' ');
@@ -222,6 +222,12 @@ var search = {
                 titleArray.push(obj);
             }
         }
+
+        return titleObject;
+    },
+
+    generateDurationObject: function(query){
+        var durationObject = {};
         if(query.duration){
             durationObject = {
                 'foreign.duration': {
@@ -230,6 +236,14 @@ var search = {
                 }
             };
         }
+
+        return durationObject;
+    },
+
+    generateQuery: function(query){
+        var titleObject = this.generateTitleObject(query);
+        var durationObject = this.generateDurationObject(query);
+
         var queryObj = {};
         if(query.query && query.duration && !query.tag){
             queryObj = { $and: [durationObject, titleObject]};

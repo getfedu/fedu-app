@@ -23,6 +23,7 @@ define([
 		collection: {},
 		viewType: 'info',
 		currentCollectionLength: 0,
+		delaySearch: 0,
 
 		// delegated events
 		events: {
@@ -65,15 +66,19 @@ define([
 
 			var templateItems = '';
 			var that = this;
-			_.each(this.collection.models, function(value){
-				if(that.viewType === 'grid'){
-					templateItems += _.template(GridVideoItemsTemplate, {attributes: value.attributes});
-				} else if(that.viewType === 'player'){
-					templateItems += _.template(PlayerVideoItemsTemplate, {attributes: value.attributes});
-				} else if(that.viewType === 'info'){
-					templateItems += _.template(InfoVideoItemsTemplate, {attributes: value.attributes});
-				}
-			});
+			if(this.collection.models.length){
+				_.each(this.collection.models, function(value){
+					if(that.viewType === 'grid'){
+						templateItems += _.template(GridVideoItemsTemplate, {attributes: value.attributes});
+					} else if(that.viewType === 'player'){
+						templateItems += _.template(PlayerVideoItemsTemplate, {attributes: value.attributes});
+					} else if(that.viewType === 'info'){
+						templateItems += _.template(InfoVideoItemsTemplate, {attributes: value.attributes});
+					}
+				});
+			} else {
+				templateItems = _.template('<li class="clearfix"><h3>SORRY, we found nothing in here...</h3><p>maybe try <a href="#search/%5Bjavascript%5D">[javascript]</a> for some awesome videos.</li>');
+			}
 
 			this.render('#all_videos', templateItems);
 		},
@@ -96,14 +101,13 @@ define([
 			if(!$('#all_videos').length){
 				this.render(this.el, VideoTemplate);
 			}
-			var searchForm = $('form#search .search-query');
 
+			var searchForm = $('form#search .search-query');
 			if(searchForm.val() !== result){
 				searchForm.val(result);
 			}
 
 			var query = this.searchQuery(result);
-			console.log(query);
 
 			this.collection.paginator_core.url = TheConfig.nodeUrl + '/search';
 			this.collection.server_api.query = query.query;
@@ -234,7 +238,11 @@ define([
 				e.preventDefault();
 				this.searchPrepare(result, true);
 			} else if(doNotTriggerKeys.indexOf(e.keyCode) === -1){
-				this.searchPrepare(result, false);
+				var that = this;
+				clearTimeout(this.delaySearch);
+				this.delaySearch = setTimeout(function() {
+					that.searchPrepare(result, false);
+				}, 1000);
 			}
 		},
 
