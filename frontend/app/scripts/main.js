@@ -28,6 +28,11 @@ require.config({
 				'jquery',
 				'bootstrapTooltip'
 			]
+		},
+		backbonePaginator: {
+			deps: [
+				'backbone'
+			]
 		}
 	},
 	paths: {

@@ -41,7 +41,7 @@ require.config({
 		backbonePaginator: {
 			deps: [
 				'backbone'
-			]			
+			]
 		}
 	},
 	paths: {
