@@ -32,6 +32,7 @@ define([
 			'keyup form#search' : 'handleSearchEvents',
 			'submit form#search' : 'handleSearchEvents',
 			'click form#flag_post .flag_submit': 'flagPost',
+			'click form#pull_request .pull_request_submit': 'pullRequest',
 			'click .search_hint': 'searchHints',
 			'click .popover .icon-remove': function(e){ e.stopPropagation(); $('.icon-question-sign').popover('hide');},
 		},
@@ -120,22 +121,59 @@ define([
 
 		flagPost: function(e){
 			e.preventDefault();
-			var locateFlagForm = $('form#flag_post');
-			var array = locateFlagForm.serializeArray();
-			var flagDescription = array[0].value;
-			var flagId = array[1].value;
-			var flagTitle = array[2].value;
 
-			$.ajax({
-				url: 'http://localhost:3100/flagPost',
-				data: {
-					id: flagId,
-					title: flagTitle,
-					description: flagDescription
-				}
-			}).done(function() {
-				locateFlagForm.find('.flag_submit').val('post was flagged, thank you!').addClass('disabled');
-			});
+			if(!$(e.currentTarget).hasClass('disabled')){
+				var locateFlagForm = $('form#flag_post');
+				var locateModalBody = locateFlagForm.find('.modal-body');
+				var array = locateFlagForm.serializeArray();
+				var flagDescription = array[0].value;
+				var flagId = array[1].value;
+				var flagTitle = array[2].value;
+
+				$.ajax({
+					url: 'http://localhost:3100/flag-post',
+					data: {
+						type: 'flag',
+						id: flagId,
+						title: flagTitle,
+						description: flagDescription
+					}
+				}).done(function() {
+					locateModalBody.html('<p><strong>Post was flagged.</strong> Thank you!</p>');
+					$(e.currentTarget).val('thank you!').addClass('disabled');
+				});
+			}
+
+		},
+
+		pullRequest: function(e){
+			e.preventDefault();
+
+			if(!$(e.currentTarget).hasClass('disabled')){
+				var locateFlagForm = $('form#pull_request');
+				var locateModalBody = locateFlagForm.find('.modal-body');
+				var array = locateFlagForm.serializeArray();
+				var pullRequestTitle = array[0].value;
+				var pullRequestUrl = array[1].value;
+				var pullRequestPostId = array[2].value;
+				var pullRequestPostTitle = array[3].value;
+
+				$.ajax({
+					url: 'http://localhost:3100/pull-request',
+					data: {
+						type: 'pull-request',
+						id: pullRequestPostId,
+						title: pullRequestPostTitle,
+						description: 'New pull request',
+						pullRequestUrl: pullRequestUrl,
+						pullRequestTitle: pullRequestTitle
+					}
+				}).done(function() {
+					locateModalBody.html('<p><strong>Pull request was sent.</strong> We will check that and merge it!</p>');
+					$(e.currentTarget).val('thank you!').addClass('disabled');
+				});
+			}
+
 		},
 
 		// helper functions

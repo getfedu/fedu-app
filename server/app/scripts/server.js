@@ -355,9 +355,10 @@ app.post('/api-call', function(req, res){
 
 // notification
 ///////////////////////////////////////////////////////////
-app.get('/flagPost', function(req, res) {
+app.get('/flag-post', function(req, res) {
     var data = {
         id: req.query.id,
+        type: req.query.type,
         title: req.query.title,
         description: req.query.description,
         checked: false,
@@ -365,7 +366,26 @@ app.get('/flagPost', function(req, res) {
         updateDate: moment().format()
     };
 
-    socketIo.sockets.emit ('flagPost', data); // websocket
+    socketIo.sockets.emit ('notify-post', data); // websocket
+    collectionNotifications.insert(data, function() {});
+
+    res.send(JSON.stringify('OK'));
+
+});
+
+app.get('/pull-request', function(req, res) {
+    var data = {
+        id: req.query.id,
+        type: req.query.type,
+        title: req.query.title,
+        description: req.query.description,
+        pullRequestTitle: req.query.pullRequestTitle,
+        pullRequestUrl: req.query.pullRequestUrl,
+        checked: false,
+        publishDate: moment().format(),
+        updateDate: moment().format()
+    };
+    socketIo.sockets.emit ('notify-post', data); // websocket
     collectionNotifications.insert(data, function() {});
 
     res.send(JSON.stringify('OK'));
