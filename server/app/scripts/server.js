@@ -6,12 +6,17 @@ var moment = require('../../node_modules/moment');
 require('../../node_modules/moment-isoduration');
 require('../../node_modules/socket.io');
 // var removeDiacritics = require('diacritics').remove;
+
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
 var app = null;
 var appSocketIo = null;
 var socketIo = null;
 var collectionPosts = {};
 var collectionTags = {};
 var collectionNotifications = {};
+var collectionUser = {};
 
 // init
 ///////////////////////////////////////////////////////////
@@ -27,13 +32,22 @@ var init = {
             collectionPosts = db.collection('posts');
             collectionTags = db.collection('tags');
             collectionNotifications = db.collection('notifications');
+            collectionUser = db.collection('user');
 
         });
     },
 
     express: function(){
         app = express();
-        app.use(express.bodyParser());
+        app.configure(function() {
+            app.use(express.static('public'));
+            app.use(express.cookieParser('keyboard cat'));
+            app.use(express.bodyParser());
+            app.use(express.cookieSession({ secret: 'keyboard cato', cookie: { path: '/', httpOnly: false, maxAge: null }}));
+            app.use(passport.initialize());
+            app.use(passport.session());
+            app.use(app.router);
+        });
         app.all('*', function(req, res, next) {
             res.header('Access-Control-Allow-Origin', '*');
             res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT');
@@ -46,6 +60,7 @@ var init = {
         appSocketIo = express();
         var serverSocketIo = require('http').createServer(appSocketIo);
         socketIo = require('socket.io').listen(serverSocketIo);
+        socketIo.set('log level', 1);
         serverSocketIo.listen(4321);
     }
 };
@@ -53,6 +68,73 @@ var init = {
 init.db();
 init.express();
 init.socketIo();
+
+// Passport
+///////////////////////////////////////////////////////////
+
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+        collectionUser.findOne({ username: username }, function(err, user) {
+            if(err){
+                return done(err);
+            }
+            if(!user){
+                return done(null, false, { message: 'Incorrect username.' });
+            }
+            if(user.password !== password){
+                return done(null, false, { message: 'Incorrect password.' });
+            }
+            return done(null, user);
+        });
+    }
+));
+
+passport.serializeUser(function(user, done) {
+    done(null, user._id);
+});
+
+passport.deserializeUser(function(_id, done) {
+    collectionUser.findById(_id, function(err, user) {
+        done(err, user);
+    });
+});
+
+app.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user) {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            res.status(401);
+            res.send('Authorization failed!');
+            return;
+        }
+        req.logIn(user, function(err) {
+            if (err) {
+                return next(err);
+            }
+            res.send('Authorization succeeded!');
+            return;
+        });
+    })(req, res, next);
+});
+
+app.post('/logout', function(req, res){
+    var BSON = mongodb.BSONPure;
+    req.user = { _id: new BSON.ObjectID(req.params.userId) };
+    if(req.isAuthenticated){
+        req.logout();
+        req.session = null;
+        res.send('logged out');
+    } else {
+        res.status(401);
+        res.send('Unauthroized!');
+    }
+});
+
+app.get('/account', function(req, res){
+    res.send(req.user);
+});
 
 // Helper Functions
 ///////////////////////////////////////////////////////////

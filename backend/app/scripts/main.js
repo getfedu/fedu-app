@@ -42,6 +42,11 @@ require.config({
 			deps: [
 				'backbone'
 			]
+		},
+		jQueryCookie: {
+			deps: [
+				'jquery'
+			]
 		}
 	},
 	paths: {
@@ -56,7 +61,8 @@ require.config({
 		moment: '../components/moment/moment',
 		socketIo: '../components/socket.io-client/dist/socket.io',
 		bootstrapDropdown: '../components/sass-bootstrap/js/bootstrap-dropdown',
-		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator'
+		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator',
+		jqueryCookie: '../components/jquery.cookie/jquery.cookie'
 	}
 });
 

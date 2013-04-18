@@ -13,7 +13,7 @@ define([
     'use strict';
 
     var View = Backbone.View.extend({
-    	el: '.notification_wrapper',
+		el: '.notification_wrapper',
 		socket: null,
 		notificationWrapper: $('.notification_wrapper'),
 		notification: $('.notification_wrapper .notifications'),

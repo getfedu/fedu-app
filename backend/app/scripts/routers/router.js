@@ -21,6 +21,7 @@ define([
 			'list-tags' : 'listTags',
 			'edit-tag' : 'editTag',
 			'list-notifications' : 'listNotifications',
+			'login' : 'login',
 			'*actions': 'defaultAction'
 		},
 
@@ -56,6 +57,11 @@ define([
 		listNotifications: function(){
 			this.notificationsView.listNotifications();
 
+		},
+
+		//Login
+		login: function(){
+			this.appView.login();
 		},
 
 		defaultAction: function() {
