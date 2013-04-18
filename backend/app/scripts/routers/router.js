@@ -4,8 +4,9 @@ define([
     '../views/app',
 	'../views/posts',
 	'../views/tags',
-	'../views/notifications'
-], function($, Backbone, AppView, PostsView, TagsView, NotificationsView) {
+	'../views/notifications',
+	'../views/pull_request',
+], function($, Backbone, AppView, PostsView, TagsView, NotificationsView, PullRequestView) {
 	'use strict';
 
 	var Router = Backbone.Router.extend({
@@ -13,6 +14,7 @@ define([
 		postsView: new PostsView(),
 		tagsView: new TagsView(),
 		notificationsView: new NotificationsView(),
+		pullRequestView: new PullRequestView(),
 		routes:{
 			'add-post' : 'addPost',
 			'list-posts' : 'listPosts',
@@ -21,6 +23,7 @@ define([
 			'list-tags' : 'listTags',
 			'edit-tag' : 'editTag',
 			'list-notifications' : 'listNotifications',
+			'pull-request/:id' : 'pullRequest',
 			'*actions': 'defaultAction'
 		},
 
@@ -55,7 +58,11 @@ define([
 		// Notifications
 		listNotifications: function(){
 			this.notificationsView.listNotifications();
+		},
 
+		// Pull request
+		pullRequest: function(id){
+			this.pullRequestView.detailPullRequest(id);
 		},
 
 		defaultAction: function() {

@@ -169,7 +169,7 @@ define([
 						pullRequestTitle: pullRequestTitle
 					}
 				}).done(function() {
-					locateModalBody.html('<p><strong>Pull request was sent.</strong> We will check that and merge it!</p>');
+					locateModalBody.html('<p><strong>Pull request was sent.</strong> We will check and merge it!</p>');
 					$(e.currentTarget).val('thank you!').addClass('disabled');
 				});
 			}

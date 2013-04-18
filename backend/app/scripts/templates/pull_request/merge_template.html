@@ -1,0 +1,25 @@
+<fieldset class="row-fluid span7">
+    <legend>Merge pull request(s) with post</legend>
+    <iframe width="100%" height="563" src="<%=attributes.foreign.embedUrl %>" frameborder="0" allowfullscreen></iframe>
+    <div class="well well-small pull_requests_wrapper">
+        <legend><h5>Pull request(s):</h5></legend>
+        <ul class="unstyled pull_requests"><!-- pull requests rendered here --></ul>
+    </div>
+    <div class="well well-small">
+        <legend><h5>Informations about the Post:</h5></legend>
+        <h5>Video Id</h5>
+        <%= attributes.videoId %>
+
+        <h5>Title</h5>
+        <%= attributes.title %>"
+
+        <h5>Author/Speaker</h5>
+        <%= attributes.userName %>"
+
+        <h5>Description</h5>
+        <%= attributes.description %>
+
+        <h5>Tags</h5>
+        <%= attributes.tags %>
+    </div>
+</fieldset>

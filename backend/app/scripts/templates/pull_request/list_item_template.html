@@ -1,0 +1,10 @@
+<li class="pull_request_item">
+		<h5>Request:</h5>
+		<form action="#" id="<%= attributes._id %>" method="POST">
+			<input type="text" class="span4" name="pullRequestTitle" value="<%= attributes.pullRequestTitle %>" />
+			<input type="text" class="span4" name="pullRequestUrl" value="<%= attributes.pullRequestUrl %>" />
+			<a href="<%= attributes.pullRequestUrl %>" target="_blank"><i class="icon-external-link"></i></a><br />
+			<button type="submit" class="btn btn-primary merge" data-post-id="<%= attributes.id %>" data-pull-request-id="<%= attributes._id %>"><i class="icon-link"></i> Merge</button>
+			<button type="submit" class="btn remove" data-pull-request-id="<%= attributes._id %>"><i class="icon-remove" ></i> Remove</button>
+		</form>
+</li>

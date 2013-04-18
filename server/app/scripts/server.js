@@ -46,6 +46,7 @@ var init = {
         appSocketIo = express();
         var serverSocketIo = require('http').createServer(appSocketIo);
         socketIo = require('socket.io').listen(serverSocketIo);
+        socketIo.set('log level', 1);
         serverSocketIo.listen(4321);
     }
 };
@@ -136,7 +137,6 @@ app.get('/post', function(req, res) {
 
 // Read a single Post from db
 app.get('/post/:id', function(req, res) {
-
     if(req.params.id.length === 24){
         var BSON = mongodb.BSONPure;
         var oId = new BSON.ObjectID(req.params.id);
@@ -145,20 +145,77 @@ app.get('/post/:id', function(req, res) {
             res.send(results);
         });
     }
+
 });
 
 // Update Post in db
 app.put('/post/:id', function(req, res) {
     var BSON = mongodb.BSONPure;
     var oId = new BSON.ObjectID(req.params.id);
+    var pullRequestId = new BSON.ObjectID(req.body.pullRequestId);
+
     delete req.body._id;
-    collectionPosts.findOne({'_id': oId }, function(err, result){
-        checkTags.init(result.tags, false);
-    });
-    collectionPosts.update({'_id': oId }, req.body, function(){
-        checkTags.init(req.body.tags, true);
-        res.send(JSON.stringify('OK'));
-    });
+
+    if(req.body.pullRequestTitle){
+        var data = {};
+
+        collectionPosts.findOne({'_id': oId }, function(err, result){
+
+            if(!result.additonalInfo){ // check if additonalInfo already exists and add the info to the post
+
+                data = {
+                    $set: {
+                        updateDate: moment().format(),
+                        additonalInfo: [{
+                            pullRequestTitle: req.body.pullRequestTitle,
+                            pullRequestUrl: req.body.pullRequestUrl,
+                            pullRequestPulishDate: moment().format()
+                        }]
+                    }
+                };
+
+            } else { // add additionalInfo to post
+                data = {
+                    $set: {
+                        updateDate: moment().format(),
+                    },
+                    $push:{
+                        additonalInfo: {
+                            pullRequestTitle: req.body.pullRequestTitle,
+                            pullRequestUrl: req.body.pullRequestUrl,
+                            pullRequestPulishDate: moment().format()
+                        }
+                    }
+                };
+
+            }
+
+            // update post
+            collectionPosts.update({'_id': oId }, data, function(){
+                res.send(JSON.stringify('OK'));
+            });
+
+            // update notification
+            data = {
+                $set: {
+                    updateDate: req.body.updateDate,
+                    checked: true
+                }
+            };
+
+            collectionNotifications.update({'_id': pullRequestId }, data);
+
+        });
+
+    } else {
+        collectionPosts.findOne({'_id': oId }, function(err, result){
+            checkTags.init(result.tags, false);
+        });
+        collectionPosts.update({'_id': oId }, req.body, function(){
+            checkTags.init(req.body.tags, true);
+            res.send(JSON.stringify('OK'));
+        });
+    }
 });
 
 // Delete Post in db
@@ -416,12 +473,40 @@ app.get('/notification', function(req, res) {
 
 });
 
+app.get('/notification/:id', function(req, res) {
+    var queryObj = {
+        $and : [
+            {id: req.params.id},
+            {type: 'pull-request'},
+            {checked: false}
+        ]
+    };
+
+    collectionNotifications.find(queryObj).sort({ _id: -1}).toArray(function(err, results){
+        res.setHeader('Content-Type', 'application/json');
+        res.send(results);
+    });
+
+});
+
 app.put('/notification/:id', function(req, res) {
     var BSON = mongodb.BSONPure;
     var oId = new BSON.ObjectID(req.params.id);
+    var body = {};
+
+    if(req.body.description === ''){
+        body = {
+            $set: {
+                updateDate: req.body.updateDate,
+                checked: req.body.checked
+            }
+        };
+    } else {
+        body = req.body;
+    }
 
     delete req.body._id;
-    collectionNotifications.update({'_id': oId }, req.body, function(){
+    collectionNotifications.update({'_id': oId }, body, function(){
         res.send(JSON.stringify('OK'));
     });
 
