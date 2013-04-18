@@ -59,7 +59,8 @@ define([
 			model.set(data);
 			model.save(null, {
                 success: function(){
-                    Backbone.history.loadUrl( Backbone.history.fragment ); // refresh site without any hash changes
+                	$(e.currentTarget).parent().html('<i class="icon-ok"></i>');
+                	$(e.currentTarget).remove();
                     that.currentNotifications = that.notificationCounter[0].innerText;
                     that.countedNotifications(-1);
 				},
