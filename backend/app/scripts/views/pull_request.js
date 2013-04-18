@@ -19,6 +19,7 @@ define([
 		el: '#app-wrapper',
 		inner: '#app',
 		notificationCounter: $('.notification_wrapper .notification_counter'),
+		notifications: $('.notification_wrapper .notifications'),
 		currentNotifications: 0,
 		postModel: {},
 		notificationModel: {},
@@ -68,6 +69,7 @@ define([
 			this.postModel.save(null, {
                 success: function(){
 					locateElement.parents('.pull_request_item').html('<h5>Request:</h5>Request successfully merged!');
+					that.notifications.find('.notification_item[data-id="' + pullRequestId + '"]').remove();
 					that.currentNotifications = that.notificationCounter[0].innerText;
 					that.countedNotifications(-1);
 				},
@@ -94,6 +96,7 @@ define([
 			this.notificationModel.save(null, {
                 success: function(){
 					locateElement.parents('.pull_request_item').html('<h5>Request:</h5>Request successfully removed!');
+					that.notifications.find('.notification_item[data-id="' + pullRequestId + '"]').remove();
 					that.currentNotifications = that.notificationCounter[0].innerText;
 					that.countedNotifications(-1);
 

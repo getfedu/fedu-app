@@ -1,4 +1,4 @@
-<li class="notification_item latest">
+<li class="notification_item latest" data-id="<%= attributes.pullRequestId %>">
 		<%
 		if(attributes.type === 'flag'){
 			print('<a href="' + frontendUrl + '/#detail-view-post/' + attributes.id + '" target="_blank">');

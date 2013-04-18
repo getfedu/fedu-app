@@ -501,13 +501,14 @@ app.get('/flag-post', function(req, res) {
         description: req.query.description,
         checked: false,
         publishDate: moment().format(),
-        updateDate: moment().format()
+        updateDate: moment().format(),
     };
+    collectionNotifications.insert(data, function(err, result) {
+        data.pullRequestId = result[0]._id;
+        socketIo.sockets.emit ('notify-post', data); // websocket
+        res.send(JSON.stringify('OK'));
+    });
 
-    socketIo.sockets.emit ('notify-post', data); // websocket
-    collectionNotifications.insert(data, function() {});
-
-    res.send(JSON.stringify('OK'));
 
 });
 
@@ -523,10 +524,12 @@ app.get('/pull-request', function(req, res) {
         publishDate: moment().format(),
         updateDate: moment().format()
     };
-    socketIo.sockets.emit ('notify-post', data); // websocket
-    collectionNotifications.insert(data, function() {});
+    collectionNotifications.insert(data, function(err, result) {
+        data.pullRequestId = result[0]._id;
+        socketIo.sockets.emit('notify-post', data); // websocket
+        res.send(JSON.stringify('OK'));
+    });
 
-    res.send(JSON.stringify('OK'));
 
 });
 

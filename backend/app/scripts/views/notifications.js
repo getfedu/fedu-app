@@ -17,6 +17,7 @@ define([
 		el: '#app-wrapper',
 		inner: '#app',
 		notificationCounter: $('.notification_wrapper .notification_counter'),
+		notifications: $('.notification_wrapper .notifications'),
 		currentNotifications: 0,
 		collection: {},
 
@@ -61,6 +62,7 @@ define([
                 success: function(){
                 	$(e.currentTarget).parent().html('<i class="icon-ok"></i>');
                 	$(e.currentTarget).remove();
+                	that.notifications.find('.notification_item[data-id="' + id + '"]').remove();
                     that.currentNotifications = that.notificationCounter[0].innerText;
                     that.countedNotifications(-1);
 				},
