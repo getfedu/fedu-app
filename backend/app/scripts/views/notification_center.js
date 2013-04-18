@@ -91,8 +91,6 @@ define([
 
 		},
 
-		// helpers
-		////////////////////////////////////////
 		getData: function(){
 			var that = this;
 			var description = '',

@@ -18,6 +18,8 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		inner: '#app',
+		notificationCounter: $('.notification_wrapper .notification_counter'),
+		currentNotifications: 0,
 		postModel: {},
 		notificationModel: {},
 
@@ -28,7 +30,6 @@ define([
 		},
 
 		initialize: function() {
-			// this.notificationModel = new TheNotficationsModel();
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -46,6 +47,7 @@ define([
 
 		mergePullRequest: function(e){
 			e.preventDefault();
+			var that = this;
 			var locateElement = $(e.currentTarget);
 			var postId = locateElement.attr('data-post-id');
 			var pullRequestId = locateElement.attr('data-pull-request-id');
@@ -66,6 +68,8 @@ define([
 			this.postModel.save(null, {
                 success: function(){
 					locateElement.parents('.pull_request_item').html('<h5>Request:</h5>Request successfully merged!');
+					that.currentNotifications = that.notificationCounter[0].innerText;
+					that.countedNotifications(-1);
 				},
                 error: function(){
 					that.render('#message', _.template(MessageTemplate, { message: 'not merged! something went wrong.', type: 'error'}));
@@ -76,6 +80,7 @@ define([
 
 		removePullRequest: function(e){
 			e.preventDefault();
+			var that = this;
 			var locateElement = $(e.currentTarget);
 			var pullRequestId = locateElement.attr('data-pull-request-id');
 
@@ -89,6 +94,9 @@ define([
 			this.notificationModel.save(null, {
                 success: function(){
 					locateElement.parents('.pull_request_item').html('<h5>Request:</h5>Request successfully removed!');
+					that.currentNotifications = that.notificationCounter[0].innerText;
+					that.countedNotifications(-1);
+
 				},
                 error: function(){
 					that.render('#message', _.template(MessageTemplate, { message: 'not removed! something went wrong.', type: 'error'}));
@@ -99,6 +107,24 @@ define([
 
 		// helpers
 		////////////////////////////////////////
+
+		countedNotifications: function(count){
+			if(count === 1){
+				this.currentNotifications += 1;
+			} else if(count === -1) {
+				this.currentNotifications -= 1;
+			} else {
+				this.currentNotifications = count;
+			}
+
+			this.notificationCounter.show().html(this.currentNotifications);
+
+			if(this.currentNotifications === 0){
+				this.notificationCounter.hide();
+			}
+
+		},
+
 		getData: function(id){
 			var that = this;
 			var templateItems = '';
