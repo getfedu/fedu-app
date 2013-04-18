@@ -49,13 +49,13 @@ define([
 				publishDate = '',
 				templateItems = '';
 
-			this.socket.on('flagPost', function(data){
-
+			// used for flagging and pull request
+			this.socket.on('notify-post', function(data){
 				that.countedNotifications(+1);
 				that.notification.find('.no_notifications').remove();
 				publishDate = new Moment(data.publishDate).format('H:m:s [ Uhr - ] DD.MM.YY');
 				description = (data.description !== '') ? '<span class="description">' + data.description + '</span>' : '';
-				templateItems = _.template(LatestListItemTemplate, {attributes: data, description: description, publishDate: publishDate, frontendUrl: TheConfig.frontendUrl});
+				templateItems = _.template(LatestListItemTemplate, {attributes: data, description: description, publishDate: publishDate, frontendUrl: TheConfig.frontendUrl, backendUrl: TheConfig.backendUrl});
 				that.notification.prepend(templateItems);
 
 			});
@@ -67,7 +67,7 @@ define([
 
 			if(locateCurrentTarget.hasClass('latest')){
 				locateCurrentTarget.removeClass('latest');
-				this.countedNotifications(-1);
+				//this.countedNotifications(-1);
 			}
 
 		},
@@ -91,8 +91,6 @@ define([
 
 		},
 
-		// helpers
-		////////////////////////////////////////
 		getData: function(){
 			var that = this;
 			var description = '',
@@ -103,13 +101,13 @@ define([
 				that.oldNotifications = true;
 				publishDate = new Moment(value.attributes.publishDate).format('H:m:s [ Uhr - ] DD.MM.YY');
 				description = (value.attributes.description !== '') ? '<span class="description">' + value.attributes.description + '</span>' : '';
-				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, description: description, publishDate: publishDate, frontendUrl: TheConfig.frontendUrl});
+				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, description: description, publishDate: publishDate, frontendUrl: TheConfig.frontendUrl, backendUrl: TheConfig.backendUrl});
 			});
 
 			this.notification.append(templateItems);
 
 			if(!this.oldNotifications){
-				this.notification.html('<li class="no_notifications"><span>No old Notifications exists!</span></li>');
+				this.notification.html('<li class="no_notifications"><span>No Notifications exists!</span></li>');
 				this.oldNotifications = true;
 			} else {
 				this.notification.append('<li class="show_all"><a href="' + TheConfig.backendUrl + '/#list-notifications">List all Notifications</a></li>');

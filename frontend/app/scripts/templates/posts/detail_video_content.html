@@ -24,13 +24,58 @@
 	        </ul>
 		</div>
 		<div class="additional span7">
-			additionals info
-			<form id="flag_post">
-				<textarea name="flag-description" placeholder="Write your flag post description here..." rows="3"></textarea>
-				<input type="hidden" name="flag-id" value="<%=attributes._id %>" />
-				<input type="hidden" name="flag-title" value="<%=attributes.title %>" />
-				<input type="submit" class="btn flag_submit" value="flag it">
-			</form>
+			<button type="button" class="btn" data-toggle="modal" data-target="#flag_modal"><i class="icon-flag"></i> flag it</button>
+			<button type="button" class="btn" data-toggle="modal" data-target="#pull_request_modal"><i class="icon-link"></i> pull request</button>
 		</div>
 	</div>
+</div>
+
+<!-- Modal flagging -->
+<div id="flag_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<form id="flag_post">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel"><i class="icon-flag"></i> Flag this post</h3>
+		</div>
+		<div class="modal-body">
+			<p>You want to flag this post? Please select one reason.</p>
+			<select name="description">
+				<option>Audio and video stutter</option>
+				<option>Video stutters, but audio is fine</option>
+				<option>Audio and video arent´s synced</option>
+				<option>Content is not legal</option>
+			</select>
+			<input type="hidden" name="flag-id" value="<%=attributes._id %>" />
+			<input type="hidden" name="flag-title" value="<%=attributes.title %>" />
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<input type="submit"  class="btn btn-primary flag_submit" value="flag it">
+		</div>
+	</form>
+</div>
+
+
+<!-- Modal pull request -->
+<div id="pull_request_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<form id="pull_request">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel"><i class="icon-link"></i>  Pull request</h3>
+		</div>
+		<div class="modal-body">
+			<p>You have additional infos? Please let us know!</p>
+			<div class="well well-small">
+				<h5>Please insert your link & title:</h5>
+				<input type="text" name="title" class="span12" placeholder="Titel">
+				<input type="text" name="url" class="span12" placeholder="Link to your additional source">
+			</div>
+			<input type="hidden" name="pull-request-id" value="<%=attributes._id %>" />
+			<input type="hidden" name="pull-title" value="<%=attributes.title %>" />
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<input type="submit"  class="btn btn-primary pull_request_submit" value="pull request">
+		</div>
+	</form>
 </div>

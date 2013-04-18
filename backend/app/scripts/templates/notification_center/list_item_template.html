@@ -1,5 +1,19 @@
 <li class="notification_item" data-id="<%= attributes._id %>">
-	<a href="<%= frontendUrl %>/#detail-view-post/<%= attributes.id %>" target="_blank">
-		<strong><%= attributes.title %></strong><%= description %><h6><%= publishDate %></h6>
+	<%
+	if(attributes.type === 'flag'){
+		print('<a href="' + frontendUrl + '/#detail-view-post/' + attributes.id + '" target="_blank">');
+		print('<i class="icon-flag" title="flagged post"></i>');
+
+	} else if(attributes.type === 'pull-request') {
+		print('<a href="' + backendUrl + '/#pull-request/' + attributes.id + '">');
+		print('<i class="icon-link" title="pull request"></i>');
+
+	} else{
+		print('<a href="' + frontendUrl + '/#detail-view-post/' + attributes.id + '" target="_blank">');
+		print('<i class="icon-comment" title="message"></i>');
+
+	}
+	%>	
+	<strong><%= attributes.title %></strong><%= description %><h6><%= publishDate %></h6>
 	</a>
 </li>

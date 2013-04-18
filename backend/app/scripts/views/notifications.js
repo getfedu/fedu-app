@@ -16,6 +16,8 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		inner: '#app',
+		notificationCounter: $('.notification_wrapper .notification_counter'),
+		currentNotifications: 0,
 		collection: {},
 
 		// delegated events
@@ -45,6 +47,7 @@ define([
 
 		updateNotifications: function(e){
 			e.preventDefault();
+			var that = this;
 			var id = $(e.currentTarget).attr('data-notification-id');
 			var model = this.collection.get(id);
 
@@ -57,6 +60,8 @@ define([
 			model.save(null, {
                 success: function(){
                     Backbone.history.loadUrl( Backbone.history.fragment ); // refresh site without any hash changes
+                    that.currentNotifications = that.notificationCounter[0].innerText;
+                    that.countedNotifications(-1);
 				},
                 error: function(){
 					//console.log('sorry');
@@ -73,7 +78,24 @@ define([
 				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, frontendUrl: TheConfig.frontendUrl});
 			});
 			this.render('#notifications_list', templateItems);
-		}
+		},
+
+		countedNotifications: function(count){
+			if(count === 1){
+				this.currentNotifications += 1;
+			} else if(count === -1) {
+				this.currentNotifications -= 1;
+			} else {
+				this.currentNotifications = count;
+			}
+
+			this.notificationCounter.show().html(this.currentNotifications);
+
+			if(this.currentNotifications === 0){
+				this.notificationCounter.hide();
+			}
+
+		},
 
 	});
 

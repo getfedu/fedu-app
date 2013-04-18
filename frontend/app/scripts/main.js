@@ -33,6 +33,11 @@ require.config({
 			deps: [
 				'backbone'
 			]
+		},
+		bootstrapModal: {
+			deps: [
+				'jquery'
+			]
 		}
 	},
 	paths: {
@@ -43,7 +48,8 @@ require.config({
 		text: '../components/requirejs-text/text',
 		bootstrapCollapse: '../components/sass-bootstrap/js/bootstrap-collapse',
 		bootstrapTooltip: '../components/sass-bootstrap/js/bootstrap-tooltip',
-		bootstrapPopover: '../components/sass-bootstrap/js/bootstrap-popover'
+		bootstrapPopover: '../components/sass-bootstrap/js/bootstrap-popover',
+		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal'
 	}
 });
 
@@ -53,7 +59,8 @@ require([
 	'bootstrapCollapse',
 	'bootstrapTooltip',
 	'bootstrapPopover',
-], function(Router, $, BootstrapCollapse, BootstrapTooltip, BootstrapPopover) {
+	'bootstrapModal'
+], function(Router, $, BootstrapCollapse, BootstrapTooltip, BootstrapPopover, BootstrapModal) {
 	'use strict';
 
 	new Router();
