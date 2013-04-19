@@ -17,6 +17,7 @@ var collectionPosts = {};
 var collectionTags = {};
 var collectionNotifications = {};
 var collectionUser = {};
+var store  = new express.session.MemoryStore;
 
 // init
 ///////////////////////////////////////////////////////////
@@ -41,9 +42,10 @@ var init = {
         app = express();
         app.configure(function() {
             app.use(express.static('public'));
-            app.use(express.cookieParser('keyboard cat'));
+            app.use(express.cookieParser());
             app.use(express.bodyParser());
-            app.use(express.cookieSession({ secret: 'keyboard cato', cookie: { path: '/', httpOnly: false, maxAge: null }}));
+            // app.use(express.cookieSession({ secret: 'keyboard cato', cookie: { path: '/', httpOnly: true, maxAge: null }}));
+            app.use(express.session(({ secret: 'keyboard cat', key: 'sid', store: this.store })));
             app.use(passport.initialize());
             app.use(passport.session());
             app.use(app.router);
@@ -113,6 +115,8 @@ app.post('/login', function(req, res, next) {
             if (err) {
                 return next(err);
             }
+            console.log(req.sessionStore);
+            console.log(store);
             res.send('Authorization succeeded!');
             return;
         });
