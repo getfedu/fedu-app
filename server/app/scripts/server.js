@@ -242,15 +242,15 @@ app.put('/post/:id', function(req, res) {
 
         collectionPosts.findOne({'_id': oId }, function(err, result){
 
-            if(!result.additonalInfo){ // check if additonalInfo already exists and add the info to the post
+            if(!result.additionalInfo){ // check if additonalInfo already exists and add the info to the post
 
                 data = {
                     $set: {
                         updateDate: moment().format(),
-                        additonalInfo: [{
+                        additionalInfo: [{
                             pullRequestTitle: req.body.pullRequestTitle,
                             pullRequestUrl: req.body.pullRequestUrl,
-                            pullRequestPulishDate: moment().format()
+                            pullRequestPublishDate: moment().format()
                         }]
                     }
                 };
@@ -261,10 +261,10 @@ app.put('/post/:id', function(req, res) {
                         updateDate: moment().format(),
                     },
                     $push:{
-                        additonalInfo: {
+                        additionalInfo: {
                             pullRequestTitle: req.body.pullRequestTitle,
                             pullRequestUrl: req.body.pullRequestUrl,
-                            pullRequestPulishDate: moment().format()
+                            pullRequestPublishDate: moment().format()
                         }
                     }
                 };

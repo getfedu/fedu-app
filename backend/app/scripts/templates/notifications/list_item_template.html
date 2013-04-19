@@ -1,13 +1,39 @@
 <tr data-id="<%= attributes._id %>">
-    <td><a href="<%= frontendUrl%>/#detail-view-post/<%= attributes.id %>" target="_blank"><%= attributes.title %></a></td>
+    <td><%
+        if(attributes.type === 'flag'){
+            print('<i class="icon-flag" title="flagged post"></i>');
+            print('<a href="' + frontendUrl + '/#detail-view-post/' + attributes.id + '" target="_blank"> ' + attributes.title + '</a>');
+
+        } else if(attributes.type === 'pull-request') {
+            print('<i class="icon-link" title="pull request"></i>');
+            print('<a href="' + backendUrl + '/#pull-request/' + attributes.id + '"> ' + attributes.title + '</a>');
+
+        } else{
+            print('<i class="icon-comment" title="message"></i>');
+            print('<a href="' + frontendUrl + '/#detail-view-post/' + attributes.id + '" target="_blank"> ' + attributes.title + '</a>');
+
+        }
+    %></td>
     <td><%= attributes.description %></td>
     <td><%= attributes.publishDate %></td>
     <td><%= attributes.updateDate %></td>
     <td><% 
-    if(attributes.checked){
-    	print('<i class="icon-ok"></i>');
-    } else {
-    	print('<button type="button" class="btn btn-primary" data-notification-id="' + attributes._id + '">checked</button>');
-    }
+        if(attributes.checked){
+        	print('<i class="icon-ok"></i>');
+        } else {
+
+            if(attributes.type === 'flag'){
+                print('<button type="button" class="btn btn-primary" data-notification-id="' + attributes._id + '"><i class="icon-ok"></i> check</button>');
+
+            } else if(attributes.type === 'pull-request') {
+                print('<a href="' + backendUrl + '/#pull-request/' + attributes.id + '" class="btn btn-primary"><i class="icon-edit" title="pull request"></i> view </a> ');
+                print('<button type="button" class="btn" data-notification-id="' + attributes._id + '"><i class="icon-remove" ></i> remove</button>');
+
+            } else{
+            	print('<button type="button" class="btn btn-primary" data-notification-id="' + attributes._id + '">checked</button>');
+
+            }            
+
+        }
     %></td>
 </tr>

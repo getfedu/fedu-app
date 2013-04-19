@@ -91,6 +91,7 @@ define([
 
 		listPost: function(results){
 			var templateDetailView = '';
+			var blubb = results[0];
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0]});
 
 			this.render('.detail_view', templateDetailView);

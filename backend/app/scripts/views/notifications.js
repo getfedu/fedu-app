@@ -63,7 +63,7 @@ define([
                 	$(e.currentTarget).parent().html('<i class="icon-ok"></i>');
                 	$(e.currentTarget).remove();
                 	that.notifications.find('.notification_item[data-id="' + id + '"]').remove();
-                    that.currentNotifications = that.notificationCounter[0].innerText;
+                    that.currentNotifications = that.notificationCounter.text();
                     that.countedNotifications(-1);
 				},
                 error: function(){
@@ -78,7 +78,7 @@ define([
 		getData: function(){
 			var templateItems = '';
 			_.each(this.collection.models, function(value){
-				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, frontendUrl: TheConfig.frontendUrl});
+				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, frontendUrl: TheConfig.frontendUrl, backendUrl: TheConfig.backendUrl });
 			});
 			this.render('#notifications_list', templateItems);
 		},
