@@ -21,7 +21,15 @@
 	                    print('<li><span class="label label-inverse tag"><a href="' + encodeURI('#search/[' + value + ']')  + '">' + value + '</a></span></li>');
 	                });
 	            %>
-	        </ul>
+	        </ul><br />
+	        ADDITIONAL INFOS:<br />
+            <ol>
+    	        <%
+                    _.each(attributes.additionalInfo, function(value){
+                        print('<li class="list"><a href="' + encodeURI(value.pullRequestUrl)  + '" target="_blank">' + value.pullRequestTitle + '</a><br />(merged: ' + value.pullRequestPublishDate + ')</li>');
+                    });
+                %>
+            </ol>
 		</div>
 		<div class="additional span7">
 			<button type="button" class="btn" data-toggle="modal" data-target="#flag_modal"><i class="icon-flag"></i> flag it</button>

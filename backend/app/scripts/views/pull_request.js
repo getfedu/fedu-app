@@ -19,6 +19,7 @@ define([
 		el: '#app-wrapper',
 		inner: '#app',
 		notificationCounter: $('.notification_wrapper .notification_counter'),
+		notifications: $('.notification_wrapper .notifications'),
 		currentNotifications: 0,
 		postModel: {},
 		notificationModel: {},
@@ -68,7 +69,8 @@ define([
 			this.postModel.save(null, {
                 success: function(){
 					locateElement.parents('.pull_request_item').html('<h5>Request:</h5>Request successfully merged!');
-					that.currentNotifications = that.notificationCounter[0].innerText;
+					that.notifications.find('.notification_item[data-id="' + pullRequestId + '"]').remove();
+					that.currentNotifications = that.notificationCounter.text();
 					that.countedNotifications(-1);
 				},
                 error: function(){
@@ -94,7 +96,8 @@ define([
 			this.notificationModel.save(null, {
                 success: function(){
 					locateElement.parents('.pull_request_item').html('<h5>Request:</h5>Request successfully removed!');
-					that.currentNotifications = that.notificationCounter[0].innerText;
+					that.notifications.find('.notification_item[data-id="' + pullRequestId + '"]').remove();
+					that.currentNotifications = that.notificationCounter.text();
 					that.countedNotifications(-1);
 
 				},
@@ -149,7 +152,7 @@ define([
 							});
 
 							if(!itemExist){
-								that.render($('.pull_requests_wrapper .pull_requests'), '<strong>Sorry</strong>, no pull request exists!');
+								that.render($('.pull_requests_wrapper .pull_requests'), '<strong>Sorry</strong>, no new pull request exists!');
 							} else {
 								that.render($('.pull_requests_wrapper .pull_requests'), _.template(templateItems));
 							}

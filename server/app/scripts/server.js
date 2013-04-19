@@ -246,15 +246,15 @@ app.put('/post/:id', function(req, res) {
 
         collectionPosts.findOne({'_id': oId }, function(err, result){
 
-            if(!result.additonalInfo){ // check if additonalInfo already exists and add the info to the post
+            if(!result.additionalInfo){ // check if additonalInfo already exists and add the info to the post
 
                 data = {
                     $set: {
                         updateDate: moment().format(),
-                        additonalInfo: [{
+                        additionalInfo: [{
                             pullRequestTitle: req.body.pullRequestTitle,
                             pullRequestUrl: req.body.pullRequestUrl,
-                            pullRequestPulishDate: moment().format()
+                            pullRequestPublishDate: moment().format()
                         }]
                     }
                 };
@@ -265,10 +265,10 @@ app.put('/post/:id', function(req, res) {
                         updateDate: moment().format(),
                     },
                     $push:{
-                        additonalInfo: {
+                        additionalInfo: {
                             pullRequestTitle: req.body.pullRequestTitle,
                             pullRequestUrl: req.body.pullRequestUrl,
-                            pullRequestPulishDate: moment().format()
+                            pullRequestPublishDate: moment().format()
                         }
                     }
                 };
@@ -505,13 +505,14 @@ app.get('/flag-post', function(req, res) {
         description: req.query.description,
         checked: false,
         publishDate: moment().format(),
-        updateDate: moment().format()
+        updateDate: moment().format(),
     };
+    collectionNotifications.insert(data, function(err, result) {
+        data.pullRequestId = result[0]._id;
+        socketIo.sockets.emit ('notify-post', data); // websocket
+        res.send(JSON.stringify('OK'));
+    });
 
-    socketIo.sockets.emit ('notify-post', data); // websocket
-    collectionNotifications.insert(data, function() {});
-
-    res.send(JSON.stringify('OK'));
 
 });
 
@@ -527,10 +528,12 @@ app.get('/pull-request', function(req, res) {
         publishDate: moment().format(),
         updateDate: moment().format()
     };
-    socketIo.sockets.emit ('notify-post', data); // websocket
-    collectionNotifications.insert(data, function() {});
+    collectionNotifications.insert(data, function(err, result) {
+        data.pullRequestId = result[0]._id;
+        socketIo.sockets.emit('notify-post', data); // websocket
+        res.send(JSON.stringify('OK'));
+    });
 
-    res.send(JSON.stringify('OK'));
 
 });
 
