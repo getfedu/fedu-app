@@ -1,5 +1,5 @@
 <form action="#" id="edit_post" method="POST" class="span7" data-id="<%= cid %>">
-    <fieldset class="row-fluid">
+    <fieldset class="row-fluid post_data">
         <legend>Edit the Post</legend>
 
         <label>Video Id</label>
@@ -19,10 +19,24 @@
             <input type="text" class="typeahead" placeholder="enter some tags" data-provide="typeahead" autocomplete="off">
             <input type="hidden" name="tags" value="<%= attributes.tags %>">
         </div>
+    </fieldset>
+    <fieldset class="row-fluid post_additional_data">
+
+        <label>Additional Infos:</label>
+        <%
+            _.each(attributes.additionalInfo, function(value){
+                print('<div class="additional_wrapper_item">');
+                    print('<label>Info:</label>');
+                    print('<input type="text" name="pullRequestTitle" class="span12" placeholder="Pull request title" value="' + value.pullRequestTitle + '">');
+                    print('<input type="text" name="pullRequestUrl" class="span12" placeholder="Pull request url" value="' + value.pullRequestUrl + '">');
+                    print('<button class="btn remove"><i class="icon-remove" ></i> Remove</button>');
+                print('</div>');
+            });
+        %>
+    </fieldsest>
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Save Changes</button>
             <button type="button" class="btn cancel_post">Cancel</button>
         </div>
-    </fieldset>
 </form>
