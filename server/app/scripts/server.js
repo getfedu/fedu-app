@@ -613,6 +613,29 @@ app.get('/account', authentication.ensureAuthenticated, function(req, res){
     res.send('ok');
 });
 
+app.post('/register', function(req, res){
+
+    var username = req.body.username;
+    var saltedPassword = crypto.createHmac('sha256', 'aGvcVZtRMjdddFxtjyur5vwpNIKp2i' + username);
+    saltedPassword.update(req.body.password);
+    saltedPassword = saltedPassword.digest('hex');
+
+    var userObj = {
+        username: username,
+        password: saltedPassword
+    };
+
+    collectionUser.findOne({ username: username }, function(err, user) {
+        if(user){
+            res.send('Username already in use');
+        } else {
+            collectionUser.insert(userObj, function() {
+                res.send(JSON.stringify('Registred'));
+            });
+        }
+    });
+});
+
 // server listen on port X
 ///////////////////////////////////////////////////////////
 app.listen(3100);

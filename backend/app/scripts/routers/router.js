@@ -24,6 +24,7 @@ define([
 			'edit-tag' : 'editTag',
 			'list-notifications' : 'listNotifications',
 			'login' : 'login',
+			'register' : 'register',
 			'pull-request/:id' : 'pullRequest',
 			'*actions': 'defaultAction'
 		},
@@ -69,6 +70,10 @@ define([
 		//Login
 		login: function(){
 			this.appView.login();
+		},
+
+		register: function(){
+			this.appView.register();
 		},
 
 		defaultAction: function() {
