@@ -77,82 +77,56 @@ var init = {
     }
 };
 
+// Authentication
+///////////////////////////////////////////////////////////
+var authentication = {
+    init: function(){
+        passport.use(new LocalStrategy(
+            function(username, password, done) {
+                collectionUser.findOne({ username: username }, function(err, user) {
+                    if(err){
+                        return done(err);
+                    }
+                    if(!user){
+                        return done(null, false, { message: 'Incorrect username.' });
+                    }
+                    if(user.password !== password){
+                        return done(null, false, { message: 'Incorrect password.' });
+                    }
+                    return done(null, user);
+                });
+            }
+        ));
+
+        passport.serializeUser(function(user, done) {
+            var userId = user._id;
+            console.log(user._id);
+            done(null, userId.toHexString());
+        });
+
+        passport.deserializeUser(function(id, done) {
+            var BSON = mongodb.BSONPure;
+            var userId = new BSON.ObjectID(id);
+            collectionUser.findOne({'_id': userId}, function(err, user) {
+                console.log(err, user);
+                done(err, user);
+            });
+        });
+    },
+
+    ensureAuthenticated: function(req, res, next){
+        if (req.isAuthenticated()){
+            return next();
+        }
+        res.status(401);
+        res.send('Unauthroized!');
+    }
+};
+
 init.db();
 init.express();
 init.socketIo();
-
-// Passport
-///////////////////////////////////////////////////////////
-
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-        collectionUser.findOne({ username: username }, function(err, user) {
-            if(err){
-                return done(err);
-            }
-            if(!user){
-                return done(null, false, { message: 'Incorrect username.' });
-            }
-            if(user.password !== password){
-                return done(null, false, { message: 'Incorrect password.' });
-            }
-            return done(null, user);
-        });
-    }
-));
-
-function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()){
-        return next();
-    }
-    res.status(401);
-    res.send('Unauthroized!');
-}
-
-passport.serializeUser(function(user, done) {
-    var userId = user._id;
-    console.log(user._id);
-    done(null, userId.toHexString());
-});
-
-passport.deserializeUser(function(id, done) {
-    var BSON = mongodb.BSONPure;
-    var userId = new BSON.ObjectID(id);
-    collectionUser.findOne({'_id': userId}, function(err, user) {
-        console.log(err, user);
-        done(err, user);
-    });
-});
-
-app.post('/login', function(req, res, next) {
-    passport.authenticate('local', function(err, user) {
-        if (err) {
-            return next(err);
-        }
-        if (!user) {
-            res.status(401);
-            res.send('Authorization failed!');
-            return;
-        }
-        req.logIn(user, function(err) {
-            if (err) {
-                return next(err);
-            }
-            res.send('Authorization succeeded!');
-            return;
-        });
-    })(req, res, next);
-});
-
-app.get('/logout', ensureAuthenticated, function(req, res){
-    req.logout();
-    res.send('logged out');
-});
-
-app.get('/account', ensureAuthenticated, function(req, res){
-    console.log(req.session);
-    res.send(req.user);
-});
+authentication.init();
 
 // Helper Functions
 ///////////////////////////////////////////////////////////
@@ -231,7 +205,6 @@ app.get('/post', function(req, res) {
         res.setHeader('Content-Type', 'application/json');
         res.send(results);
     });
-
 });
 
 // Read a single Post from db
@@ -244,7 +217,6 @@ app.get('/post/:id', function(req, res) {
             res.send(results);
         });
     }
-
 });
 
 // Update Post in db
@@ -430,7 +402,6 @@ app.get('/search', function(req, res) {
         res.setHeader('Content-Type', 'application/json');
         res.send(results);
     });
-
 });
 
 
@@ -527,8 +498,6 @@ app.get('/flag-post', function(req, res) {
         socketIo.sockets.emit ('notify-post', data); // websocket
         res.send(JSON.stringify('OK'));
     });
-
-
 });
 
 app.get('/pull-request', function(req, res) {
@@ -548,8 +517,6 @@ app.get('/pull-request', function(req, res) {
         socketIo.sockets.emit('notify-post', data); // websocket
         res.send(JSON.stringify('OK'));
     });
-
-
 });
 
 app.get('/notification', function(req, res) {
@@ -573,7 +540,6 @@ app.get('/notification', function(req, res) {
         });
 
     }
-
 });
 
 app.get('/notification/:id', function(req, res) {
@@ -612,7 +578,39 @@ app.put('/notification/:id', function(req, res) {
     collectionNotifications.update({'_id': oId }, body, function(){
         res.send(JSON.stringify('OK'));
     });
+});
 
+// Login
+///////////////////////////////////////////////////////////
+
+app.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user) {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            res.status(401);
+            res.send('Authorization failed!');
+            return;
+        }
+        req.logIn(user, function(err) {
+            if (err) {
+                return next(err);
+            }
+            res.send('Authorization succeeded!');
+            return;
+        });
+    })(req, res, next);
+});
+
+app.get('/logout', authentication.ensureAuthenticated, function(req, res){
+    req.logout();
+    res.send('logged out');
+});
+
+app.get('/account', authentication.ensureAuthenticated, function(req, res){
+    console.log(req.session);
+    res.send(req.user);
 });
 
 // server listen on port X
