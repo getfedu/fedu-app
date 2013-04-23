@@ -1,13 +1,13 @@
 'use strict';
-var express = require('../../node_modules/express');
-var mongodb = require('../../node_modules/mongodb');
-var request = require('../../node_modules/request');
-var moment = require('../../node_modules/moment');
-require('../../node_modules/moment-isoduration');
-require('../../node_modules/socket.io');
-
+var express = require('express');
+var mongodb = require('mongodb');
+var request = require('request');
+var moment = require('moment');
+require('moment-isoduration');
+require('socket.io');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var crypto = require('crypto');
 
 var app = null;
 var appSocketIo = null;
@@ -83,6 +83,9 @@ var authentication = {
     init: function(){
         passport.use(new LocalStrategy(
             function(username, password, done) {
+                var saltedPassword = crypto.createHmac('sha256', 'aGvcVZtRMjdddFxtjyur5vwpNIKp2i' + username);
+                saltedPassword.update(password);
+                saltedPassword = saltedPassword.digest('hex');
                 collectionUser.findOne({ username: username }, function(err, user) {
                     if(err){
                         return done(err);
@@ -90,7 +93,7 @@ var authentication = {
                     if(!user){
                         return done(null, false, { message: 'Incorrect username.' });
                     }
-                    if(user.password !== password){
+                    if(user.password !== saltedPassword){
                         return done(null, false, { message: 'Incorrect password.' });
                     }
                     return done(null, user);
@@ -100,7 +103,6 @@ var authentication = {
 
         passport.serializeUser(function(user, done) {
             var userId = user._id;
-            console.log(user._id);
             done(null, userId.toHexString());
         });
 
@@ -108,7 +110,6 @@ var authentication = {
             var BSON = mongodb.BSONPure;
             var userId = new BSON.ObjectID(id);
             collectionUser.findOne({'_id': userId}, function(err, user) {
-                console.log(err, user);
                 done(err, user);
             });
         });
@@ -258,7 +259,6 @@ app.put('/post/:id', function(req, res) {
                         }
                     }
                 };
-
             }
 
             // update post
@@ -279,7 +279,6 @@ app.put('/post/:id', function(req, res) {
         });
 
     } else {
-        console.log(req.body);
         collectionPosts.findOne({'_id': oId }, function(err, result){
             checkTags.init(result.tags, false);
         });
@@ -605,12 +604,13 @@ app.post('/login', function(req, res, next) {
 
 app.get('/logout', authentication.ensureAuthenticated, function(req, res){
     req.logout();
+    res.cookie('connect.sid', '');
     res.send('logged out');
 });
 
 app.get('/account', authentication.ensureAuthenticated, function(req, res){
-    console.log(req.session);
-    res.send(req.user);
+    console.log(req.sessionStore);
+    res.send('ok');
 });
 
 // server listen on port X

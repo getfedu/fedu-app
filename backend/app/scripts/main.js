@@ -62,7 +62,7 @@ require.config({
 		socketIo: '../components/socket.io-client/dist/socket.io',
 		bootstrapDropdown: '../components/sass-bootstrap/js/bootstrap-dropdown',
 		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator',
-		jqueryCookie: '../components/jquery.cookie/jquery.cookie'
+		jqueryCookie: '../components/jquery.cookie/jquery.cookie',
 	}
 });
 

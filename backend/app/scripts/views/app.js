@@ -5,6 +5,7 @@ define([
 	'socketIo',
 	'vendor/fedu/config',
 	'text!../templates/login_template.html',
+	'../vendor/sha256',
 	'jqueryCookie'
 ], function( $, _, Backbone, SocketIo, TheConfig, LoginTemplate) {
 	'use strict';
@@ -50,7 +51,6 @@ define([
 		},
 
 		account: function(){
-			console.log(this.userId);
 			$.ajax({
 				url: TheConfig.nodeUrl + '/account',
 				xhrFields: {
@@ -80,7 +80,8 @@ define([
 		handleLogin: function(e) {
 			e.preventDefault();
 			var data = $(e.currentTarget).serializeArray();
-
+			var password = data[0].value;
+			password = CryptoJS.SHA256(password).toString();
 			$.ajax({
 				type: 'POST',
 				url: TheConfig.nodeUrl + '/login',
@@ -89,7 +90,7 @@ define([
 				},
 				data: {
 					username: data[0].value,
-					password: data[1].value
+					password: password
 				}
 			}).done(function(){
 			}).fail(function(error){
