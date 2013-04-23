@@ -2,9 +2,11 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
+	'socketIo',
+	'vendor/fedu/config',
 	'text!../templates/login_template.html',
 	'jqueryCookie'
-], function( $, _, Backbone, LoginTemplate) {
+], function( $, _, Backbone, SocketIo, TheConfig, LoginTemplate) {
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -15,6 +17,7 @@ define([
 		inner: '#app',
 		collection: {},
 		data: {},
+		socket: null,
 
 		// compile template
 
@@ -47,10 +50,13 @@ define([
 		},
 
 		account: function(){
+			console.log(this.userId);
 			$.ajax({
-				url: 'http://localhost:3100/account'
-			}).done(function(r){
-				console.log(r);
+				url: TheConfig.nodeUrl + '/account',
+				xhrFields: {
+					withCredentials: true
+				}
+			}).done(function(){
 			}).fail(function(error){
 				console.log(error.responseText);
 			});
@@ -58,13 +64,11 @@ define([
 
 		logout: function(){
 			$.ajax({
-				type: 'POST',
-				url: 'http://localhost:3100/logout',
-				data: {
-					userId: '516e6b10fc12f90441000001'
+				url: TheConfig.nodeUrl + '/logout',
+				xhrFields: {
+					withCredentials: true
 				}
-			}).done(function(r){
-				console.log(r);
+			}).done(function(){
 			}).fail(function(error){
 				console.log(error.responseText);
 			});
@@ -72,25 +76,24 @@ define([
 
 		// helper functions
 		////////////////////////////////////////
+
 		handleLogin: function(e) {
 			e.preventDefault();
 			var data = $(e.currentTarget).serializeArray();
 
-			var jqXHR = $.ajax({
+			$.ajax({
 				type: 'POST',
-				url: 'http://localhost:3100/login',
+				url: TheConfig.nodeUrl + '/login',
+				xhrFields: {
+					withCredentials: true
+				},
 				data: {
 					username: data[0].value,
 					password: data[1].value
 				}
+			}).done(function(){
 			}).fail(function(error){
 				console.log(error.responseText);
-			});
-
-			jqXHR.done(function(data, textStatus, jqXHR) {
-				console.log(jqXHR.getResponseHeader('Set-Cookie'));
-				console.log(data);
-				this.data = data;
 			});
 		},
 

@@ -5,7 +5,6 @@ var request = require('../../node_modules/request');
 var moment = require('../../node_modules/moment');
 require('../../node_modules/moment-isoduration');
 require('../../node_modules/socket.io');
-// var removeDiacritics = require('diacritics').remove;
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -17,7 +16,6 @@ var collectionPosts = {};
 var collectionTags = {};
 var collectionNotifications = {};
 var collectionUser = {};
-var store  = new express.session.MemoryStore;
 
 // init
 ///////////////////////////////////////////////////////////
@@ -38,24 +36,36 @@ var init = {
         });
     },
 
+    allowedOrigin: function(url){
+        var array = ['http://localhost:9100', 'http://localhost:9000'];
+        if(array.indexOf(url) !== -1){
+            return url;
+        } else {
+            return '';
+        }
+    },
+
     express: function(){
         app = express();
         app.configure(function() {
             app.use(express.static('public'));
             app.use(express.cookieParser());
+            app.use(express.session({ secret: 'aGvcVZtRMjdddFxtjyur5vwpNIKp2i', cookie: { secure: false }}));
             app.use(express.bodyParser());
-            // app.use(express.cookieSession({ secret: 'keyboard cato', cookie: { path: '/', httpOnly: true, maxAge: null }}));
-            app.use(express.session(({ secret: 'keyboard cat', key: 'sid', store: this.store })));
             app.use(passport.initialize());
             app.use(passport.session());
             app.use(app.router);
         });
+
+        var that = this;
         app.all('*', function(req, res, next) {
-            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Origin', that.allowedOrigin(req.headers.origin));
             res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT');
             res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+            res.header('Access-Control-Allow-Credentials', 'true');
             next();
         });
+
     },
 
     socketIo: function(){
@@ -91,12 +101,25 @@ passport.use(new LocalStrategy(
     }
 ));
 
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()){
+        return next();
+    }
+    res.status(401);
+    res.send('Unauthroized!');
+}
+
 passport.serializeUser(function(user, done) {
-    done(null, user._id);
+    var userId = user._id;
+    console.log(user._id);
+    done(null, userId.toHexString());
 });
 
-passport.deserializeUser(function(_id, done) {
-    collectionUser.findById(_id, function(err, user) {
+passport.deserializeUser(function(id, done) {
+    var BSON = mongodb.BSONPure;
+    var userId = new BSON.ObjectID(id);
+    collectionUser.findOne({'_id': userId}, function(err, user) {
+        console.log(err, user);
         done(err, user);
     });
 });
@@ -115,28 +138,19 @@ app.post('/login', function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(req.sessionStore);
-            console.log(store);
             res.send('Authorization succeeded!');
             return;
         });
     })(req, res, next);
 });
 
-app.post('/logout', function(req, res){
-    var BSON = mongodb.BSONPure;
-    req.user = { _id: new BSON.ObjectID(req.params.userId) };
-    if(req.isAuthenticated){
-        req.logout();
-        req.session = null;
-        res.send('logged out');
-    } else {
-        res.status(401);
-        res.send('Unauthroized!');
-    }
+app.get('/logout', ensureAuthenticated, function(req, res){
+    req.logout();
+    res.send('logged out');
 });
 
-app.get('/account', function(req, res){
+app.get('/account', ensureAuthenticated, function(req, res){
+    console.log(req.session);
     res.send(req.user);
 });
 
@@ -212,7 +226,7 @@ app.post('/post', function(req, res) {
 app.get('/post', function(req, res) {
     var top = parseInt(req.query.top, 0);
     var skip = parseInt(req.query.skip, 0);
-
+    console.log(req.session);
     collectionPosts.find().skip(skip).limit(top).sort({ _id: -1}).toArray(function(err, results){
         res.setHeader('Content-Type', 'application/json');
         res.send(results);
