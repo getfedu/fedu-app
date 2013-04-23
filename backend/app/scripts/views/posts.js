@@ -50,6 +50,7 @@ define([
 			'click .tag': function(e){ this.removeTag($(e.currentTarget)); },
 			'typeahead:autocompleted': function(e){ this.addTag(e.target, e.target.value); },
 			'typeahead:selected': function(e){ this.addTag(e.target, e.target.value); },
+			'click #edit_post .additional_wrapper_item .remove': 'removeAdditionalWrapperItem'
 		},
 
 		initialize: function(){
@@ -97,6 +98,10 @@ define([
 
 		},
 
+		removeAdditionalWrapperItem: function(e){
+			$(e.currentTarget).parent().remove();
+		},
+
 		// helpers
 		////////////////////////////////////////
 
@@ -140,20 +145,26 @@ define([
 
 		updatePost: function(e){
 			e.preventDefault();
+			var arrayPostData = $('.post_data :input.changed').serializeArray();
+			var arrayPostAdditionalData = $('.post_additional_data').serializeArray();
 
-			var array = $(':input.changed').serializeArray();
 			var data = {
 				updateDate: new Moment().format()
 			};
-			_.each(array, function(value){
+
+			_.each(arrayPostData, function(value){
 				if(value.name === 'tags'){
 					var array = value.value.split(',');
 					array.pop();
 					data[value.name] = array;
 				} else {
+					console.log(value.name, value.value);
 					data[value.name] = value.value;
 				}
 			});
+
+			data['additionalInfo'] = this.generateAdditionalDataObject(arrayPostAdditionalData);
+
 			var that = this;
 			var id = $(e.currentTarget).attr('data-id');
 			var model = this.collection.get(id);
@@ -277,6 +288,30 @@ define([
 			}
 			target.remove();
 		},
+
+		generateAdditionalDataObject: function(data){
+			var additionalInfo = [];
+			var counter = 0;
+
+			_.each(data, function(value){
+				if(value.name === 'pullRequestTitle'){
+					additionalInfo[counter] = {
+						pullRequestTitle: value.value,
+						pullRequestUrl: '',
+						pullRequestPublishDate: new Moment().format()
+					};
+
+				} else if(value.name === 'pullRequestUrl'){
+					additionalInfo[counter].pullRequestUrl = value.value;
+					counter++;
+				}
+
+			});
+
+			return additionalInfo;
+
+		}
+
 	});
 
 	return View;

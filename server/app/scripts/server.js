@@ -307,6 +307,7 @@ app.put('/post/:id', function(req, res) {
         });
 
     } else {
+        console.log(req.body);
         collectionPosts.findOne({'_id': oId }, function(err, result){
             checkTags.init(result.tags, false);
         });
