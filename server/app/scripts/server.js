@@ -1,38 +1,43 @@
 'use strict';
 var express = require('express');
 var mongodb = require('mongodb');
-var request = require('request');
-var moment = require('moment');
-require('moment-isoduration');
-require('socket.io');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var crypto = require('crypto');
+var auth = null;
+var tags = null;
+var posts = null;
+var login = null;
+var search = null;
+var api = null;
+var notifications = null;
+require('socket.io');
 
 var app = null;
 var appSocketIo = null;
 var socketIo = null;
+var saltKey = 'aGvcVZtRMjdddFxtjyur5vwpNIKp2i';
 var collectionPosts = {};
 var collectionTags = {};
 var collectionNotifications = {};
 var collectionUser = {};
+
 
 // init
 ///////////////////////////////////////////////////////////
 var init = {
 
     db: function(){
+        var that = this;
         mongodb.connect('mongodb://localhost/fedu', function(err, db) {
             if(err){
                 throw err;
             }
-
             console.log('connected');
             collectionPosts = db.collection('posts');
             collectionTags = db.collection('tags');
             collectionNotifications = db.collection('notifications');
             collectionUser = db.collection('user');
 
+            that.serverIsReady();
         });
     },
 
@@ -50,7 +55,7 @@ var init = {
         app.configure(function() {
             app.use(express.static('public'));
             app.use(express.cookieParser());
-            app.use(express.session({ secret: 'aGvcVZtRMjdddFxtjyur5vwpNIKp2i', cookie: { secure: false }}));
+            app.use(express.session({ secret: '8MJBCAiDtrQIIiJnoFEfhXMUUjqD5A', cookie: { secure: false }}));
             app.use(express.bodyParser());
             app.use(passport.initialize());
             app.use(passport.session());
@@ -66,6 +71,9 @@ var init = {
             next();
         });
 
+        // server listen on port X
+        app.listen(3100);
+
     },
 
     socketIo: function(){
@@ -74,575 +82,25 @@ var init = {
         socketIo = require('socket.io').listen(serverSocketIo);
         socketIo.set('log level', 1);
         serverSocketIo.listen(4321);
-    }
-};
-
-// Authentication
-///////////////////////////////////////////////////////////
-var authentication = {
-    init: function(){
-        passport.use(new LocalStrategy(
-            function(username, password, done) {
-                var saltedPassword = crypto.createHmac('sha256', 'aGvcVZtRMjdddFxtjyur5vwpNIKp2i' + username);
-                saltedPassword.update(password);
-                saltedPassword = saltedPassword.digest('hex');
-                collectionUser.findOne({ username: username }, function(err, user) {
-                    if(err){
-                        return done(err);
-                    }
-                    if(!user){
-                        return done(null, false, { message: 'Incorrect username.' });
-                    }
-                    if(user.password !== saltedPassword){
-                        return done(null, false, { message: 'Incorrect password.' });
-                    }
-                    return done(null, user);
-                });
-            }
-        ));
-
-        passport.serializeUser(function(user, done) {
-            var userId = user._id;
-            done(null, userId.toHexString());
-        });
-
-        passport.deserializeUser(function(id, done) {
-            var BSON = mongodb.BSONPure;
-            var userId = new BSON.ObjectID(id);
-            collectionUser.findOne({'_id': userId}, function(err, user) {
-                done(err, user);
-            });
-        });
     },
 
-    ensureAuthenticated: function(req, res, next){
-        if (req.isAuthenticated()){
-            return next();
-        }
-        res.status(401);
-        res.send('Unauthroized!');
+    serverIsReady: function(){
+        auth = require('./auth.js')(saltKey, collectionUser);
+        posts = require('./posts.js')(app, collectionPosts, collectionTags, collectionNotifications);
+        tags = require('./tags.js')(app, collectionTags);
+        login = require('./login.js')(app, saltKey, collectionUser);
+        search = require('./search.js')(app, collectionPosts);
+        api = require('./api.js')(app);
+        notifications = require('./notifications.js')(app, collectionNotifications, socketIo);
+        auth.init();
     }
 };
 
 init.db();
 init.express();
 init.socketIo();
-authentication.init();
-
-// Helper Functions
-///////////////////////////////////////////////////////////
-
-var checkTags = {
-    init: function(tags, increaseOrDecrease){ // true = increase, false = decrease
-        if(tags.length > 0){
-            for (var i = 0; i < tags.length; i++){
-                this.queryTags(tags[i], increaseOrDecrease);
-            }
-        }
-    },
-
-    queryTags: function(value, increaseOrDecrease){
-        var that = this;
-        collectionTags.findOne({tagName: value}, function(err, result){
-            if(result){
-                if(increaseOrDecrease) {
-                    that.increaseCounter(result);
-                } else {
-                    that.decreaseCounter(result);
-                }
-            } else {
-                that.addTag(value);
-            }
-        });
-    },
-
-    increaseCounter: function(result){
-        result.counter = result.counter + 1;
-        collectionTags.update({'_id': result._id }, result);
-    },
-
-    decreaseCounter: function(result){
-        result.counter = result.counter - 1;
-        collectionTags.update({'_id': result._id }, result);
-    },
-
-    addTag: function(value){
-
-        var tag = {
-            tagName: value,
-            description: '',
-            counter: 1,
-            createDate: moment().format(),
-            updateDate: moment().format()
-        };
-
-        collectionTags.insert(tag);
-    }
-};
 
 //General Options-Handler (no use atm)
 app.options('/*', function(req, res) {
     res.send(JSON.stringify(res.headers));
 });
-
-// CRUD - Backend Posts
-///////////////////////////////////////////////////////////
-
-// Create Post and save into db
-app.post('/post', function(req, res) {
-    collectionPosts.insert(req.body, function() {
-        checkTags.init(req.body.tags, true);
-        res.send(JSON.stringify('OK'));
-    });
-});
-
-
-// Read Posts from db
-app.get('/post', function(req, res) {
-    var top = parseInt(req.query.top, 0);
-    var skip = parseInt(req.query.skip, 0);
-    console.log(req.session);
-    collectionPosts.find().skip(skip).limit(top).sort({ _id: -1}).toArray(function(err, results){
-        res.setHeader('Content-Type', 'application/json');
-        res.send(results);
-    });
-});
-
-// Read a single Post from db
-app.get('/post/:id', function(req, res) {
-    if(req.params.id.length === 24){
-        var BSON = mongodb.BSONPure;
-        var oId = new BSON.ObjectID(req.params.id);
-        collectionPosts.find({'_id': oId }).toArray(function(err, results){
-            res.setHeader('Content-Type', 'application/json');
-            res.send(results);
-        });
-    }
-});
-
-// Update Post in db
-app.put('/post/:id', function(req, res) {
-    var BSON = mongodb.BSONPure;
-    var oId = new BSON.ObjectID(req.params.id);
-    var pullRequestId = new BSON.ObjectID(req.body.pullRequestId);
-
-    delete req.body._id;
-
-    if(req.body.pullRequestTitle){
-        var data = {};
-
-        collectionPosts.findOne({'_id': oId }, function(err, result){
-
-            if(!result.additionalInfo){ // check if additonalInfo already exists and add the info to the post
-
-                data = {
-                    $set: {
-                        updateDate: moment().format(),
-                        additionalInfo: [{
-                            pullRequestTitle: req.body.pullRequestTitle,
-                            pullRequestUrl: req.body.pullRequestUrl,
-                            pullRequestPublishDate: moment().format()
-                        }]
-                    }
-                };
-
-            } else { // add additionalInfo to post
-                data = {
-                    $set: {
-                        updateDate: moment().format(),
-                    },
-                    $push:{
-                        additionalInfo: {
-                            pullRequestTitle: req.body.pullRequestTitle,
-                            pullRequestUrl: req.body.pullRequestUrl,
-                            pullRequestPublishDate: moment().format()
-                        }
-                    }
-                };
-            }
-
-            // update post
-            collectionPosts.update({'_id': oId }, data, function(){
-                res.send(JSON.stringify('OK'));
-            });
-
-            // update notification
-            data = {
-                $set: {
-                    updateDate: req.body.updateDate,
-                    checked: true
-                }
-            };
-
-            collectionNotifications.update({'_id': pullRequestId }, data);
-
-        });
-
-    } else {
-        collectionPosts.findOne({'_id': oId }, function(err, result){
-            checkTags.init(result.tags, false);
-        });
-        collectionPosts.update({'_id': oId }, req.body, function(){
-            checkTags.init(req.body.tags, true);
-            res.send(JSON.stringify('OK'));
-        });
-    }
-});
-
-// Delete Post in db
-app.delete('/post/:id', function(req, res) {
-    var BSON = mongodb.BSONPure;
-    var oId = new BSON.ObjectID(req.params.id);
-    collectionPosts.findOne({'_id': oId }, function(err, result){
-        checkTags.init(result.tags, false);
-    });
-    collectionPosts.remove({'_id': oId }, function(){
-        res.send(JSON.stringify('OK'));
-    });
-});
-
-// CRUD - Backend Tags
-///////////////////////////////////////////////////////////
-
-// Create Tags and save into db
-app.post('/tag', function(req, res) {
-    collectionTags.insert(req.body, function() {
-        res.send(JSON.stringify('OK'));
-    });
-});
-
-// Read Tags from db
-app.get('/tag', function(req, res) {
-
-    collectionTags.find().sort({ counter: -1}).toArray(function(err, results){
-        res.setHeader('Content-Type', 'application/json');
-        res.send(results);
-    });
-
-});
-
-app.put('/tag/:id', function(req, res) {
-    var BSON = mongodb.BSONPure;
-    var oId = new BSON.ObjectID(req.params.id);
-    delete req.body._id;
-    collectionTags.update({'_id': oId }, req.body, function(){
-        res.send(JSON.stringify('OK'));
-    });
-});
-
-
-// Search
-///////////////////////////////////////////////////////////
-
-var search = {
-
-    generateTitleObject: function(query){
-        var titleObject = {};
-        var titleArray = [];
-        titleObject.$and = titleArray;
-        if(query.query){
-            var split = query.query.split(' ');
-            for (var i = 0; i < split.length; i++) {
-                var obj = {};
-                obj.title = {};
-                obj.title.$regex = '^.*' + split[i] + '.*$';
-                obj.title.$options = 'i';
-                titleArray.push(obj);
-            }
-        }
-
-        return titleObject;
-    },
-
-    generateDurationObject: function(query){
-        var durationObject = {};
-        if(query.duration){
-            durationObject = {
-                'foreign.duration': {
-                    '$gte': parseInt(query.duration, 10) - 300,
-                    '$lte': parseInt(query.duration, 10) + 300
-                }
-            };
-        }
-
-        return durationObject;
-    },
-
-    generateQuery: function(query){
-        var titleObject = this.generateTitleObject(query);
-        var durationObject = this.generateDurationObject(query);
-
-        var queryObj = {};
-        if(query.query && query.duration && !query.tag){
-            queryObj = { $and: [durationObject, titleObject]};
-        } else if(query.tag && query.duration && !query.query){
-            queryObj =  { $and: [durationObject, { tags: query.tag }] };
-        } else if(query.query && query.tag && query.duration){
-            queryObj =  { $and: [durationObject, { tags: query.tag }, titleObject] };
-        } else if(query.tag && query.query){
-            queryObj =  { $and: [{ tags: query.tag }, titleObject] };
-        } else if(query.query && !query.tag) {
-            queryObj = { $or: [{ tags: query.query }, titleObject] };
-        } else if(query.tag && !query.query) {
-            queryObj = { tags: query.tag };
-        }
-        return queryObj;
-    }
-};
-
-// Search Posts in db
-app.get('/search', function(req, res) {
-
-    var queryObj = search.generateQuery(req.query);
-    var skip = parseInt(req.query.skip, 0);
-    var top = parseInt(req.query.top, 0);
-
-    collectionPosts.find(queryObj).skip(skip).limit(top).sort({ _id: -1}).toArray(function(err, results){
-        res.setHeader('Content-Type', 'application/json');
-        res.send(results);
-    });
-});
-
-
-// API Section - Backend
-///////////////////////////////////////////////////////////
-
-app.post('/api-call', function(req, res){
-
-    var optionsVideo = {};
-
-    if(req.body.type === 'youtube'){
-        optionsVideo.url = 'https://www.googleapis.com/youtube/v3/videos/?id=' + req.body.id + '&key=' + req.body.key + '&part=snippet,contentDetails,statistics,status';
-    } else if(req.body.type === 'vimeo') {
-        optionsVideo.url = 'http://vimeo.com/api/v2/video/' + req.body.id + '.json';
-    } else {
-        res.send(500);
-    }
-
-    var parsedData = {};
-
-    request(optionsVideo, function (error, response, apiData) {
-        apiData = JSON.parse(apiData);
-        if (req.body.type === 'vimeo') {
-            apiData = apiData[0];
-            if(response.statusCode === 200) {
-                parsedData.title = apiData.title;
-                parsedData.description = apiData.description;
-                parsedData.tags = apiData.tags;
-                parsedData.foreign = {};
-                parsedData.foreign.embedUrl = 'http://player.vimeo.com/video/' + apiData.id;
-                parsedData.foreign.uploadDate = moment(apiData.upload_date).format();
-                parsedData.foreign.duration = apiData.duration;
-                parsedData.foreign.thumbnail = {};
-                parsedData.foreign.thumbnail.small = apiData.thumbnail_small;
-                parsedData.foreign.thumbnail.medium = apiData.thumbnail_medium;
-                parsedData.foreign.thumbnail.large = apiData.thumbnail_large;
-                parsedData.foreign.channelId = apiData.user_id;
-                parsedData.foreign.channelName = apiData.user_name;
-                parsedData.foreign.likeCount = apiData.stats_number_of_likes;
-                parsedData.foreign.playCount = apiData.stats_number_of_plays;
-                parsedData.foreign.commentCount = apiData.stats_number_of_comments;
-                parsedData.foreign.caption = false;
-
-                res.send(parsedData);
-            } else {
-                res.status(204);
-                res.send('no content');
-            }
-
-        } else if (req.body.type === 'youtube'){
-            if(apiData.items.length > 0){
-                apiData = apiData.items[0];
-                parsedData.title = apiData.snippet.title;
-                parsedData.description = apiData.snippet.description;
-                parsedData.tags = '';
-                parsedData.foreign = {};
-                parsedData.foreign.embedUrl = 'http://www.youtube.com/embed/' + apiData.id;
-                parsedData.foreign.uploadDate = moment(apiData.snippet.publishedAt).format();
-                parsedData.foreign.duration = moment.duration.fromIsoduration(apiData.contentDetails.duration).asSeconds();
-                parsedData.foreign.thumbnail = {};
-                parsedData.foreign.thumbnail.small = apiData.snippet.thumbnails.default.url;
-                parsedData.foreign.thumbnail.medium = apiData.snippet.thumbnails.medium.url;
-                parsedData.foreign.thumbnail.large = apiData.snippet.thumbnails.high.url;
-                parsedData.foreign.channelId = apiData.snippet.channelId;
-                parsedData.foreign.channelName = apiData.snippet.channelTitle;
-                parsedData.foreign.likeCount = apiData.statistics.likeCount;
-                parsedData.foreign.playCount = apiData.statistics.viewCount;
-                parsedData.foreign.commentCount = apiData.statistics.commentCount;
-                parsedData.foreign.caption = apiData.contentDetails.caption;
-
-                res.send(parsedData);
-            } else {
-                res.status(204);
-                res.send('no content');
-            }
-        }
-    });
-});
-
-// notification
-///////////////////////////////////////////////////////////
-app.get('/flag-post', function(req, res) {
-    var data = {
-        id: req.query.id,
-        type: req.query.type,
-        title: req.query.title,
-        description: req.query.description,
-        checked: false,
-        publishDate: moment().format(),
-        updateDate: moment().format(),
-    };
-    collectionNotifications.insert(data, function(err, result) {
-        data.pullRequestId = result[0]._id;
-        socketIo.sockets.emit ('notify-post', data); // websocket
-        res.send(JSON.stringify('OK'));
-    });
-});
-
-app.get('/pull-request', function(req, res) {
-    var data = {
-        id: req.query.id,
-        type: req.query.type,
-        title: req.query.title,
-        description: req.query.description,
-        pullRequestTitle: req.query.pullRequestTitle,
-        pullRequestUrl: req.query.pullRequestUrl,
-        checked: false,
-        publishDate: moment().format(),
-        updateDate: moment().format()
-    };
-    collectionNotifications.insert(data, function(err, result) {
-        data.pullRequestId = result[0]._id;
-        socketIo.sockets.emit('notify-post', data); // websocket
-        res.send(JSON.stringify('OK'));
-    });
-});
-
-app.get('/notification', function(req, res) {
-    if(req.query.filter === 'all'){
-        collectionNotifications.find().sort({'_id': -1}).toArray(function(err, results){
-            res.setHeader('Content-Type', 'application/json');
-            res.send(results);
-        });
-
-    } else if(req.query.filter === 'partial'){
-        collectionNotifications.find({ checked: false}).limit(3).sort({ _id: -1}).toArray(function(err, results){
-            res.setHeader('Content-Type', 'application/json');
-            res.send(results);
-        });
-
-    } else if(req.query.filter === 'countUnchecked'){
-        collectionNotifications.find({ checked: false}).count(function(e, count){
-            res.setHeader('Content-Type', 'application/json');
-            var object = {uncheckedNotifications: count};
-            res.send(object);
-        });
-
-    }
-});
-
-app.get('/notification/:id', function(req, res) {
-    var queryObj = {
-        $and : [
-            {id: req.params.id},
-            {type: 'pull-request'},
-            {checked: false}
-        ]
-    };
-
-    collectionNotifications.find(queryObj).sort({ _id: -1}).toArray(function(err, results){
-        res.setHeader('Content-Type', 'application/json');
-        res.send(results);
-    });
-
-});
-
-app.put('/notification/:id', function(req, res) {
-    var BSON = mongodb.BSONPure;
-    var oId = new BSON.ObjectID(req.params.id);
-    var body = {};
-
-    if(req.body.description === ''){
-        body = {
-            $set: {
-                updateDate: req.body.updateDate,
-                checked: req.body.checked
-            }
-        };
-    } else {
-        body = req.body;
-    }
-
-    delete req.body._id;
-    collectionNotifications.update({'_id': oId }, body, function(){
-        res.send(JSON.stringify('OK'));
-    });
-});
-
-// Login
-///////////////////////////////////////////////////////////
-
-app.post('/login', function(req, res, next) {
-    passport.authenticate('local', function(err, user) {
-        if (err) {
-            return next(err);
-        }
-        if (!user) {
-            res.status(401);
-            res.send('Password or Username is wrong.');
-            return;
-        }
-        if(user.activated){
-            res.status(401);
-            res.send('Account is not activated!');
-            return;
-        }
-        req.logIn(user, function(err) {
-            if (err) {
-                return next(err);
-            }
-            res.send('Authorization succeeded!');
-            return;
-        });
-    })(req, res, next);
-});
-
-app.get('/logout', authentication.ensureAuthenticated, function(req, res){
-    req.logout();
-    res.cookie('connect.sid', '');
-    res.send('logged out');
-});
-
-app.get('/account', authentication.ensureAuthenticated, function(req, res){
-    console.log(req.sessionStore);
-    res.send('ok');
-});
-
-app.post('/register', function(req, res){
-
-    var username = req.body.username;
-    var saltedPassword = crypto.createHmac('sha256', 'aGvcVZtRMjdddFxtjyur5vwpNIKp2i' + username);
-    saltedPassword.update(req.body.password);
-    saltedPassword = saltedPassword.digest('hex');
-
-    var userObj = {
-        username: username,
-        password: saltedPassword,
-        activated: false
-    };
-
-    collectionUser.findOne({ username: username }, function(err, user) {
-        if(user){
-            res.status(406);
-            res.send('Username already in use');
-        } else {
-            collectionUser.insert(userObj, function() {
-                res.send(JSON.stringify('Registred'));
-            });
-        }
-    });
-});
-
-// server listen on port X
-///////////////////////////////////////////////////////////
-app.listen(3100);
