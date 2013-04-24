@@ -589,7 +589,12 @@ app.post('/login', function(req, res, next) {
         }
         if (!user) {
             res.status(401);
-            res.send('Authorization failed!');
+            res.send('Password or Username is wrong.');
+            return;
+        }
+        if(user.activated){
+            res.status(401);
+            res.send('Account is not activated!');
             return;
         }
         req.logIn(user, function(err) {
@@ -622,11 +627,13 @@ app.post('/register', function(req, res){
 
     var userObj = {
         username: username,
-        password: saltedPassword
+        password: saltedPassword,
+        activated: false
     };
 
     collectionUser.findOne({ username: username }, function(err, user) {
         if(user){
+            res.status(406);
             res.send('Username already in use');
         } else {
             collectionUser.insert(userObj, function() {

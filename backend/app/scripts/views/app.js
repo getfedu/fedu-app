@@ -6,9 +6,10 @@ define([
 	'vendor/fedu/config',
 	'text!../templates/login_template.html',
 	'text!../templates/register_template.html',
+	'text!../templates/message_template.html',
 	'../vendor/sha256',
 	'jqueryCookie'
-], function( $, _, Backbone, SocketIo, TheConfig, LoginTemplate, RegisterTemplate) {
+], function( $, _, Backbone, SocketIo, TheConfig, LoginTemplate, RegisterTemplate, MessageTemplate) {
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -90,6 +91,7 @@ define([
 			var data = $(e.currentTarget).serializeArray();
 			var password = data[1].value;
 			password = CryptoJS.SHA256(password).toString();
+			var that = this;
 			$.ajax({
 				type: 'POST',
 				url: TheConfig.nodeUrl + '/login',
@@ -101,8 +103,12 @@ define([
 					password: password
 				}
 			}).done(function(){
+				Backbone.history.navigate('/list-posts', true);
+				$('.alert').alert('close');
 			}).fail(function(error){
-				console.log(error.responseText);
+				if(error.status === 401){
+					that.render('#message', _.template(MessageTemplate, { message: 'Sorry... Your login failed, password or username are wrong, please check it and try again.', type: 'error'}));
+				}
 			});
 		},
 
@@ -111,6 +117,7 @@ define([
 			var data = $(e.currentTarget).serializeArray();
 			var password = data[1].value;
 			password = CryptoJS.SHA256(password).toString();
+			var that = this;
 			$.ajax({
 				type: 'POST',
 				url: TheConfig.nodeUrl + '/register',
@@ -122,7 +129,14 @@ define([
 					password: password
 				}
 			}).done(function(){
+				Backbone.history.navigate('/login', true);
 			}).fail(function(error){
+				if(error.status === 406){
+					that.render('#message', _.template(MessageTemplate, { message: 'Sorry... This username is already in use by another person...', type: 'error'}));
+                    setTimeout(function() {
+						$('.alert').alert('close');
+                    }, 5000);
+				}
 				console.log(error.responseText);
 			});
 		},
