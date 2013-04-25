@@ -58,6 +58,27 @@ define([
 			this.render(this.inner, RegisterTemplate);
 		},
 
+		activate: function(code){
+			var that = this;
+			$.ajax({
+				url: TheConfig.nodeUrl + '/activate/' + code,
+				xhrFields: {
+					withCredentials: true
+				}
+			}).done(function(res){
+				if(res.key === 'ok'){
+					that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
+					Backbone.history.navigate('/login', true);
+				} else {
+					that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'error'}));
+				}
+			}).fail(function(res){
+				var txt = JSON.parse(res.responseText);
+				that.render('#message', _.template(MessageTemplate, { message: txt.message, type: 'error'}));
+				Backbone.history.navigate('/register', true);
+			});
+		},
+
 		logout: function(){
 			$.ajax({
 				url: TheConfig.nodeUrl + '/logout',
@@ -105,10 +126,9 @@ define([
 			}).done(function(){
 				Backbone.history.navigate('/list-posts', true);
 				$('.alert').alert('close');
-			}).fail(function(error){
-				if(error.status === 401){
-					that.render('#message', _.template(MessageTemplate, { message: 'Sorry... Your login failed, password or username are wrong, please check it and try again.', type: 'error'}));
-				}
+			}).fail(function(res){
+				var msg = JSON.parse(res.responseText);
+				that.render('#message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
 			});
 		},
 
@@ -128,16 +148,18 @@ define([
 					username: data[0].value,
 					password: password
 				}
-			}).done(function(){
+			}).done(function(res){
 				Backbone.history.navigate('/login', true);
-			}).fail(function(error){
-				if(error.status === 406){
-					that.render('#message', _.template(MessageTemplate, { message: 'Sorry... This username is already in use by another person...', type: 'error'}));
-                    setTimeout(function() {
-						$('.alert').alert('close');
-                    }, 5000);
-				}
-				console.log(error.responseText);
+				that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
+                setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
+			}).fail(function(res){
+				var msg = JSON.parse(res.responseText);
+				that.render('#message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
+                setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
 			});
 		},
 

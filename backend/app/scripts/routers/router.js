@@ -15,7 +15,7 @@ define([
 		tagsView: new TagsView(),
 		notificationsView: new NotificationsView(),
 		pullRequestView: new PullRequestView(),
-		routes:{
+		routes: {
 			'add-post' : 'addPost',
 			'list-posts' : 'listPosts',
 			'edit-post' : 'editPost',
@@ -25,6 +25,7 @@ define([
 			'list-notifications' : 'listNotifications',
 			'login' : 'login',
 			'register' : 'register',
+			'activate/:code' : 'activate',
 			'pull-request/:id' : 'pullRequest',
 			'*actions': 'defaultAction'
 		},
@@ -74,6 +75,10 @@ define([
 
 		register: function(){
 			this.appView.register();
+		},
+
+		activate: function(code){
+			this.appView.activate(code);
 		},
 
 		defaultAction: function() {
