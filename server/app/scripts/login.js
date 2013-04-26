@@ -6,11 +6,12 @@ var passport = require('passport');
 var crypto = require('crypto');
 var moment = require('moment');
 var nodemailer = require('nodemailer');
+var host = 'http://localhost:9100/';
 
 module.exports = function(app, saltKey, collectionUser){
     var auth = require('./auth.js')(saltKey, collectionUser);
 
-    app.post('/login', function(req, res, next) {
+    app.post('/login', auth.isNotAuth, function(req, res, next) {
         passport.authenticate('local', function(err, user) {
             if (err) {
                 return next(err);
@@ -22,7 +23,7 @@ module.exports = function(app, saltKey, collectionUser){
             }
             if(user.activated !== 'activated'){
                 res.status(401);
-                res.json({ key: 'notActivated', message: 'Sorry... But your Account is not activated click the link in the Email we have sent you. <a href="http://localhost:9100/#activate/' + user.activated +'?force=true">resend</a>'});
+                res.json({ key: 'notActivated', message: 'Sorry... But your Account is not activated click the link in the Email we have sent you. <a href="' + host + '#activate/' + user.activated +'?force=true">resend</a>'});
                 return;
             }
             req.logIn(user, function(err) {
@@ -48,11 +49,8 @@ module.exports = function(app, saltKey, collectionUser){
     app.post('/register', function(req, res){
 
         var username = req.body.username;
-        var saltedPassword = crypto.createHmac('sha256', saltKey + username);
-        saltedPassword.update(req.body.password);
-        saltedPassword = saltedPassword.digest('hex');
-
-        var activationHash = helpers.generateActivationHash(username);
+        var saltedPassword = helpers.generateSaltedPassword(username, req.body.password);
+        var activationHash = helpers.generateHash(username);
 
         var userObj = {
             username: username,
@@ -90,7 +88,7 @@ module.exports = function(app, saltKey, collectionUser){
                         res.json({ key: 'ok', message: 'Your Account was successfully activated!'});
                     });
                 } else {
-                    var activationHash = helpers.generateActivationHash(user.username);
+                    var activationHash = helpers.generateHash(user.username);
 
                     collectionUser.update({ activated: code }, {$set: { activated: activationHash, registrationDate: moment().format() }}, function(){
                         helpers.sendRegistrationMailAgain(activationHash, user.username);
@@ -110,6 +108,44 @@ module.exports = function(app, saltKey, collectionUser){
         });
     });
 
+    app.post('/recover-password', auth.isNotAuth, function(req, res) {
+        var username = req.body.username;
+        collectionUser.findOne({ username: username }, function(err, user) {
+            if(user){
+                var recoveryHash = helpers.generateHash(user.username);
+                collectionUser.update({ username: username }, {$set: { recoverPasswordHash: recoveryHash, recoverPasswordDate: moment().format() }}, function(){
+                    helpers.passwordRecoveryEmail(recoveryHash, user.username);
+                    res.json({key:'passwordRecoveryActivated', message: 'We just sent you an email with a link to create a new password!'});
+                });
+            } else {
+                res.status(409);
+                res.json({key:'usernameNotFound', message: 'Sorry... This Username is not in our Database..'});
+            }
+        });
+    });
+
+    app.post('/recover-password/:code', auth.isNotAuth, function(req, res) {
+        var code = req.params.code;
+        collectionUser.findOne({ recoverPasswordHash: code }, function(err, user) {
+            if(user){
+                var newPassword = helpers.generateSaltedPassword(user.username, req.body.password);
+                var recoverPasswordDateUnix = moment(user.recoverPasswordDate).unix();
+                var todayUnix = moment(moment().add('minutes', -30)).unix();
+                if(todayUnix <= recoverPasswordDateUnix){
+                    collectionUser.update({ recoverPasswordHash: code }, {$unset: { recoverPasswordHash: 1, recoverPasswordDate: 1 }, $set: { password: newPassword }}, function(){
+                        res.json({key:'newPasswordSet', message: 'Ok'});
+                    });
+                } else {
+                    res.status(409);
+                    res.json({key:'usernameNotFound', message: 'Sorry... The time limit for the Password recovery is already exceeded. <a href="' + host + '#recover-password">Try Recover again.</a>'});
+                }
+            } else {
+                res.status(409);
+                res.json({key:'usernameNotFound', message: 'Sorry... This is an invalid Recovery-Code.'});
+            }
+        });
+    });
+
     var helpers = {
         registrationEmail: function(activationHash, username, res){
             var transport = nodemailer.createTransport('sendmail');
@@ -118,8 +154,8 @@ module.exports = function(app, saltKey, collectionUser){
                 from: 'getfedu <mail@getfedu.com>',
                 to: username,
                 subject: 'Your registration at getfedu.com',
-                text: 'You registred an Account on getfedu.com with this Emailadress: ' + username + ' To verify your Account please click this link: http://localhost:9100/#activate/' + activationHash,
-                html: 'You registred an Account on getfedu.com with this Emailadress: ' + username + '<br/><br/> To verify your Account please click this link: <b>http://localhost:9100/#activate/' + activationHash + '</b>'
+                text: 'You registred an Account on getfedu.com with this Emailadress: ' + username + ' To verify your Account please click this link:'  + host + '#activate/' + activationHash,
+                html: 'You registred an Account on getfedu.com with this Emailadress: ' + username + '<br/><br/> To verify your Account please click this link: <b>' + host + '#activate/' + activationHash + '</b>'
             };
 
             transport.sendMail(mailOptions, function(error, response){
@@ -138,8 +174,8 @@ module.exports = function(app, saltKey, collectionUser){
                 from: 'getfedu <mail@getfedu.com>',
                 to: username,
                 subject: 'Your new Registration-Code for getfedu.com',
-                text: 'You just requested a new Regisration-Code for your Account on getfedu.com with this Emailadress: ' + username + 'Here it is :) To verify your Account please click this link: http://localhost:9100/#activate/' + activationHash,
-                html: 'You just requested a new Regisration-Code for your Account on getfedu.com with this Emailadress: ' + username + '<br/><br/> Here it is :) To verify your Account please click this link: <b>http://localhost:9100/#activate/' + activationHash + '</b>'
+                text: 'You just requested a new Regisration-Code for your Account on getfedu.com with this Emailadress: ' + username + 'Here it is :) To verify your Account please click this link: ' + host + '#activate/' + activationHash,
+                html: 'You just requested a new Regisration-Code for your Account on getfedu.com with this Emailadress: ' + username + '<br/><br/> Here it is :) To verify your Account please click this link: <b>' + host + '#activate/' + activationHash + '</b>'
             };
 
             transport.sendMail(mailOptions, function(error, response){
@@ -149,13 +185,41 @@ module.exports = function(app, saltKey, collectionUser){
             });
         },
 
-        generateActivationHash: function(username){
-            var activationHash = crypto.createHash('sha1');
-            activationHash.update(moment().format());
-            activationHash.update(username);
-            activationHash = activationHash.digest('hex');
+        passwordRecoveryEmail: function(recoveryHash, username, res){
+            var transport = nodemailer.createTransport('sendmail');
 
-            return activationHash;
+            var mailOptions = {
+                from: 'getfedu <mail@getfedu.com>',
+                to: username,
+                subject: 'Password recover from getfedu.com',
+                text: 'You just ordered to reset your Password. To set a new Password please click this link: ' + host + '#recover-password/' + recoveryHash,
+                html: 'You just ordered to reset your Password.</br></br> To set a new Password please click this link: ' + host + '#recover-password/' + recoveryHash,
+            };
+
+            transport.sendMail(mailOptions, function(error, response){
+                if(error){
+                    console.log(error, response);
+                } else {
+                    res.json({ key: 'regSucceeded', message: 'Nice one, you successfully registred your Account. Please click the link in the Email we have sent yout to verfify your Account.'});
+                }
+            });
+        },
+
+        generateHash: function(username){
+            var hash = crypto.createHash('sha1');
+            hash.update(moment().format());
+            hash.update(username);
+            hash = hash.digest('hex');
+
+            return hash;
+        },
+
+        generateSaltedPassword: function(username, password){
+            var saltedPassword = crypto.createHmac('sha256', saltKey + username);
+            saltedPassword.update(password);
+            saltedPassword = saltedPassword.digest('hex');
+
+            return saltedPassword;
         }
     };
 };

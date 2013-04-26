@@ -6,10 +6,12 @@ define([
 	'vendor/fedu/config',
 	'text!../templates/login_template.html',
 	'text!../templates/register_template.html',
+	'text!../templates/recover_password_template.html',
+	'text!../templates/create_new_password_template.html',
 	'text!../templates/message_template.html',
 	'../vendor/sha256',
 	'jqueryCookie'
-], function( $, _, Backbone, SocketIo, TheConfig, LoginTemplate, RegisterTemplate, MessageTemplate) {
+], function( $, _, Backbone, SocketIo, TheConfig, LoginTemplate, RegisterTemplate, RecoverPasswordTemplate, CreateNewPasswordTemplate, MessageTemplate) {
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -28,6 +30,8 @@ define([
 		events: {
 			'submit #login' : 'handleLogin',
 			'submit #register' : 'handleRegister',
+			'submit #recover_password' : 'handleRecoverPassword',
+			'submit #create_new_password' : 'handleCreateNewPassword',
 			'click #hash' : 'hashPassPhrase',
 			'click #acc' : 'account',
 			'click #logout' : 'logout'
@@ -104,6 +108,14 @@ define([
 			});
 		},
 
+		recoverPassword: function(){
+			this.render(this.inner, RecoverPasswordTemplate);
+		},
+
+		createNewPassword: function(code){
+			this.render(this.inner, _.template(CreateNewPasswordTemplate, { code: code }));
+		},
+
 		// helper functions
 		////////////////////////////////////////
 
@@ -169,6 +181,64 @@ define([
 			} else {
 				$('#password').attr('type', 'text');
 			}
+		},
+
+		handleRecoverPassword: function(e){
+			e.preventDefault();
+			var data = $(e.currentTarget).serializeArray();
+			var that = this;
+			$.ajax({
+				type: 'POST',
+				url: TheConfig.nodeUrl + '/recover-password',
+				xhrFields: {
+					withCredentials: true
+				},
+				data: {
+					username: data[0].value,
+				}
+			}).done(function(res){
+				Backbone.history.navigate('/login', true);
+				that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
+                setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
+			}).fail(function(res){
+				var msg = JSON.parse(res.responseText);
+				that.render('#message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
+                setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
+			});
+		},
+
+		handleCreateNewPassword: function(e){
+			e.preventDefault();
+			var data = $(e.currentTarget).serializeArray();
+			var password = data[0].value;
+			password = CryptoJS.SHA256(password).toString();
+			var that = this;
+			$.ajax({
+				type: 'POST',
+				url: TheConfig.nodeUrl + '/recover-password/' + data[1].value,
+				xhrFields: {
+					withCredentials: true
+				},
+				data: {
+					password: password,
+				}
+			}).done(function(res){
+				Backbone.history.navigate('/login', true);
+				that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
+                setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
+			}).fail(function(res){
+				var msg = JSON.parse(res.responseText);
+				that.render('#message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
+                setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
+			});
 		}
 
 	});

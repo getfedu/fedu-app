@@ -26,6 +26,8 @@ define([
 			'login' : 'login',
 			'register' : 'register',
 			'activate/:code' : 'activate',
+			'recover-password' : 'recoverPassword',
+			'recover-password/:code' : 'createNewPassword',
 			'pull-request/:id' : 'pullRequest',
 			'*actions': 'defaultAction'
 		},
@@ -79,6 +81,14 @@ define([
 
 		activate: function(code){
 			this.appView.activate(code);
+		},
+
+		recoverPassword: function(){
+			this.appView.recoverPassword();
+		},
+
+		createNewPassword: function(code){
+			this.appView.createNewPassword(code);
 		},
 
 		defaultAction: function() {

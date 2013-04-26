@@ -50,6 +50,14 @@ module.exports = function(saltKey, collectionUser){
             }
             res.status(401);
             res.send('Unauthroized!');
+        },
+
+        isNotAuth: function(req, res, next){
+            if (!req.isAuthenticated()){
+                return next();
+            }
+            res.status(409);
+            res.json({ key: 'alreadyAuth', message: 'Your are logged in. For this function, please log out'});
         }
     };
     return auth;

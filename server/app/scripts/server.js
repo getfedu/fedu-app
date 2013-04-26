@@ -52,6 +52,7 @@ var init = {
 
     express: function(){
         app = express();
+        app.use(require('express-chrome-logger'));
         app.configure(function() {
             app.use(express.static('public'));
             app.use(express.cookieParser());
