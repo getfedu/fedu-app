@@ -77,13 +77,11 @@ require([
 	'bootstrapTransition',
 	'bootstrapTypeahead',
 	'bootstrapModal',
-	'views/notification_center',
 	'bootstrapDropdown'
-], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, BootstrapTypeahead, NotificationCenter, BootstrapDropdown) {
+], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, BootstrapTypeahead, BootstrapDropdown) {
 	'use strict';
 
-	// initialize routing, notifciation center and start Backbone.history()
-	//new NotificationCenter();
+	// initialize routing and start Backbone.history()
 	new Router();
 	Backbone.history.start();
 
