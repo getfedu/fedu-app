@@ -2,29 +2,23 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'socketIo',
 	'vendor/fedu/config',
+	'text!../templates/app_template.html',
 	'text!../templates/login_template.html',
 	'text!../templates/register_template.html',
 	'text!../templates/recover_password_template.html',
 	'text!../templates/create_new_password_template.html',
 	'text!../templates/message_template.html',
-	'../vendor/sha256',
-	'jqueryCookie'
-], function( $, _, Backbone, SocketIo, TheConfig, LoginTemplate, RegisterTemplate, RecoverPasswordTemplate, CreateNewPasswordTemplate, MessageTemplate) {
+	'jqueryCookie',
+	'cryptoJS'
+], function( $, _, Backbone, TheConfig, AppTemplate, LoginTemplate, RegisterTemplate, RecoverPasswordTemplate, CreateNewPasswordTemplate, MessageTemplate, jqueryCookie, CryptoJS) {
 	'use strict';
 
-	var AppView = Backbone.View.extend({
+	var View = Backbone.View.extend({
 
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
-		el: '#app-wrapper',
-		inner: '#app',
-		collection: {},
-		data: {},
-		socket: null,
-
-		// compile template
+		el: '#wrapper',
 
 		// delegated events
 		events: {
@@ -38,8 +32,6 @@ define([
 		},
 
 		initialize: function() {
-			// this.collection = new TheCollection();
-			// this.collection.fetchData(this);
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -55,11 +47,11 @@ define([
 		////////////////////////////////////////
 
 		login: function(){
-			this.render(this.inner, LoginTemplate);
+			this.render(this.el, LoginTemplate);
 		},
 
 		register: function(){
-			this.render(this.inner, RegisterTemplate);
+			this.render(this.el, RegisterTemplate);
 		},
 
 		activate: function(code){
@@ -109,11 +101,11 @@ define([
 		},
 
 		recoverPassword: function(){
-			this.render(this.inner, RecoverPasswordTemplate);
+			this.render(this.el, RecoverPasswordTemplate);
 		},
 
 		createNewPassword: function(code){
-			this.render(this.inner, _.template(CreateNewPasswordTemplate, { code: code }));
+			this.render(this.el, _.template(CreateNewPasswordTemplate, { code: code }));
 		},
 
 		// helper functions
@@ -136,6 +128,7 @@ define([
 					password: password
 				}
 			}).done(function(){
+				that.render(that.el, AppTemplate);
 				Backbone.history.navigate('/list-posts', true);
 				$('.alert').alert('close');
 			}).fail(function(res){
@@ -243,5 +236,5 @@ define([
 
 	});
 
-	return AppView;
+	return View;
 });

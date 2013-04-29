@@ -145,5 +145,5 @@ define([
 
 	});
 
-	return View;
+	return new View();
 });

@@ -10,7 +10,7 @@ require.config({
 			],
 			exports: 'Backbone'
 		},
-		underscore: { // template
+		underscore: {
 			exports: '_'
 		},
 		bootstrapAlert: {
@@ -43,10 +43,14 @@ require.config({
 				'backbone'
 			]
 		},
-		jQueryCookie: {
+		jqueryCookie: {
 			deps: [
 				'jquery'
-			]
+			],
+			exports: 'jQuery.cookie'
+		},
+		cryptoJS: {
+			exports: 'CryptoJS'
 		}
 	},
 	paths: {
@@ -63,6 +67,7 @@ require.config({
 		bootstrapDropdown: '../components/sass-bootstrap/js/bootstrap-dropdown',
 		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator',
 		jqueryCookie: '../components/jquery.cookie/jquery.cookie',
+		cryptoJS: 'vendor/sha256',
 	}
 });
 
@@ -78,7 +83,7 @@ require([
 	'use strict';
 
 	// initialize routing, notifciation center and start Backbone.history()
-	new NotificationCenter();
+	//new NotificationCenter();
 	new Router();
 	Backbone.history.start();
 

@@ -2,19 +2,11 @@ define([
 	'jquery',
 	'backbone',
     '../views/app',
-	'../views/posts',
-	'../views/tags',
-	'../views/notifications',
-	'../views/pull_request',
-], function($, Backbone, AppView, PostsView, TagsView, NotificationsView, PullRequestView) {
+], function($, Backbone, AppView) {
 	'use strict';
 
 	var Router = Backbone.Router.extend({
 		appView: new AppView(),
-		postsView: new PostsView(),
-		tagsView: new TagsView(),
-		notificationsView: new NotificationsView(),
-		pullRequestView: new PullRequestView(),
 		routes: {
 			'add-post' : 'addPost',
 			'list-posts' : 'listPosts',
@@ -34,40 +26,72 @@ define([
 
 		// Post
 		addPost: function(){
-            this.postsView.addPost();
+			require([
+				'views/posts'
+			], function(View) {
+				View.addPost();
+			});
 		},
 
 		listPosts: function(){
-			this.postsView.listPosts();
+			require([
+				'views/posts'
+			], function(View) {
+				View.listPosts();
+			});
 		},
 
 		editPost: function(){
-			this.postsView.listPosts();
-			Backbone.history.navigate('/list-posts', false);
+			require([
+				'views/posts'
+			], function(View) {
+				View.listPosts();
+				Backbone.history.navigate('/list-posts', false);
+			});
 		},
 
 		// Tag
 		addTag: function(){
-			this.tagsView.addTag();
+			require([
+				'views/tags'
+			], function(View) {
+				View.addTag();
+			});
 		},
 
 		listTags: function(){
-			this.tagsView.listTags();
+			require([
+				'views/tags'
+			], function(View) {
+				View.listTags();
+			});
 		},
 
 		editTag: function(){
-			this.tagsView.listTags();
-			Backbone.history.navigate('/list-tags', false);
+			require([
+				'views/tags'
+			], function(View) {
+				View.listTags();
+				Backbone.history.navigate('/list-tags', false);
+			});
 		},
 
 		// Notifications
 		listNotifications: function(){
-			this.notificationsView.listNotifications();
+			require([
+				'views/notifications'
+			], function(View) {
+				View.listNotifications();
+			});
 		},
 
 		// Pull request
 		pullRequest: function(id){
-			this.pullRequestView.detailPullRequest(id);
+			require([
+				'views/pull_request'
+			], function(View) {
+				View.detailPullRequest(id);
+			});
 		},
 
 		//Login
