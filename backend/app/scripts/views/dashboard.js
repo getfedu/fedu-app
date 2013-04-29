@@ -20,7 +20,6 @@ define([
 		},
 
 		initialize: function() {
-			console.log('ddd');
 			this.initNotficationCenter();
 		},
 
