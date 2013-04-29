@@ -61,14 +61,14 @@ define([
 				}
 			}).done(function(res){
 				if(res.key === 'ok'){
-					that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
+					that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
 					Backbone.history.navigate('/login', true);
 				} else {
-					that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'error'}));
+					that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'error'}));
 				}
 			}).fail(function(res){
 				var txt = JSON.parse(res.responseText);
-				that.render('#message', _.template(MessageTemplate, { message: txt.message, type: 'error'}));
+				that.render('#login_message', _.template(MessageTemplate, { message: txt.message, type: 'error'}));
 				Backbone.history.navigate('/register', true);
 			});
 		},
@@ -80,6 +80,7 @@ define([
 					withCredentials: true
 				}
 			}).done(function(){
+				Backbone.history.navigate('/login', true);
 			}).fail(function(error){
 				console.log(error.responseText);
 			});
@@ -127,11 +128,11 @@ define([
 				}
 			}).done(function(){
 				that.render(that.el, AppTemplate);
-				Backbone.history.navigate('/list-posts', true);
+				Backbone.history.navigate('/dashboard', true);
 				$('.alert').alert('close');
 			}).fail(function(res){
 				var msg = JSON.parse(res.responseText);
-				that.render('#message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
+				that.render('#login_message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
 			});
 		},
 
@@ -153,13 +154,13 @@ define([
 				}
 			}).done(function(res){
 				Backbone.history.navigate('/login', true);
-				that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
+				that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
                 setTimeout(function() {
 					$('.alert').alert('close');
                 }, 5000);
 			}).fail(function(res){
 				var msg = JSON.parse(res.responseText);
-				that.render('#message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
+				that.render('#login_message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
                 setTimeout(function() {
 					$('.alert').alert('close');
                 }, 5000);
@@ -189,13 +190,13 @@ define([
 				}
 			}).done(function(res){
 				Backbone.history.navigate('/login', true);
-				that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
+				that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
                 setTimeout(function() {
 					$('.alert').alert('close');
                 }, 5000);
 			}).fail(function(res){
 				var msg = JSON.parse(res.responseText);
-				that.render('#message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
+				that.render('#login_message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
                 setTimeout(function() {
 					$('.alert').alert('close');
                 }, 5000);
@@ -219,13 +220,13 @@ define([
 				}
 			}).done(function(res){
 				Backbone.history.navigate('/login', true);
-				that.render('#message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
+				that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
                 setTimeout(function() {
 					$('.alert').alert('close');
                 }, 5000);
 			}).fail(function(res){
 				var msg = JSON.parse(res.responseText);
-				that.render('#message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
+				that.render('#login_message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
                 setTimeout(function() {
 					$('.alert').alert('close');
                 }, 5000);

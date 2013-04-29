@@ -16,6 +16,7 @@ define([
 			'edit-tag' : 'editTag',
 			'list-notifications' : 'listNotifications',
 			'login' : 'login',
+			'logout' : 'logout',
 			'register' : 'register',
 			'activate/:code' : 'activate',
 			'recover-password' : 'recoverPassword',
@@ -97,6 +98,10 @@ define([
 		//Login
 		login: function(){
 			this.appView.login();
+		},
+
+		logout: function(){
+			this.appView.logout();
 		},
 
 		register: function(){

@@ -22,6 +22,10 @@ $fontAwesomePath: "../components/font-awesome/font";
     @include box-sizing(border-box);
 }
 
+.login_form {
+    margin-top: 100px;
+}
+
 .page {
     padding-top: 60px;
 }
@@ -69,7 +73,7 @@ $fontAwesomePath: "../components/font-awesome/font";
         .notification_item{
             border-bottom:1px dotted gray;
             min-width: 300px;
-            
+
             &.latest{
                 background-color:$grayLighter;
                 border-left: 2px solid gray;

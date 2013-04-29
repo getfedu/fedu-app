@@ -1,17 +1,18 @@
-<form method="post" id="login">
-    <div>
-        <label>Email:</label>
-        <input type="email" name="username" value="hello@codelovers.de"/>
+<div class="container login_form">
+    <div class="row-fluid">
+        <div class="span4 offset4 well">
+            <legend>Please Sign In</legend>
+            <div id="login_message"></div>
+            <form method="POST" action="" accept-charset="UTF-8" id="login">
+                <input type="text" id="username" class="span12" name="username" placeholder="Email" value="hello@codelovers.de">
+                <input type="password" id="password" class="span12" name="password" placeholder="Password" value="test">
+                <!-- <label class="checkbox">
+                    <input type="checkbox" name="remember" value="1"> Remember Me
+                </label> -->
+                <button type="submit" name="submit" class="btn btn-info btn-block">Sign in</button>
+            </form>
+            <a href="#register">no account? sign up here</a><br/>
+            <a href="#recover-password">forgot your password?</a>
+        </div>
     </div>
-    <div>
-        <label>Password:</label>
-        <input type="password" name="password" value="test"/>
-    </div>
-    <div>
-        <input type="submit" value="Log In"/>
-    </div>
-</form>
-
-<button id="acc">acc</button>
-<button id="logout">logout</button>
-<a href="#register">Sign up</a>
+</div>
