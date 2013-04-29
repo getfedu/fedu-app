@@ -1,7 +1,7 @@
 define([
 	'jquery',
 	'backbone',
-    '../views/app',
+    '../views/login',
 ], function($, Backbone, AppView) {
 	'use strict';
 

@@ -4,10 +4,10 @@ define([
 	'backbone',
 	'vendor/fedu/config',
 	'text!../templates/app_template.html',
-	'text!../templates/login_template.html',
-	'text!../templates/register_template.html',
-	'text!../templates/recover_password_template.html',
-	'text!../templates/create_new_password_template.html',
+	'text!../templates/login/login_template.html',
+	'text!../templates/login/register_template.html',
+	'text!../templates/login/recover_password_template.html',
+	'text!../templates/login/create_new_password_template.html',
 	'text!../templates/message_template.html',
 	'jqueryCookie',
 	'cryptoJS'
@@ -38,9 +38,7 @@ define([
 		// of the app doesn't change.
 		render: function(target, value) {
 			// render function
-
 			$(target).html(value);
-
 		},
 
 		// actions

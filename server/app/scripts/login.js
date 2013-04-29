@@ -6,6 +6,7 @@ var passport = require('passport');
 var crypto = require('crypto');
 var moment = require('moment');
 var nodemailer = require('nodemailer');
+
 var host = 'http://localhost:9100/';
 
 module.exports = function(app, saltKey, collectionUser){
