@@ -22,6 +22,7 @@ define([
 			'recover-password' : 'recoverPassword',
 			'recover-password/:code' : 'createNewPassword',
 			'pull-request/:id' : 'pullRequest',
+			'dashboard' : 'dashboard',
 			'*actions': 'defaultAction'
 		},
 
@@ -118,6 +119,15 @@ define([
 
 		createNewPassword: function(code){
 			this.appView.createNewPassword(code);
+		},
+
+		// Dashboard
+		dashboard: function(){
+			require([
+				'views/dashboard'
+			], function(View) {
+				View.showDashboard();
+			});
 		},
 
 		defaultAction: function() {
