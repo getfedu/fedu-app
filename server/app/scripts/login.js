@@ -186,7 +186,7 @@ module.exports = function(app, saltKey, collectionUser){
             });
         },
 
-        passwordRecoveryEmail: function(recoveryHash, username, res){
+        passwordRecoveryEmail: function(recoveryHash, username){
             var transport = nodemailer.createTransport('sendmail');
 
             var mailOptions = {
@@ -200,8 +200,6 @@ module.exports = function(app, saltKey, collectionUser){
             transport.sendMail(mailOptions, function(error, response){
                 if(error){
                     console.log(error, response);
-                } else {
-                    res.json({ key: 'regSucceeded', message: 'Nice one, you successfully registred your Account. Please click the link in the Email we have sent yout to verfify your Account.'});
                 }
             });
         },
