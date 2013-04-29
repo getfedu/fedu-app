@@ -34,10 +34,8 @@ define([
 		////////////////////////////////////////
 
 		showDashboard: function(){
-		 	this.render(this.inner, DashboardTemplate);
+			this.render(this.inner, DashboardTemplate);
 		},
-
-
 
 		// helper functions
 		////////////////////////////////////////
