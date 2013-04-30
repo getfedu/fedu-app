@@ -31,6 +31,8 @@ module.exports = function(app, saltKey, collectionUser){
                 if (err) {
                     return next(err);
                 }
+                var userId = user._id;
+                res.cookie('user', userId.toHexString());
                 res.json('Ok');
                 return;
             });
@@ -39,6 +41,7 @@ module.exports = function(app, saltKey, collectionUser){
 
     app.get('/logout', auth.isAuth, function(req, res){
         req.logout();
+        res.cookie('user', '');
         res.cookie('connect.sid', '');
         res.send('logged out');
     });

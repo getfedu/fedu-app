@@ -11,7 +11,7 @@ module.exports = function(saltKey, collectionUser){
     var auth = {
         init: function(){
             passport.use(new localStrategy(
-                function(username, password, done) {
+                function(username, password, done){
                     var saltedPassword = crypto.createHmac('sha256', saltKey + username);
                     saltedPassword.update(password);
                     saltedPassword = saltedPassword.digest('hex');
@@ -30,12 +30,12 @@ module.exports = function(saltKey, collectionUser){
                 }
             ));
 
-            passport.serializeUser(function(user, done) {
+            passport.serializeUser(function(user, done){
                 var userId = user._id;
                 done(null, userId.toHexString());
             });
 
-            passport.deserializeUser(function(id, done) {
+            passport.deserializeUser(function(id, done){
                 var BSON = mongodb.BSONPure;
                 var userId = new BSON.ObjectID(id);
                 collectionUser.findOne({'_id': userId}, function(err, user) {

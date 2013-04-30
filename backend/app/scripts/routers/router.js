@@ -21,9 +21,9 @@ define([
 			'login' : function(){ if(this.isNotAuth()){ this.login(); }},
 			'logout' : function(){ if(this.isAuth()){ this.logout(); }},
 			'register' : function(){ if(this.isNotAuth()){ this.register(); }},
-			'activate/:code' : function(){ if(this.isNotAuth()){ this.activate(); }},
+			'activate/:code' : function(code){ if(this.isNotAuth()){ this.activate(code); }},
 			'recover-password' : function(){ if(this.isNotAuth()){ this.recoverPassword(); }},
-			'recover-password/:code' : function(){ if(this.isNotAuth()){ this.createNewPassword(); }},
+			'recover-password/:code' : function(code){ if(this.isNotAuth()){ this.createNewPassword(code); }},
 			'pull-request/:id' : function(id){ if(this.isAuth()){ this.pullRequest(id); }},
 			'dashboard' : function(){ if(this.isAuth()){ this.dashboard(); }},
 			'': function(){ if(this.isAuth()){ this.dashboard(); }},
@@ -32,7 +32,8 @@ define([
 
 		isAuth: function(){
 			var sessionCookie = jqueryCookie('connect.sid');
-			if(sessionCookie !== '' && sessionCookie !== null){
+			var userCookie = jqueryCookie('user');
+			if(sessionCookie !== '' && sessionCookie !== null && userCookie !== '' && userCookie !== null){
 				if($('#app-wrapper').length === 0){
 					require(['text!templates/app_template.html'], function(AppTemplate) {
 						$('#wrapper').html(AppTemplate);
@@ -46,8 +47,8 @@ define([
 		},
 
 		isNotAuth: function(){
-			var sessionCookie = jqueryCookie('connect.sid');
-			if(sessionCookie === '' || sessionCookie === null){
+			var userCookie = jqueryCookie('user');
+			if(userCookie === '' || userCookie === null){
 				return true;
 			} else {
 				Backbone.history.navigate('/dashboard', true);
