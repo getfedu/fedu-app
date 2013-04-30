@@ -56,7 +56,7 @@ var init = {
         app.configure(function() {
             app.use(express.static('public'));
             app.use(express.cookieParser());
-            app.use(express.session({ secret: '8MJBCAiDtrQIIiJnoFEfhXMUUjqD5A', cookie: { secure: false }}));
+            app.use(express.session({ secret: '8MJBCAiDtrQIIiJnoFEfhXMUUjqD5A', cookie: { secure: false, httpOnly: false }}));
             app.use(express.bodyParser());
             app.use(passport.initialize());
             app.use(passport.session());

@@ -34,7 +34,6 @@ define([
 			this.collection.fetchData();
 
 			this.getUncheckedNotificationsCounted();
-
 			var that = this;
 			this.socket = SocketIo.connect(TheConfig.websocketUrl);
 			this.socket.on('connect', function(){

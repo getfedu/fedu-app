@@ -7,7 +7,7 @@
     "requirejs-text": "~2.0.5",
     "modernizr": "~2.6.2",
     "jquery": "~1.9.1",
-    "backbone": "~0.9.10",
+    "backbone": "~1.0.0",
     "underscore": "~1.4.4",
     "font-awesome": "~3.0.2",
     "moment": "~2.0.0",
