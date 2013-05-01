@@ -24,6 +24,7 @@ define([
 		viewType: 'info',
 		currentCollectionLength: 0,
 		delaySearch: 0,
+		popularTags: '#popular_tags',
 
 		// delegated events
 		events: {
@@ -59,6 +60,7 @@ define([
 			this.render(this.el, VideoTemplate);
 			$('.type[data-type=' + this.viewType + ']').addClass('active'); // set type button active-state
 			// set page start to 0
+			this.renderPopularTags();
 			this.collection.goTo(0);
 			this.getPosts();
 		},
@@ -91,7 +93,6 @@ define([
 
 		listPost: function(results){
 			var templateDetailView = '';
-			var blubb = results[0];
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0]});
 
 			this.render('.detail_view', templateDetailView);
@@ -326,6 +327,24 @@ define([
 			}
 
 			return {query: queryString, tag: tag, duration: duration};
+		},
+
+		renderPopularTags: function(){
+			var that = this;
+			$.ajax({
+				url: TheConfig.nodeUrl + '/popular-tags',
+				xhrFields: {
+					withCredentials: true
+				}
+			}).done(function(tags){
+				var string = '';
+				_.each(tags, function(value){
+					string += '<li><a href="#search/' + encodeURI('[' + value.tagName + ']') + '">' + value.tagName + '</a></li>';
+				});
+				that.render(that.popularTags, string);
+			}).fail(function(error){
+				console.log(error.responseText);
+			});
 		}
 
 	});

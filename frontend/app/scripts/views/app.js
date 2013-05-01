@@ -16,7 +16,6 @@ define([
 		el: '#wrap',
 		appWrapper: '#app-wrapper',
 		loginWrapper: $('.login_wrapper'),
-		// compile template
 
 		// delegated events
 		events: {
@@ -26,7 +25,6 @@ define([
 		},
 
 		initialize: function() {
-			this.isAuth();
 		},
 
 		render: function(target, value) {
