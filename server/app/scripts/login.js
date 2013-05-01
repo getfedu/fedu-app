@@ -8,6 +8,7 @@ var moment = require('moment');
 var nodemailer = require('nodemailer');
 
 var host = 'http://localhost:9100/';
+var frontendHost = 'http://localhost:9000/';
 
 module.exports = function(app, saltKey, collectionUser){
     var auth = require('./auth.js')(saltKey, collectionUser);
@@ -152,6 +153,33 @@ module.exports = function(app, saltKey, collectionUser){
                 res.json({key:'usernameNotFound', message: 'Sorry... This is an invalid Recovery-Code.'});
             }
         });
+    });
+
+    // Twitter
+    app.get('/auth/twitter', passport.authenticate('twitter'));
+
+    app.get('/auth/twitter/callback', function(req, res, next) {
+        passport.authenticate('twitter', function(err, user) {
+            if (err) {
+                return next(err);
+            }
+
+            if (!user) {
+                return res.redirect( frontendHost + '#login-error');
+            }
+
+            req.logIn(user, function(err) {
+                if (err) {
+                    return next(err);
+                } else {
+                    var userId = user._id;
+                    userId = new Buffer(userId.toHexString()).toString('base64');
+                    res.cookie('user_f', userId);
+                    return res.redirect( frontendHost + '#login-success');
+                }
+            });
+
+        })(req, res, next);
     });
 
     var helpers = {
