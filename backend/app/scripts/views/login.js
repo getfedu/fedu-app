@@ -157,15 +157,9 @@ define([
 			}).done(function(res){
 				Backbone.history.navigate('/login', true);
 				that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
-                setTimeout(function() {
-					$('.alert').alert('close');
-                }, 5000);
 			}).fail(function(res){
 				var msg = JSON.parse(res.responseText);
 				that.render('#login_message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
-                setTimeout(function() {
-					$('.alert').alert('close');
-                }, 5000);
 			});
 		},
 
@@ -193,15 +187,9 @@ define([
 			}).done(function(res){
 				Backbone.history.navigate('/login', true);
 				that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
-                setTimeout(function() {
-					$('.alert').alert('close');
-                }, 5000);
 			}).fail(function(res){
 				var msg = JSON.parse(res.responseText);
 				that.render('#login_message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
-                setTimeout(function() {
-					$('.alert').alert('close');
-                }, 5000);
 			});
 		},
 
@@ -223,15 +211,9 @@ define([
 			}).done(function(res){
 				Backbone.history.navigate('/login', true);
 				that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
-                setTimeout(function() {
-					$('.alert').alert('close');
-                }, 5000);
 			}).fail(function(res){
 				var msg = JSON.parse(res.responseText);
 				that.render('#login_message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
-                setTimeout(function() {
-					$('.alert').alert('close');
-                }, 5000);
 			});
 		}
 

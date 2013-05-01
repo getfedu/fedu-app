@@ -4,9 +4,9 @@ define([
 	'backbone',
 	'text!../templates/404.html',
 	'text!../templates/login/logged_out_template.html',
-	'../vendor/fedu/config',
+	'../vendor/fedu/options',
 	'jqueryCookie'
-], function( $, _, Backbone, The404Template, LogoutTemplate, TheConfig, jqueryCookie) {
+], function( $, _, Backbone, The404Template, LogoutTemplate, TheOption, jqueryCookie) {
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -34,12 +34,12 @@ define([
 
 		redirectToTwitter: function(e){
 			e.preventDefault();
-			window.open( TheConfig.nodeUrl + '/auth/twitter', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			window.open( TheOption.nodeUrl + '/auth/twitter', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
 		},
 
 		redirectToFacebook: function(e){
 			e.preventDefault();
-			window.open( TheConfig.nodeUrl + '/auth/facebook', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			window.open( TheOption.nodeUrl + '/auth/facebook', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
 		},
 
 		errorDefault: function(){
@@ -68,7 +68,7 @@ define([
 			var that = this;
 			if(this.isAuth()){
 				$.ajax({
-					url: TheConfig.nodeUrl + '/username',
+					url: TheOption.nodeUrl + '/username',
 					xhrFields: {
 						withCredentials: true
 					}
@@ -84,7 +84,7 @@ define([
 		logout: function(){
 			var that = this;
 			$.ajax({
-				url: TheConfig.nodeUrl + '/logout',
+				url: TheOption.nodeUrl + '/logout',
 				xhrFields: {
 					withCredentials: true
 				}

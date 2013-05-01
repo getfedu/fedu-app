@@ -21,6 +21,7 @@ define([
 		el: '#app-wrapper',
 		inner: '#app',
 		collection: {},
+		messageTimeout: {},
 
 		// delegated events
 		events: {
@@ -83,7 +84,8 @@ define([
                 success: function(){
 					Backbone.history.navigate('/list-tags', true);
                     that.render('#message', _.template(MessageTemplate, { message: 'saved', type: 'success'}));
-                    setTimeout(function() {
+                    clearTimeout(that.messageTimeout);
+                    that.messageTimeout = setTimeout(function() {
 						$('.alert').alert('close');
                     }, 5000);
 				},
@@ -116,7 +118,8 @@ define([
 			model.save(null, {
                 success: function(){
                     that.render('#message', _.template(MessageTemplate, { message: 'Data was updated', type: 'success'}));
-                    setTimeout(function() {
+                    clearTimeout(that.messageTimeout);
+                    that.messageTimeout = setTimeout(function() {
 						$('.alert').alert('close');
                     }, 5000);
 				},

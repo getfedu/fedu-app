@@ -4,15 +4,17 @@ define([
 	'backbone',
 	'../collections/posts',
 	'../models/posts',
-	'../vendor/fedu/config',
+	'../vendor/fedu/options',
+	'./app',
 	'text!../templates/posts/video.html',
 	'text!../templates/posts/grid_video_items.html',
 	'text!../templates/posts/info_video_items.html',
 	'text!../templates/posts/player_video_items.html',
 	'text!../templates/posts/detail_video_view.html',
 	'text!../templates/posts/detail_video_content.html',
-], function( $, _, Backbone, TheCollection, TheModel, TheConfig, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
-	PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate) {
+	'text!../templates/message_template.html'
+], function( $, _, Backbone, TheCollection, TheModel, TheOption, AppView, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
+	PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate, MessageTemplate) {
 	'use strict';
 
 	var PostsView = Backbone.View.extend({
@@ -25,6 +27,7 @@ define([
 		currentCollectionLength: 0,
 		delaySearch: 0,
 		popularTags: '#popular_tags',
+		messageTimeout: {},
 
 		// delegated events
 		events: {
@@ -34,6 +37,7 @@ define([
 			'submit form#search' : 'handleSearchEvents',
 			'click form#flag_post .flag_submit': 'flagPost',
 			'click form#pull_request .pull_request_submit': 'pullRequest',
+			'click #btn_pull_request': 'checkPullRequest',
 			'click .search_hint': 'searchHints',
 			'click .popover .icon-remove': function(e){ e.stopPropagation(); $('.icon-question-sign').popover('hide');},
 		},
@@ -41,7 +45,6 @@ define([
 		initialize: function() {
 			// render default template (form)
 			this.collection = new TheCollection();
-
 			// listen to scroll event
 			var that = this;
 		    $(window).scroll(function(){
@@ -56,7 +59,7 @@ define([
 		},
 
 		listDefault: function(){
-			this.collection.paginator_core.url = TheConfig.nodeUrl + '/post';
+			this.collection.paginator_core.url = TheOption.nodeUrl + '/post';
 			this.render(this.el, VideoTemplate);
 			$('.type[data-type=' + this.viewType + ']').addClass('active'); // set type button active-state
 			// set page start to 0
@@ -112,7 +115,7 @@ define([
 
 			var query = this.searchQuery(result);
 
-			this.collection.paginator_core.url = TheConfig.nodeUrl + '/search';
+			this.collection.paginator_core.url = TheOption.nodeUrl + '/search';
 			this.collection.server_api.query = query.query;
 			this.collection.server_api.tag = query.tag;
 			this.collection.server_api.duration = query.duration;
@@ -332,7 +335,7 @@ define([
 		renderPopularTags: function(){
 			var that = this;
 			$.ajax({
-				url: TheConfig.nodeUrl + '/popular-tags',
+				url: TheOption.nodeUrl + '/popular-tags',
 				xhrFields: {
 					withCredentials: true
 				}
@@ -345,6 +348,18 @@ define([
 			}).fail(function(error){
 				console.log(error.responseText);
 			});
+		},
+
+		checkPullRequest: function(){
+			if(TheOption.isAuth()){
+				$('#pull_request_modal').modal();
+			} else {
+				this.render('#message', _.template(MessageTemplate, { message: 'Sorry... To send pull requests you have to sign in.', type: 'error'}));
+				clearTimeout(this.messageTimeout);
+                this.messageTimeout = setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
+            }
 		}
 
 	});

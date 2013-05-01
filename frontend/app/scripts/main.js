@@ -44,6 +44,11 @@ require.config({
 				'jquery'
 			]
 		},
+		bootstrapAlert: {
+			deps: [
+				'jquery'
+			]
+		},
 		jqueryCookie: {
 			deps: [
 				'jquery'
@@ -62,6 +67,7 @@ require.config({
 		bootstrapPopover: '../components/sass-bootstrap/js/bootstrap-popover',
 		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',
 		bootstrapDropdown: '../components/sass-bootstrap/js/bootstrap-dropdown',
+		bootstrapAlert: '../components/sass-bootstrap/js/bootstrap-alert',
 		jqueryCookie: '../components/jquery.cookie/jquery.cookie'
 	}
 });
@@ -73,8 +79,9 @@ require([
 	'bootstrapTooltip',
 	'bootstrapPopover',
 	'bootstrapModal',
-	'bootstrapDropdown'
-], function(Router, $, BootstrapCollapse, BootstrapTooltip, BootstrapPopover, BootstrapModal, BootstrapDropdown) {
+	'bootstrapDropdown',
+	'bootstrapAlert'
+], function(Router, $, BootstrapCollapse, BootstrapTooltip, BootstrapPopover, BootstrapModal, BootstrapDropdown, BootstrapAlert) {
 	'use strict';
 
 	new Router();

@@ -1,12 +1,12 @@
 define([
 	'underscore',
 	'backbone',
-	'../vendor/fedu/config'
-], function( _, Backbone, TheConfig) {
+	'../vendor/fedu/options'
+], function( _, Backbone, TheOption) {
 	'use strict';
 
 	var theModel = Backbone.Model.extend({
-		urlRoot: TheConfig.nodeUrl + '/post',
+		urlRoot: TheOption.nodeUrl + '/post',
 		idAttribute: '_id',
 
 		// Default key/values

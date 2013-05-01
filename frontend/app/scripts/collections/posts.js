@@ -1,6 +1,11 @@
 define([
-    'jquery', 'underscore', 'backbone', 'backbonePaginator', '../models/posts', '../vendor/fedu/config'
-], function($, _, Backbone, Paginator, TheModel, TheConfig) {
+    'jquery',
+    'underscore',
+    'backbone',
+    'backbonePaginator',
+    '../models/posts',
+    '../vendor/fedu/options'
+], function($, _, Backbone, Paginator, TheModel, TheOptions) {
     'use strict';
 
     var paginatedCollection = Backbone.Paginator.requestPager.extend({
@@ -11,7 +16,7 @@ define([
             dataType: 'json',
 
             url: function() {
-                return  TheConfig.nodeUrl + '/post';
+                return  TheOptions.nodeUrl + '/post';
             }
         },
 

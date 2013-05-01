@@ -23,6 +23,7 @@ define([
 		el: '#app-wrapper',
 		inner: '#app',
 		collection: {},
+		messageTimeout: {},
 		engine: {
 			//Workaround for using underscore templating engine
 			compile: function(template) {
@@ -132,7 +133,8 @@ define([
                 success: function(){
 					Backbone.history.navigate('/list-posts', true);
                     that.render('#message', _.template(MessageTemplate, { message: 'saved', type: 'success'}));
-                    setTimeout(function() {
+                    clearTimeout(that.messageTimeout);
+                    that.messageTimeout = setTimeout(function() {
 						$('.alert').alert('close');
                     }, 5000);
                     TheApi.theData = {};
@@ -163,7 +165,7 @@ define([
 				}
 			});
 
-			data['additionalInfo'] = this.generateAdditionalDataObject(arrayPostAdditionalData);
+			data.additionalInfo = this.generateAdditionalDataObject(arrayPostAdditionalData);
 
 			var that = this;
 			var id = $(e.currentTarget).attr('data-id');
@@ -172,7 +174,8 @@ define([
 			model.save(null, {
                 success: function(){
                     that.render('#message', _.template(MessageTemplate, { message: 'Data was updated', type: 'success'}));
-                    setTimeout(function() {
+                    clearTimeout(that.messageTimeout);
+                    that.messageTimeout = setTimeout(function() {
 						$('.alert').alert('close');
                     }, 5000);
 				},
