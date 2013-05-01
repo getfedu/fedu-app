@@ -7,7 +7,7 @@ var crypto = require('crypto');
 var moment = require('moment');
 var nodemailer = require('nodemailer');
 
-var host = 'http://localhost:9100/';
+var backendHost = 'http://localhost:9100/';
 var frontendHost = 'http://localhost:9000/';
 
 module.exports = function(app, saltKey, collectionUser){
@@ -25,7 +25,7 @@ module.exports = function(app, saltKey, collectionUser){
             }
             if(user.activated !== 'activated'){
                 res.status(401);
-                res.json({ key: 'notActivated', message: 'Sorry... But your Account is not activated click the link in the Email we have sent you. <a href="' + host + '#activate/' + user.activated +'?force=true">resend</a>'});
+                res.json({ key: 'notActivated', message: 'Sorry... But your Account is not activated click the link in the Email we have sent you. <a href="' + backendHost + '#activate/' + user.activated +'?force=true">resend</a>'});
                 return;
             }
             req.logIn(user, function(err) {
@@ -146,7 +146,7 @@ module.exports = function(app, saltKey, collectionUser){
                     });
                 } else {
                     res.status(409);
-                    res.json({key:'usernameNotFound', message: 'Sorry... The time limit for the Password recovery is already exceeded. <a href="' + host + '#recover-password">Try Recover again.</a>'});
+                    res.json({key:'usernameNotFound', message: 'Sorry... The time limit for the Password recovery is already exceeded. <a href="' + backendHost + '#recover-password">Try Recover again.</a>'});
                 }
             } else {
                 res.status(409);
@@ -190,8 +190,8 @@ module.exports = function(app, saltKey, collectionUser){
                 from: 'getfedu <mail@getfedu.com>',
                 to: username,
                 subject: 'Your registration at getfedu.com',
-                text: 'You registred an Account on getfedu.com with this Emailadress: ' + username + ' To verify your Account please click this link:'  + host + '#activate/' + activationHash,
-                html: 'You registred an Account on getfedu.com with this Emailadress: ' + username + '<br/><br/> To verify your Account please click this link: <b>' + host + '#activate/' + activationHash + '</b>'
+                text: 'You registred an Account on getfedu.com with this Emailadress: ' + username + ' To verify your Account please click this link:'  + backendHost + '#activate/' + activationHash,
+                html: 'You registred an Account on getfedu.com with this Emailadress: ' + username + '<br/><br/> To verify your Account please click this link: <b>' + backendHost + '#activate/' + activationHash + '</b>'
             };
 
             transport.sendMail(mailOptions, function(error, response){
@@ -210,8 +210,8 @@ module.exports = function(app, saltKey, collectionUser){
                 from: 'getfedu <mail@getfedu.com>',
                 to: username,
                 subject: 'Your new Registration-Code for getfedu.com',
-                text: 'You just requested a new Regisration-Code for your Account on getfedu.com with this Emailadress: ' + username + 'Here it is :) To verify your Account please click this link: ' + host + '#activate/' + activationHash,
-                html: 'You just requested a new Regisration-Code for your Account on getfedu.com with this Emailadress: ' + username + '<br/><br/> Here it is :) To verify your Account please click this link: <b>' + host + '#activate/' + activationHash + '</b>'
+                text: 'You just requested a new Regisration-Code for your Account on getfedu.com with this Emailadress: ' + username + 'Here it is :) To verify your Account please click this link: ' + backendHost + '#activate/' + activationHash,
+                html: 'You just requested a new Regisration-Code for your Account on getfedu.com with this Emailadress: ' + username + '<br/><br/> Here it is :) To verify your Account please click this link: <b>' + backendHost + '#activate/' + activationHash + '</b>'
             };
 
             transport.sendMail(mailOptions, function(error, response){
@@ -228,8 +228,8 @@ module.exports = function(app, saltKey, collectionUser){
                 from: 'getfedu <mail@getfedu.com>',
                 to: username,
                 subject: 'Password recover from getfedu.com',
-                text: 'You just ordered to reset your Password. To set a new Password please click this link: ' + host + '#recover-password/' + recoveryHash,
-                html: 'You just ordered to reset your Password.</br></br> To set a new Password please click this link: ' + host + '#recover-password/' + recoveryHash,
+                text: 'You just ordered to reset your Password. To set a new Password please click this link: ' + backendHost + '#recover-password/' + recoveryHash,
+                html: 'You just ordered to reset your Password.</br></br> To set a new Password please click this link: ' + backendHost + '#recover-password/' + recoveryHash,
             };
 
             transport.sendMail(mailOptions, function(error, response){
