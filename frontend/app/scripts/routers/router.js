@@ -14,6 +14,8 @@ define([
 			'' : 'overViewPosts',
 			'detail-view-post/:id' : 'detailViewPost',
 			'search/:params' : 'searchAction',
+			'login-success' : 'loginSuccessView',
+			'login-error' : 'loginErrorView',
 			'*actions': 'defaultAction'
 		},
 
@@ -27,6 +29,22 @@ define([
 
 		searchAction: function(params){
 			this.postsView.search(decodeURI(params));
+		},
+
+		loginSuccessView: function(){
+			require([
+				'views/login'
+			], function(View) {
+				View.loginSuccessView();
+			});
+		},
+
+		loginErrorView: function(){
+			require([
+				'views/login'
+			], function(View) {
+				View.loginErrorView();
+			});
 		},
 
 		defaultAction: function() {

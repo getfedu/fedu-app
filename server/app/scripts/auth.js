@@ -3,9 +3,11 @@
 
 'use strict';
 var localStrategy = require('passport-local').Strategy;
+var twitterStrategy = require('passport-twitter').Strategy;
 var mongodb = require('mongodb');
 var passport = require('passport');
 var crypto = require('crypto');
+var moment = require('moment');
 
 module.exports = function(saltKey, collectionUser){
     var auth = {
@@ -32,7 +34,8 @@ module.exports = function(saltKey, collectionUser){
 
             passport.serializeUser(function(user, done){
                 var userId = user._id;
-                done(null, userId.toHexString());
+                userId = userId.toHexString();
+                done(null, userId);
             });
 
             passport.deserializeUser(function(id, done){
@@ -42,6 +45,37 @@ module.exports = function(saltKey, collectionUser){
                     done(err, user);
                 });
             });
+
+            // twitter
+            passport.use(new twitterStrategy({
+                consumerKey: 'QW04KQwoiD574WC9DeCoDg',
+                consumerSecret: 'QQuC3XBb9ptUuiAGStVwi4spumTPLtJKPPifLIyuOM',
+                callbackURL: '/auth/twitter/callback'
+            },
+            function(token, tokenSecret, profile, done) {
+                collectionUser.findOne({'socialId.twitter': profile.id}, function(err, user) {
+                    if(user) {
+                        done(null, user);
+                    } else {
+                        var body = {
+                            username: profile.username,
+                            userImage: profile.photos[0].value,
+                            registrationDate: moment().format(),
+                            socialId: {
+                                twitter: profile.id
+                            },
+                            activated: 'activated'
+                        };
+
+                        collectionUser.insert(body, function(err, user) {
+                            done(null, user[0]);
+                        });
+
+                    }
+                });
+
+            }));
+
         },
 
         isAuth: function(req, res, next){

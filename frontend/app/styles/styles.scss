@@ -96,7 +96,7 @@ html, body {
             left: -20px;
             line-height: 30px;
             color: $grayLight;
-            z-index: 9999;
+            z-index: 2;
         }
     }
     .popover {
@@ -251,4 +251,8 @@ html, body {
             }
         }
     }
+}
+
+.login_wrapper{
+    display:none;
 }
