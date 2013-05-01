@@ -32,7 +32,7 @@ module.exports = function(app, saltKey, collectionUser){
                     return next(err);
                 }
                 var userId = user._id;
-                res.cookie('user', userId.toHexString());
+                res.cookie('user_b', new Buffer(userId.toHexString()).toString('base64'));
                 res.json('Ok');
                 return;
             });
@@ -41,13 +41,17 @@ module.exports = function(app, saltKey, collectionUser){
 
     app.get('/logout', auth.isAuth, function(req, res){
         req.logout();
-        res.cookie('user', '');
+        res.cookie('user_b', '');
         res.cookie('connect.sid', '');
-        res.send('logged out');
+        res.json({key:'logged_out', message: 'You are successfully logged out!' });
     });
 
     app.get('/account', auth.isAuth, function(req, res){
         res.send('ok');
+    });
+
+    app.get('/username', auth.isAuth, function(req, res){
+        res.json(req.user.username);
     });
 
     app.post('/register', function(req, res){

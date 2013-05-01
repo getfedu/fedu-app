@@ -74,13 +74,15 @@ define([
 		},
 
 		logout: function(){
+			var that = this;
 			$.ajax({
 				url: TheConfig.nodeUrl + '/logout',
 				xhrFields: {
 					withCredentials: true
 				}
-			}).done(function(){
+			}).done(function(res){
 				Backbone.history.navigate('/login', true);
+				that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
 			}).fail(function(error){
 				console.log(error.responseText);
 			});

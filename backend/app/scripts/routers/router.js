@@ -32,7 +32,7 @@ define([
 
 		isAuth: function(){
 			var sessionCookie = jqueryCookie('connect.sid');
-			var userCookie = jqueryCookie('user');
+			var userCookie = jqueryCookie('user_b');
 			if(sessionCookie !== '' && sessionCookie !== null && userCookie !== '' && userCookie !== null){
 				if($('#app-wrapper').length === 0){
 					require(['text!templates/app_template.html'], function(AppTemplate) {
@@ -47,7 +47,7 @@ define([
 		},
 
 		isNotAuth: function(){
-			var userCookie = jqueryCookie('user');
+			var userCookie = jqueryCookie('user_b');
 			if(userCookie === '' || userCookie === null){
 				return true;
 			} else {
