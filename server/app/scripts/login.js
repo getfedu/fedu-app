@@ -171,12 +171,42 @@ module.exports = function(app, saltKey, collectionUser){
             req.logIn(user, function(err) {
                 if (err) {
                     return next(err);
-                } else {
-                    var userId = user._id;
-                    userId = new Buffer(userId.toHexString()).toString('base64');
-                    res.cookie('user_f', userId);
-                    return res.redirect( frontendHost + '#login-success');
                 }
+
+                var userId = user._id;
+                userId = new Buffer(userId.toHexString()).toString('base64');
+                res.cookie('user_f', userId);
+                return res.redirect( frontendHost + '#login-success');
+
+            });
+
+        })(req, res, next);
+    });
+
+
+    // Twitter
+    app.get('/auth/facebook', passport.authenticate('facebook'));
+
+    app.get('/auth/facebook/callback', function(req, res, next) {
+        passport.authenticate('facebook', function(err, user) {
+            if (err) {
+                return next(err);
+            }
+
+            if (!user) {
+                return res.redirect( frontendHost + '#login-error');
+            }
+
+            req.logIn(user, function(err) {
+                if (err) {
+                    return next(err);
+                }
+
+                var userId = user._id;
+                userId = new Buffer(userId.toHexString()).toString('base64');
+                res.cookie('user_f', userId);
+                return res.redirect( frontendHost + '#login-success');
+
             });
 
         })(req, res, next);

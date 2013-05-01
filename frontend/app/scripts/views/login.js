@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'text!../templates/login/login_template.html',
+	'text!../templates/login/login_template.html'
 ], function( $, _, Backbone, LoginTemplate) {
 	'use strict';
 
@@ -35,10 +35,6 @@ define([
 			$(this.el).html();
 			this.render($(this.el), 'Error - something went wrong, please try it again!');
 		}
-
-		// helper functions
-		////////////////////////////////////////
-
 
 
 	});

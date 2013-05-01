@@ -38,6 +38,12 @@ require.config({
 			deps: [
 				'jquery'
 			]
+		},
+		jqueryCookie: {
+			deps: [
+				'jquery'
+			],
+			exports: 'jQuery.cookie'
 		}
 	},
 	paths: {
@@ -49,7 +55,8 @@ require.config({
 		bootstrapCollapse: '../components/sass-bootstrap/js/bootstrap-collapse',
 		bootstrapTooltip: '../components/sass-bootstrap/js/bootstrap-tooltip',
 		bootstrapPopover: '../components/sass-bootstrap/js/bootstrap-popover',
-		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal'
+		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',
+		jqueryCookie: '../components/jquery.cookie/jquery.cookie'
 	}
 });
 
