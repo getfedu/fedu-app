@@ -1,9 +1,8 @@
 define([
 	'jquery',
 	'underscore',
-	'backbone',
-	'text!../templates/login/login_template.html'
-], function( $, _, Backbone, LoginTemplate) {
+	'backbone'
+], function( $, _, Backbone) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -13,14 +12,6 @@ define([
 		el: 'body',
 		appWrapper: '#app-wrapper',
 		// compile template
-
-		// delegated events
-		events: {
-			// 'click .login' : 'initLogin'
-		},
-
-		initialize: function() {
-		},
 
 		render: function(target, value) {
 			$(target).html(value);

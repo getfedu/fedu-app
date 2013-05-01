@@ -43,6 +43,7 @@ module.exports = function(app, saltKey, collectionUser){
     app.get('/logout', auth.isAuth, function(req, res){
         req.logout();
         res.cookie('user_b', '');
+        res.cookie('user_f', '');
         res.cookie('connect.sid', '');
         res.json({key:'logged_out', message: 'You are successfully logged out!' });
     });
