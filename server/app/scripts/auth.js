@@ -4,6 +4,7 @@
 'use strict';
 var localStrategy = require('passport-local').Strategy;
 var twitterStrategy = require('passport-twitter').Strategy;
+var facebookStrategy = require('passport-facebook').Strategy;
 var mongodb = require('mongodb');
 var passport = require('passport');
 var crypto = require('crypto');
@@ -32,24 +33,10 @@ module.exports = function(saltKey, collectionUser){
                 }
             ));
 
-            passport.serializeUser(function(user, done){
-                var userId = user._id;
-                userId = userId.toHexString();
-                done(null, userId);
-            });
-
-            passport.deserializeUser(function(id, done){
-                var BSON = mongodb.BSONPure;
-                var userId = new BSON.ObjectID(id);
-                collectionUser.findOne({'_id': userId}, function(err, user) {
-                    done(err, user);
-                });
-            });
-
             // twitter
             passport.use(new twitterStrategy({
-                consumerKey: 'QW04KQwoiD574WC9DeCoDg',
-                consumerSecret: 'QQuC3XBb9ptUuiAGStVwi4spumTPLtJKPPifLIyuOM',
+                consumerKey: 'n2Iqlg5E5g9noHuvxtonQ', // local and production use 
+                consumerSecret: 'jKSgndSD5NR5phOqDekRHYSsKR9FGn22LBK46UiQo', // local and production use
                 callbackURL: '/auth/twitter/callback'
             },
             function(token, tokenSecret, profile, done) {
@@ -73,8 +60,50 @@ module.exports = function(saltKey, collectionUser){
 
                     }
                 });
-
             }));
+
+            // facebook
+            passport.use(new facebookStrategy({
+                clientID: 235650393244226, // production use = 442238072532571
+                clientSecret: 'b0dbebf4583c10d334f650428ee70c0e', // production use = 11be1b0c9fa03e0bcd8f8b412f5044a6
+                callbackURL: '/auth/facebook/callback'
+            },
+            function(accessToken, refreshToken, profile, done) {
+                collectionUser.findOne({'socialId.facebook': profile.id}, function(err, user) {
+                    if(user) {
+                        done(null, user);
+                    } else {
+                        var body = {
+                            username: profile.username,
+                            registrationDate: moment().format(),
+                            socialId: {
+                                facebook: profile.id
+                            },
+                            activated: 'activated'
+                        };
+
+                        collectionUser.insert(body, function(err, user) {
+                            done(null, user[0]);
+                        });
+
+                    }
+                });
+            }));
+
+            passport.serializeUser(function(user, done){
+                var userId = user._id;
+                userId = userId.toHexString();
+                done(null, userId);
+            });
+
+            passport.deserializeUser(function(id, done){
+                var BSON = mongodb.BSONPure;
+                var userId = new BSON.ObjectID(id);
+                collectionUser.findOne({'_id': userId}, function(err, user) {
+                    done(err, user);
+                });
+            });
+
 
         },
 
