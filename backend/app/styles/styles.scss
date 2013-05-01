@@ -59,13 +59,13 @@ $fontAwesomePath: "../components/font-awesome/font";
     }
 }
 
-.notification_wrapper{
+#notification_wrapper{
 
-    .notification_counter{
+    #notification_counter{
         display: none;
     }
 
-    .notifications{
+    #notifications{
         .no_notifications{
             padding:5px 10px 5px 15px;
         }

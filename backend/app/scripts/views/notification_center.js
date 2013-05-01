@@ -13,12 +13,10 @@ define([
     'use strict';
 
     var View = Backbone.View.extend({
-		el: '.notification_wrapper',
+		el: '#notification_wrapper',
 		socket: null,
-		notificationWrapper: $('.notification_wrapper'),
-		notification: $('.notification_wrapper .notifications'),
-		notificationCounter: $('.notification_wrapper .notification_counter'),
-		currentNotifications: 0,
+		notification: $('#notifications'),
+		notificationCounter: $('#notification_counter'),
 		oldNotifications: false,
 		collection: {},
 
@@ -66,7 +64,6 @@ define([
 
 			if(locateCurrentTarget.hasClass('latest')){
 				locateCurrentTarget.removeClass('latest');
-				//this.countedNotifications(-1);
 			}
 
 		},
@@ -74,17 +71,19 @@ define([
 		// helpers
 		////////////////////////////////////////
 		countedNotifications: function(count){
+			var currentNotifications = parseInt($('#notification_counter').text(), 0);
+
 			if(count === 1){
-				this.currentNotifications += 1;
+				currentNotifications = currentNotifications + 1;
 			} else if(count === -1) {
-				this.currentNotifications -= 1;
+				currentNotifications -= 1;
 			} else {
-				this.currentNotifications = count;
+				currentNotifications = count;
 			}
 
-			this.notificationCounter.show().html(this.currentNotifications);
+			this.notificationCounter.show().html(currentNotifications);
 
-			if(this.currentNotifications === 0){
+			if(currentNotifications === 0){
 				this.notificationCounter.hide();
 			}
 
