@@ -22,6 +22,8 @@ define([
 		},
 
 		initialize: function() {
+			this.initNotficationCenter();
+			this.displayUsermenu();
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -35,8 +37,6 @@ define([
 		////////////////////////////////////////
 
 		showDashboard: function(){
-			this.displayUsermenu();
-			this.initNotficationCenter();
 			this.render(this.inner, DashboardTemplate);
 		},
 

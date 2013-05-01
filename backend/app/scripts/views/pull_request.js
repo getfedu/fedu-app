@@ -18,9 +18,8 @@ define([
 		// the App already present in the HTML.
 		el: '#app-wrapper',
 		inner: '#app',
-		notificationCounter: $('.notification_wrapper .notification_counter'),
-		notifications: $('.notification_wrapper .notifications'),
-		currentNotifications: 0,
+		notifications: $('#notifications'),
+		notificationCounter: $('#notification_counter'),
 		postModel: {},
 		notificationModel: {},
 
@@ -112,18 +111,20 @@ define([
 		////////////////////////////////////////
 
 		countedNotifications: function(count){
+			var currentNotifications = parseInt($('#notification_counter').text(), 0);
 			if(count === 1){
-				this.currentNotifications += 1;
+				currentNotifications += 1;
 			} else if(count === -1) {
-				this.currentNotifications -= 1;
+				currentNotifications -= 1;
 			} else {
-				this.currentNotifications = count;
+				currentNotifications = count;
 			}
 
-			this.notificationCounter.show().html(this.currentNotifications);
+			this.notificationCounter.show().html(currentNotifications);
 
-			if(this.currentNotifications === 0){
+			if(currentNotifications === 0){
 				this.notificationCounter.hide();
+				this.notifications.html('<li class="no_notifications"><span>No Notifications exists!</span></li>');
 			}
 
 		},
