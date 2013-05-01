@@ -73,7 +73,7 @@ define([
 						withCredentials: true
 					}
 				}).done(function(username){
-					that.render(that.username, username);
+					that.render(that.username, '<i class="icon-user"></i> ' + username);
 					that.render($('#user_actions'), LogoutTemplate);
 				}).fail(function(error){
 					console.log(error.responseText);
