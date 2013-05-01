@@ -3,10 +3,10 @@ define([
 	'underscore',
 	'backbone',
 	'text!../templates/404.html',
-	'text!../templates/login/login_template.html',
+	'text!../templates/login/logged_out_template.html',
 	'../vendor/fedu/config',
 	'jqueryCookie'
-], function( $, _, Backbone, The404Template, LoginTemplate, TheConfig, jqueryCookie) {
+], function( $, _, Backbone, The404Template, LogoutTemplate, TheConfig, jqueryCookie) {
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -15,26 +15,21 @@ define([
 		// the App already present in the HTML.
 		el: '#wrap',
 		appWrapper: '#app-wrapper',
-		loginWrapper: $('.login_wrapper'),
+		username: '#username',
 
 		// delegated events
 		events: {
-			'click .login' : 'initLogin',
-			'click .login_twitter' : 'redirectToTwitter',
-			'click .login_facebook' : 'redirectToFacebook',
+			'click #login_twitter' : 'redirectToTwitter',
+			'click #login_facebook' : 'redirectToFacebook',
+			'click #logout' : 'logout'
 		},
 
 		initialize: function() {
+			this.displayUsermenu();
 		},
 
 		render: function(target, value) {
 			$(target).html(value);
-		},
-
-		initLogin: function(e){
-			e.preventDefault();
-			this.render(this.loginWrapper, LoginTemplate);
-			this.loginWrapper.toggle();
 		},
 
 		redirectToTwitter: function(e){
@@ -67,6 +62,37 @@ define([
 			} else {
 				return false;
 			}
+		},
+
+		displayUsermenu: function(){
+			var that = this;
+			if(this.isAuth()){
+				$.ajax({
+					url: TheConfig.nodeUrl + '/username',
+					xhrFields: {
+						withCredentials: true
+					}
+				}).done(function(username){
+					that.render(that.username, username);
+					that.render($('#user_actions'), LogoutTemplate);
+				}).fail(function(error){
+					console.log(error.responseText);
+				});
+			}
+		},
+
+		logout: function(){
+			var that = this;
+			$.ajax({
+				url: TheConfig.nodeUrl + '/logout',
+				xhrFields: {
+					withCredentials: true
+				}
+			}).done(function(res){
+				window.location.reload();
+			}).fail(function(error){
+				console.log(error.responseText);
+			});
 		}
 
 	});
