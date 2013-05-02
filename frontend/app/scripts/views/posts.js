@@ -143,9 +143,6 @@ define([
 
 				$.ajax({
 					url: 'http://localhost:3100/flag-post',
-					xhrFields: {
-						withCredentials: true
-					},
 					data: {
 						type: 'flag',
 						id: flagId,
