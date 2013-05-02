@@ -12,9 +12,10 @@ define([
 	'text!../templates/posts/player_video_items.html',
 	'text!../templates/posts/detail_video_view.html',
 	'text!../templates/posts/detail_video_content.html',
-	'text!../templates/message_template.html'
+	'text!../templates/message_template.html',
+	'text!../templates/posts/surprise_me.html'
 ], function( $, _, Backbone, TheCollection, TheModel, TheOption, AppView, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
-	PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate, MessageTemplate) {
+	PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate, MessageTemplate, SurpriseMeTemplate) {
 	'use strict';
 
 	var PostsView = Backbone.View.extend({
@@ -27,6 +28,7 @@ define([
 		currentCollectionLength: 0,
 		delaySearch: 0,
 		popularTags: '#popular_tags',
+		surpriseMe: '#surprise_me',
 		messageTimeout: {},
 
 		// delegated events
@@ -40,6 +42,7 @@ define([
 			'click #btn_pull_request': 'checkPullRequest',
 			'click .search_hint': 'searchHints',
 			'click .popover .icon-remove': function(e){ e.stopPropagation(); $('.icon-question-sign').popover('hide');},
+			'click form#surprise_me #submit': 'surpriseMeSearch'
 		},
 
 		initialize: function() {
@@ -64,6 +67,7 @@ define([
 			$('.type[data-type=' + this.viewType + ']').addClass('active'); // set type button active-state
 			// set page start to 0
 			this.renderPopularTags();
+			this.renderSurpriseMe();
 			this.collection.goTo(0);
 			this.getPosts();
 		},
@@ -179,6 +183,17 @@ define([
 				});
 			}
 
+		},
+
+		surpriseMeSearch: function(e){
+			e.preventDefault();
+			var locateFlagForm = $('form#surprise_me');
+			var array = locateFlagForm.serializeArray();
+			var minutes = array[0].value;
+			var lesson = array[1].value;
+			var searchUrl = '[' + lesson + '] d:' + minutes;
+
+			Backbone.history.navigate('/search/' + encodeURI(searchUrl), true);
 		},
 
 		// helper functions
@@ -345,6 +360,32 @@ define([
 					string += '<li><a href="#search/' + encodeURI('[' + value.tagName + ']') + '">' + value.tagName + '</a></li>';
 				});
 				that.render(that.popularTags, string);
+			}).fail(function(error){
+				console.log(error.responseText);
+			});
+		},
+
+		renderSurpriseMe: function(){
+			var that = this;
+			$.ajax({
+				url: TheOption.nodeUrl + '/surprise-tags',
+				xhrFields: {
+					withCredentials: true
+				}
+			}).done(function(tags){
+				var lessons = '';
+				_.each(tags, function(value){
+					lessons += '<option>' + value.tagName + '</option>';
+				});
+
+				var i=5,
+					minutes = '';
+				do {
+				  minutes += '<option>' + i + '</option>';
+				  i = i + 5;
+				} while (i <= 60);
+
+				that.render(that.surpriseMe, _.template(SurpriseMeTemplate, {minutes: minutes, lessons: lessons}));
 			}).fail(function(error){
 				console.log(error.responseText);
 			});

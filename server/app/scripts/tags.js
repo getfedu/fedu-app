@@ -34,4 +34,11 @@ module.exports = function(app, collectionTags){
             res.json(results);
         });
     });
+
+    // Read Tags from db
+    app.get('/surprise-tags', function(req, res) {
+        collectionTags.find().sort({ counter: -1}).limit(10).toArray(function(err, results){
+            res.json(results);
+        });
+    });
 };
