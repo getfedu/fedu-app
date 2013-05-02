@@ -47,7 +47,7 @@ define([
 			'click form#surprise_me #submit': 'surpriseMeSearch',
 			'click form#rate_post .rating_scale li': 'ratingScale',
 			'click form#rate_post .rate_submit': 'rating',
-			'click #btn_rating': 'checkRating'
+			'click #btn_rating:not(".disabled")': 'checkRating'
 		},
 
 		initialize: function() {
@@ -110,7 +110,13 @@ define([
 			if(favorites.indexOf(results[0]._id) !== -1){
 				favoriteStar = '<i class="icon-star"></i>';
 			}
-			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar});
+
+			var rating = TheOption.rating;
+			var ratingButton = '';
+			if(rating.indexOf(results[0]._id) !== -1){
+				ratingButton = 'disabled';
+			}
+			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, ratingButton: ratingButton});
 
 			this.render('.detail_view', templateDetailView);
 			this.postId = $('#post_id').attr('data-post-id');

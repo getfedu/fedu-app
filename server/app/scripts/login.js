@@ -53,7 +53,7 @@ module.exports = function(app, saltKey, collectionUser){
     });
 
     app.get('/user', auth.isAuth, function(req, res){
-        res.json({'username': req.user.username, 'favoritePosts': req.user.favoritePosts});
+        res.json({'username': req.user.username, 'favoritePosts': req.user.favoritePosts, 'ratedPosts': req.user.ratedPosts});
     });
 
     app.post('/register', function(req, res){

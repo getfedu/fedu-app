@@ -65,6 +65,11 @@ define([
 					if(user.favoritePosts){
 						TheOption.favorites = user.favoritePosts;
 					}
+
+					if(user.ratedPosts){
+						TheOption.rating = user.ratedPosts;
+					}
+
 					that.render($('#user_menu'), _.template(UserMenuTemplate, { username: '<i class="icon-user"></i>' + user.username }));
 				}).fail(function(error){
 					console.log(error.responseText);

@@ -220,7 +220,6 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
 
             // update post
             collectionPosts.update({'_id': oId }, data, function(){
-
                 var userId = req.user._id;
                 collectionUser.findAndModify({'_id': userId}, [['_id','asc']], { $push: { ratedPosts: postId }}, {}, function() {
                     res.json('ok');
