@@ -5,13 +5,14 @@
 var mongodb = require('mongodb');
 var moment = require('moment');
 
-module.exports = function(app, collectionPosts, collectionTags, collectionNotifications){
+module.exports = function(app, collectionPosts, collectionTags, collectionNotifications, collectionUser, saltKey){
     var helpers = require('./helpers.js')(collectionTags);
+    var auth = require('./auth.js')(saltKey, collectionUser);
     // Create Post and save into db
     app.post('/post', function(req, res) {
         collectionPosts.insert(req.body, function() {
             helpers.checkTags.init(req.body.tags, true);
-            res.send(JSON.stringify('OK'));
+            res.json('ok');
         });
     });
 
@@ -20,8 +21,7 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
         var top = parseInt(req.query.top, 0);
         var skip = parseInt(req.query.skip, 0);
         collectionPosts.find().skip(skip).limit(top).sort({ _id: -1}).toArray(function(err, results){
-            res.setHeader('Content-Type', 'application/json');
-            res.send(results);
+            res.json(results);
         });
     });
 
@@ -31,8 +31,7 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
             var BSON = mongodb.BSONPure;
             var oId = new BSON.ObjectID(req.params.id);
             collectionPosts.find({'_id': oId }).toArray(function(err, results){
-                res.setHeader('Content-Type', 'application/json');
-                res.send(results);
+                res.json(results);
             });
         }
     });
@@ -101,7 +100,7 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
             });
             collectionPosts.update({'_id': oId }, req.body, function(){
                 helpers.checkTags.init(req.body.tags, true);
-                res.send(JSON.stringify('OK'));
+                res.json('ok');
             });
         }
     });
@@ -114,7 +113,15 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
             helpers.checkTags.init(result.tags, false);
         });
         collectionPosts.remove({'_id': oId }, function(){
-            res.send(JSON.stringify('OK'));
+            res.json('ok');
+        });
+    });
+
+    app.post('/post/favorite', auth.isAuth, function(req, res) {
+        var postId = req.body.postId;
+        var userId = req.user._id;
+        collectionUser.findAndModify({'_id': userId}, [['_id','asc']], { $push: { favoritePosts: postId }}, {}, function() {
+            res.json('ok');
         });
     });
 };

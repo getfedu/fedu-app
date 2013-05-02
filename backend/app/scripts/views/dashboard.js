@@ -22,8 +22,6 @@ define([
 		},
 
 		initialize: function() {
-			this.initNotficationCenter();
-			this.displayUsermenu();
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -37,6 +35,8 @@ define([
 		////////////////////////////////////////
 
 		showDashboard: function(){
+			this.initNotficationCenter();
+			this.displayUsermenu();
 			this.render(this.inner, DashboardTemplate);
 		},
 
@@ -50,12 +50,12 @@ define([
 		displayUsermenu: function(){
 			var that = this;
 			$.ajax({
-				url: TheConfig.nodeUrl + '/username',
+				url: TheConfig.nodeUrl + '/user',
 				xhrFields: {
 					withCredentials: true
 				}
-			}).done(function(username){
-				that.render(that.username, username);
+			}).done(function(user){
+				that.render(that.username, user.username);
 			}).fail(function(error){
 				console.log(error.responseText);
 			});

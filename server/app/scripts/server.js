@@ -87,7 +87,7 @@ var init = {
 
     serverIsReady: function(){
         auth = require('./auth.js')(saltKey, collectionUser);
-        posts = require('./posts.js')(app, collectionPosts, collectionTags, collectionNotifications);
+        posts = require('./posts.js')(app, collectionPosts, collectionTags, collectionNotifications, collectionUser, saltKey);
         tags = require('./tags.js')(app, collectionTags);
         login = require('./login.js')(app, saltKey, collectionUser);
         search = require('./search.js')(app, collectionPosts);

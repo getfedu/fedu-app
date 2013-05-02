@@ -3,10 +3,10 @@ define([
 	'underscore',
 	'backbone',
 	'text!../templates/404.html',
-	'text!../templates/login/logged_out_template.html',
+	'text!../templates/login/user_menu_template.html',
 	'../vendor/fedu/options',
 	'jqueryCookie'
-], function( $, _, Backbone, The404Template, LogoutTemplate, TheOption, jqueryCookie) {
+], function( $, _, Backbone, The404Template, UserMenuTemplate, TheOption, jqueryCookie) {
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -68,13 +68,13 @@ define([
 			var that = this;
 			if(this.isAuth()){
 				$.ajax({
-					url: TheOption.nodeUrl + '/username',
+					url: TheOption.nodeUrl + '/user',
 					xhrFields: {
 						withCredentials: true
 					}
-				}).done(function(username){
-					that.render(that.username, '<i class="icon-user"></i> ' + username);
-					that.render($('#user_actions'), LogoutTemplate);
+				}).done(function(user){
+					TheOption.favorites = user.favoritePosts;
+					that.render($('#user_menu'), _.template(UserMenuTemplate, { username: '<i class="icon-user"></i>' + user.username }));
 				}).fail(function(error){
 					console.log(error.responseText);
 				});
@@ -82,13 +82,12 @@ define([
 		},
 
 		logout: function(){
-			var that = this;
 			$.ajax({
 				url: TheOption.nodeUrl + '/logout',
 				xhrFields: {
 					withCredentials: true
 				}
-			}).done(function(res){
+			}).done(function(){
 				window.location.reload();
 			}).fail(function(error){
 				console.log(error.responseText);

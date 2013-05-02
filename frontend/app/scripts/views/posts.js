@@ -28,6 +28,7 @@ define([
 		delaySearch: 0,
 		popularTags: '#popular_tags',
 		messageTimeout: {},
+		postId: '',
 
 		// delegated events
 		events: {
@@ -40,6 +41,7 @@ define([
 			'click #btn_pull_request': 'checkPullRequest',
 			'click .search_hint': 'searchHints',
 			'click .popover .icon-remove': function(e){ e.stopPropagation(); $('.icon-question-sign').popover('hide');},
+			'click #favorite i.icon-star-empty': 'favoritePost'
 		},
 
 		initialize: function() {
@@ -96,9 +98,15 @@ define([
 
 		listPost: function(results){
 			var templateDetailView = '';
-			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0]});
+			var favorites = TheOption.favorites;
+			var favoriteStar = '<i class="icon-star-empty"></i>';
+			if(favorites.indexOf(results[0]._id) !== -1){
+				favoriteStar = '<i class="icon-star"></i>';
+			}
+			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar});
 
 			this.render('.detail_view', templateDetailView);
+			this.postId = $('#post_id').attr('data-post-id');
 
 		},
 
@@ -132,8 +140,8 @@ define([
 				var locateModalBody = locateFlagForm.find('.modal-body');
 				var array = locateFlagForm.serializeArray();
 				var flagDescription = array[0].value;
-				var flagId = array[1].value;
-				var flagTitle = array[2].value;
+				var flagId = this.postId;
+				var flagTitle = array[1].value;
 
 				$.ajax({
 					url: 'http://localhost:3100/flag-post',
@@ -160,8 +168,8 @@ define([
 				var array = locateFlagForm.serializeArray();
 				var pullRequestTitle = array[0].value;
 				var pullRequestUrl = array[1].value;
-				var pullRequestPostId = array[2].value;
-				var pullRequestPostTitle = array[3].value;
+				var pullRequestPostId = this.postId;
+				var pullRequestPostTitle = array[2].value;
 
 				$.ajax({
 					url: 'http://localhost:3100/pull-request',
@@ -179,6 +187,25 @@ define([
 				});
 			}
 
+		},
+
+		favoritePost: function(e){
+			var that = this;
+			$.ajax({
+				type: 'POST',
+				data: {
+					postId: this.postId
+				},
+				url: TheOption.nodeUrl + '/post/favorite',
+				xhrFields: {
+					withCredentials: true
+				}
+			}).done(function(){
+				$(e.currentTarget).parent().html('<i class="icon-star"></i>');
+				TheOption.favorites.push(that.postId);
+			}).fail(function(error){
+				console.log(error.responseText);
+			});
 		},
 
 		// helper functions

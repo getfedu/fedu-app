@@ -5,6 +5,7 @@ define([
 
     var options = {
         nodeUrl: 'http://localhost:3100',
+        favorites: [],
 
         isAuth: function(){
             var sessionCookie = jqueryCookie('connect.sid');

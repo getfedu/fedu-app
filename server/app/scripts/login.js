@@ -52,8 +52,8 @@ module.exports = function(app, saltKey, collectionUser){
         res.send('ok');
     });
 
-    app.get('/username', auth.isAuth, function(req, res){
-        res.json(req.user.username);
+    app.get('/user', auth.isAuth, function(req, res){
+        res.json({'username': req.user.username, 'favoritePosts': req.user.favoritePosts});
     });
 
     app.post('/register', function(req, res){
