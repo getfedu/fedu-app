@@ -4,7 +4,9 @@
 var mongodb = require('mongodb');
 var moment = require('moment');
 
-module.exports = function(app, collectionNotifications, socketIo){
+module.exports = function(app, collectionNotifications, socketIo, saltKey, collectionUser){
+    var auth = require('./auth.js')(saltKey, collectionUser);
+
     app.get('/flag-post', function(req, res) {
         var data = {
             id: req.query.id,
@@ -22,7 +24,8 @@ module.exports = function(app, collectionNotifications, socketIo){
         });
     });
 
-    app.get('/pull-request', function(req, res) {
+    app.get('/pull-request', auth.isAuth, function(req, res) {
+
         var data = {
             id: req.query.id,
             type: req.query.type,
@@ -30,6 +33,7 @@ module.exports = function(app, collectionNotifications, socketIo){
             description: req.query.description,
             pullRequestTitle: req.query.pullRequestTitle,
             pullRequestUrl: req.query.pullRequestUrl,
+            submitter: req.user.username,
             checked: false,
             publishDate: moment().format(),
             updateDate: moment().format()

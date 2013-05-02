@@ -54,19 +54,9 @@ define([
 		// helper functions
 		////////////////////////////////////////
 
-		isAuth: function(){
-			var sessionCookie = jqueryCookie('connect.sid');
-			var userCookie = jqueryCookie('user_f');
-			if(sessionCookie !== '' && sessionCookie !== null && userCookie !== '' && userCookie !== null){
-				return true;
-			} else {
-				return false;
-			}
-		},
-
 		displayUsermenu: function(){
 			var that = this;
-			if(this.isAuth()){
+			if(TheOption.isAuth()){
 				$.ajax({
 					url: TheOption.nodeUrl + '/user',
 					xhrFields: {
