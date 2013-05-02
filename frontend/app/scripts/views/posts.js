@@ -44,7 +44,10 @@ define([
 			'click .popover .icon-remove': function(e){ e.stopPropagation(); $('.icon-question-sign').popover('hide');},
 			'click #favorite i.icon-star-empty': 'addFavoritePost',
 			'click #favorite i.icon-star': 'removeFavoritePost',
-			'click form#surprise_me #submit': 'surpriseMeSearch'
+			'click form#surprise_me #submit': 'surpriseMeSearch',
+			'click form#rate_post .rating_scale li': 'ratingScale',
+			'click form#rate_post .rate_submit': 'rating',
+			'click #btn_rating': 'checkRating'
 		},
 
 		initialize: function() {
@@ -150,7 +153,7 @@ define([
 				var flagTitle = array[1].value;
 
 				$.ajax({
-					url: 'http://localhost:3100/flag-post',
+					url: TheOption.nodeUrl + '/flag-post',
 					data: {
 						type: 'flag',
 						id: flagId,
@@ -158,7 +161,7 @@ define([
 						description: flagDescription
 					}
 				}).done(function() {
-					locateModalBody.html('<p><strong>Post was flagged.</strong> Thank you!</p>');
+					locateModalBody.html('<p><b>Post was flagged.</b> Thank you!</p>');
 					$(e.currentTarget).val('thank you!').addClass('disabled');
 				});
 			}
@@ -178,7 +181,7 @@ define([
 				var pullRequestPostTitle = array[2].value;
 
 				$.ajax({
-					url: 'http://localhost:3100/pull-request',
+					url: TheOption.nodeUrl + '/pull-request',
 					data: {
 						type: 'pull-request',
 						id: pullRequestPostId,
@@ -188,7 +191,7 @@ define([
 						pullRequestTitle: pullRequestTitle
 					}
 				}).done(function() {
-					locateModalBody.html('<p><strong>Pull request was sent.</strong> We will check and merge it!</p>');
+					locateModalBody.html('<p><b>Pull request was sent.</b> We will check and merge it!</p>');
 					$(e.currentTarget).val('thank you!').addClass('disabled');
 				});
 			}
@@ -251,6 +254,36 @@ define([
 			Backbone.history.navigate('/search/' + encodeURI(searchUrl), true);
 		},
 
+		rating: function(e){
+			e.preventDefault();
+
+			if(!$(e.currentTarget).hasClass('disabled')){
+				var that = this;
+				var locateForm = $('form#rate_post');
+				var array = locateForm.serializeArray();
+
+				var quality = array[0].value;
+				var comprehensibility = array[1].value;
+
+				if(quality !== '0' && comprehensibility !== '0'){
+
+					$.ajax({
+						url: TheOption.nodeUrl + '/post/rate',
+						type: 'POST',
+						data: {
+							id: this.postId,
+							quality: quality,
+							comprehensibility: comprehensibility
+						}
+					}).done(function() {
+						$(e.currentTarget).val('thank you!').addClass('disabled');
+						locateForm.find('.modal-body').html('<p><b>Your rating was sent!</b></p>');
+						TheOption.rating.push(that.postId);
+					});
+				}
+			}
+
+		},
 
 		// helper functions
 		////////////////////////////////////////
@@ -450,7 +483,33 @@ define([
 					$('.alert').alert('close');
                 }, 5000);
             }
-		}
+		},
+
+		ratingScale: function(e){
+			e.preventDefault();
+			var clickedElement = $(e.currentTarget);
+			var parent = clickedElement.parent();
+			var children = parent.children();
+			var index = clickedElement.index();
+			parent.find('li').removeClass('icon-star').addClass('icon-star-empty');
+			parent.next().val(index+1);
+
+			for(var i=0; i<=index; i++){
+				children.eq(i).removeClass('icon-star-empty').addClass('icon-star');
+			}
+		},
+
+		checkRating: function(){
+			if(TheOption.isAuth()){
+				$('#rating_modal').modal();
+			} else {
+				this.render('#message', _.template(MessageTemplate, { message: 'Sorry... To to rate this post you have to sign in.', type: 'error'}));
+				clearTimeout(this.messageTimeout);
+                this.messageTimeout = setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
+            }
+		},
 
 	});
 

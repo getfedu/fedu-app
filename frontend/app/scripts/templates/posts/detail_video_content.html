@@ -40,6 +40,7 @@
 			<div class="additional span7">
 				<button type="button" class="btn" data-toggle="modal" data-target="#flag_modal"><i class="icon-flag"></i> flag it</button>
 				<button type="button" class="btn" id="btn_pull_request"><i class="icon-link"></i> pull request</button>
+				<button type="button" class="btn" id="btn_rating"><i class="icon-star"></i> rate it</button>
 			</div>
 		</div>
 	</div>
@@ -89,6 +90,45 @@
 		<div class="modal-footer">
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 			<input type="submit"  class="btn btn-primary pull_request_submit" value="pull request">
+		</div>
+	</form>
+</div>
+
+<!-- Modal pull request -->
+<div id="rating_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<form id="rate_post">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3 id="myModalLabel"><i class="icon-star"></i> Rate this post</h3>
+		</div>
+		<div class="modal-body">
+			<p>Please rate (you have to rate all):</p>
+			<div class="well well-small">
+				<h5>Video-Quality</h5>
+				<ul class="rating_scale">
+					<li class="icon-star-empty"></li> 
+					<li class="icon-star-empty"></li> 
+					<li class="icon-star-empty"></li> 
+					<li class="icon-star-empty"></li> 
+					<li class="icon-star-empty"></li> 
+				</ul>
+				<input type="hidden" name="rating" value="0">
+
+				<h5>Comprehensibility</h5>
+				<ul class="rating_scale">
+					<li class="icon-star-empty"></li> 
+					<li class="icon-star-empty"></li> 
+					<li class="icon-star-empty"></li> 
+					<li class="icon-star-empty"></li> 
+					<li class="icon-star-empty"></li> 
+				</ul>
+				<input type="hidden" name="rating" value="0">
+
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			<input type="submit"  class="btn btn-primary rate_submit" value="rate">
 		</div>
 	</form>
 </div>

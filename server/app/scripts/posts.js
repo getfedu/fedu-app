@@ -79,7 +79,7 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
 
                 // update post
                 collectionPosts.update({'_id': oId }, data, function(){
-                    res.send(JSON.stringify('OK'));
+                    res.json('ok');
                 });
 
                 // update notification
@@ -149,5 +149,84 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
         } else {
             res.json('input empty');
         }
+    });
+
+    app.post('/post/rate', auth.isAuth, function(req, res) {
+        var postId = req.body.id;
+        var BSON = mongodb.BSONPure;
+        var oId = new BSON.ObjectID(postId);
+
+        collectionPosts.findOne({'_id': oId }, function(err, result){
+
+            var data = {};
+            var newTotalUsers = 0;
+            var newQualityExact = 0;
+            var newQualityRounded = 0;
+
+            var newComprehensibilityExact = 0;
+            var newComprehensibilityRounded = 0;
+
+            var newTotalPointsExact = 0;
+            var newTotalPointsRounded = 0;
+
+            if(!result.rating){
+                newTotalUsers = 1;
+
+                newQualityExact = parseInt(req.body.quality, 0);
+                newQualityRounded = parseInt(req.body.quality, 0);
+
+                newComprehensibilityExact = parseInt(req.body.comprehensibility, 0);
+                newComprehensibilityExact = parseFloat(newComprehensibilityExact.toFixed(2));
+                newComprehensibilityRounded = parseInt(req.body.comprehensibility, 0);
+
+                newTotalPointsExact =  newQualityExact + newComprehensibilityExact;
+                newTotalPointsRounded =  Math.round(newTotalPointsExact);
+
+            } else {
+                newTotalUsers = result.rating.totalUsers + 1;
+
+                newQualityExact = ((result.rating.quality.exact * result.rating.totalUsers) + parseInt(req.body.quality, 0)) / newTotalUsers;
+                newQualityExact = parseFloat(newQualityExact.toFixed(2));
+                newQualityRounded = Math.round(newQualityExact);
+
+                newComprehensibilityExact = ((result.rating.comprehensibility.exact * result.rating.totalUsers) + parseInt(req.body.comprehensibility, 0)) / newTotalUsers;
+                newComprehensibilityExact = parseFloat(newComprehensibilityExact.toFixed(2));
+                newComprehensibilityRounded = Math.round(newComprehensibilityExact);
+
+                newTotalPointsExact =  newQualityExact + newComprehensibilityExact;
+                newTotalPointsRounded =  newQualityRounded + newComprehensibilityRounded;
+
+            }
+
+            data = {
+                $set: {
+                    rating: {
+                        totalUsers: newTotalUsers,
+                        totalPoints: {
+                            exact: newTotalPointsExact,
+                            rounded: newTotalPointsRounded
+                        },
+                        quality: {
+                            exact: newQualityExact,
+                            rounded: newQualityRounded,
+                        },
+                        comprehensibility: {
+                            exact: newComprehensibilityExact,
+                            rounded: newComprehensibilityRounded,
+                        }
+                    }
+                }
+            };
+
+            // update post
+            collectionPosts.update({'_id': oId }, data, function(){
+
+                var userId = req.user._id;
+                collectionUser.findAndModify({'_id': userId}, [['_id','asc']], { $push: { ratedPosts: postId }}, {}, function() {
+                    res.json('ok');
+                });
+            });
+
+        });
     });
 };
