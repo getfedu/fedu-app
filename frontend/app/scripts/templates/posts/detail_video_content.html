@@ -5,8 +5,18 @@
 	<div class="info_container row-fluid">
 		<div class="span1">
 			<div class="rating">
-				<h4>4.5</h4>
-				<span><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class=" icon-star-half"></i></span>
+				<h4><% if(attributes.rating){ print(attributes.rating.totalPoints.exact); } else { print(0); } %></h4>
+				<span>
+					<%
+						if(attributes.rating){
+							for(var i=0; i < attributes.rating.totalPoints.rounded; i++){
+								print('<i class="icon-star"></i> ');
+							}
+						} else {
+							print('not rated yet');
+						}
+					%>
+				</span>
 			</div>
 			<div id="favorite">
 				<span><%= iconStar %></span>
