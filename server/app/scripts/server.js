@@ -92,7 +92,7 @@ var init = {
         login = require('./login.js')(app, saltKey, collectionUser);
         search = require('./search.js')(app, collectionPosts);
         api = require('./api.js')(app);
-        notifications = require('./notifications.js')(app, collectionNotifications, socketIo);
+        notifications = require('./notifications.js')(app, collectionNotifications, socketIo, saltKey, collectionUser);
         auth.init();
     }
 };
