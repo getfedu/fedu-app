@@ -30,6 +30,7 @@ module.exports = function(app, collectionNotifications, socketIo){
             description: req.query.description,
             pullRequestTitle: req.query.pullRequestTitle,
             pullRequestUrl: req.query.pullRequestUrl,
+            submitter: req.query.submitter,
             checked: false,
             publishDate: moment().format(),
             updateDate: moment().format()

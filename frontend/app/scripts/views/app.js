@@ -54,26 +54,16 @@ define([
 		// helper functions
 		////////////////////////////////////////
 
-		isAuth: function(){
-			var sessionCookie = jqueryCookie('connect.sid');
-			var userCookie = jqueryCookie('user_f');
-			if(sessionCookie !== '' && sessionCookie !== null && userCookie !== '' && userCookie !== null){
-				return true;
-			} else {
-				return false;
-			}
-		},
-
 		displayUsermenu: function(){
 			var that = this;
-			if(this.isAuth()){
+			if(TheOption.isAuth()){
 				$.ajax({
 					url: TheOption.nodeUrl + '/username',
 					xhrFields: {
 						withCredentials: true
 					}
 				}).done(function(username){
-					that.render(that.username, '<i class="icon-user"></i> ' + username);
+					that.render(that.username, '<i class="icon-user"></i> <span id="name">' + username + '</span>');
 					that.render($('#user_actions'), LogoutTemplate);
 				}).fail(function(error){
 					console.log(error.responseText);

@@ -168,6 +168,7 @@ define([
 				var pullRequestUrl = array[1].value;
 				var pullRequestPostId = array[2].value;
 				var pullRequestPostTitle = array[3].value;
+				var getLoggedUser = $('#username #name').text();
 
 				$.ajax({
 					url: 'http://localhost:3100/pull-request',
@@ -177,7 +178,8 @@ define([
 						title: pullRequestPostTitle,
 						description: 'New pull request',
 						pullRequestUrl: pullRequestUrl,
-						pullRequestTitle: pullRequestTitle
+						pullRequestTitle: pullRequestTitle,
+						submitter: getLoggedUser
 					}
 				}).done(function() {
 					locateModalBody.html('<p><strong>Pull request was sent.</strong> We will check and merge it!</p>');
