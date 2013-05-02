@@ -110,6 +110,8 @@ define([
 
 			if(!$('#all_videos').length){
 				this.render(this.el, VideoTemplate);
+				this.renderPopularTags();
+				this.renderSurpriseMe();
 			}
 
 			var searchForm = $('form#search .search-query');
