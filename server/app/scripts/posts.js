@@ -146,7 +146,8 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
                 res.json(results);
             });
         } else {
-            res.json('input empty');
+            res.status(204);
+            res.json('no favorites');
         }
     });
 
