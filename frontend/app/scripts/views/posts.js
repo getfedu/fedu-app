@@ -5,7 +5,6 @@ define([
 	'../collections/posts',
 	'../models/posts',
 	'../vendor/fedu/options',
-	'./app',
 	'text!../templates/posts/video.html',
 	'text!../templates/posts/grid_video_items.html',
 	'text!../templates/posts/info_video_items.html',
@@ -14,7 +13,7 @@ define([
 	'text!../templates/posts/detail_video_content.html',
 	'text!../templates/message_template.html',
 	'text!../templates/posts/surprise_me.html'
-], function( $, _, Backbone, TheCollection, TheModel, TheOption, AppView, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
+], function( $, _, Backbone, TheCollection, TheModel, TheOption, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
 	PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate, MessageTemplate, SurpriseMeTemplate) {
 	'use strict';
 
@@ -43,7 +42,8 @@ define([
 			'click #btn_pull_request': 'checkPullRequest',
 			'click .search_hint': 'searchHints',
 			'click .popover .icon-remove': function(e){ e.stopPropagation(); $('.icon-question-sign').popover('hide');},
-			'click #favorite i.icon-star-empty': 'favoritePost',
+			'click #favorite i.icon-star-empty': 'addFavoritePost',
+			'click #favorite i.icon-star': 'removeFavoritePost',
 			'click form#surprise_me #submit': 'surpriseMeSearch'
 		},
 
@@ -195,23 +195,49 @@ define([
 
 		},
 
-		favoritePost: function(e){
+		addFavoritePost: function(e){
 			var that = this;
 			$.ajax({
 				type: 'POST',
 				data: {
 					postId: this.postId
 				},
-				url: TheOption.nodeUrl + '/post/favorite',
-				xhrFields: {
-					withCredentials: true
-				}
+				url: TheOption.nodeUrl + '/post/add-favorite'
 			}).done(function(){
 				$(e.currentTarget).parent().html('<i class="icon-star"></i>');
 				TheOption.favorites.push(that.postId);
 			}).fail(function(error){
 				console.log(error.responseText);
 			});
+		},
+
+		removeFavoritePost: function(e){
+			var that = this;
+			$.ajax({
+				type: 'POST',
+				data: {
+					postId: this.postId
+				},
+				url: TheOption.nodeUrl + '/post/remove-favorite'
+			}).done(function(){
+				$(e.currentTarget).parent().html('<i class="icon-star-empty"></i>');
+				TheOption.favorites.pop(that.postId);
+				console.log(TheOption);
+			}).fail(function(error){
+				console.log(error.responseText);
+			});
+		},
+
+		listFavorites: function(){
+			if(!$('#all_videos').length){
+				this.render(this.el, VideoTemplate);
+				this.renderPopularTags();
+				this.renderSurpriseMe();
+			}
+			this.collection.paginator_core.url = TheOption.nodeUrl + '/post-list-favorite';
+			this.collection.goTo(0);
+			this.getPosts();
+			$('.search-query').val('');
 		},
 
 		surpriseMeSearch: function(e){
@@ -224,6 +250,7 @@ define([
 
 			Backbone.history.navigate('/search/' + encodeURI(searchUrl), true);
 		},
+
 
 		// helper functions
 		////////////////////////////////////////
@@ -379,10 +406,7 @@ define([
 		renderPopularTags: function(){
 			var that = this;
 			$.ajax({
-				url: TheOption.nodeUrl + '/popular-tags',
-				xhrFields: {
-					withCredentials: true
-				}
+				url: TheOption.nodeUrl + '/popular-tags'
 			}).done(function(tags){
 				var string = '';
 				_.each(tags, function(value){
@@ -397,22 +421,18 @@ define([
 		renderSurpriseMe: function(){
 			var that = this;
 			$.ajax({
-				url: TheOption.nodeUrl + '/surprise-tags',
-				xhrFields: {
-					withCredentials: true
-				}
+				url: TheOption.nodeUrl + '/surprise-tags'
 			}).done(function(tags){
 				var lessons = '';
 				_.each(tags, function(value){
 					lessons += '<option>' + value.tagName + '</option>';
 				});
 
-				var i=5,
-					minutes = '';
-				do {
-				  minutes += '<option>' + i + '</option>';
-				  i = i + 5;
-				} while (i <= 60);
+				var minutes = '';
+
+				for (var i = 5; i <= 60; i+=5) {
+					minutes += '<option>' + i + '</option>';
+				}
 
 				that.render(that.surpriseMe, _.template(SurpriseMeTemplate, {minutes: minutes, lessons: lessons}));
 			}).fail(function(error){

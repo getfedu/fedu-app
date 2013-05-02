@@ -68,8 +68,7 @@ module.exports = function(app, collectionPosts){
         var top = parseInt(req.query.top, 0);
 
         collectionPosts.find(queryObj).skip(skip).limit(top).sort({ _id: -1}).toArray(function(err, results){
-            res.setHeader('Content-Type', 'application/json');
-            res.send(results);
+            res.json(results);
         });
     });
 

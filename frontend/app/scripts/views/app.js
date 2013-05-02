@@ -4,9 +4,8 @@ define([
 	'backbone',
 	'text!../templates/404.html',
 	'text!../templates/login/user_menu_template.html',
-	'../vendor/fedu/options',
-	'jqueryCookie'
-], function( $, _, Backbone, The404Template, UserMenuTemplate, TheOption, jqueryCookie) {
+	'../vendor/fedu/options'
+], function( $, _, Backbone, The404Template, UserMenuTemplate, TheOption) {
 	'use strict';
 
 	var AppView = Backbone.View.extend({
@@ -63,7 +62,9 @@ define([
 						withCredentials: true
 					}
 				}).done(function(user){
-					TheOption.favorites = user.favoritePosts;
+					if(user.favoritePosts){
+						TheOption.favorites = user.favoritePosts;
+					}
 					that.render($('#user_menu'), _.template(UserMenuTemplate, { username: '<i class="icon-user"></i>' + user.username }));
 				}).fail(function(error){
 					console.log(error.responseText);

@@ -2,8 +2,9 @@ define([
 	'jquery',
 	'backbone',
 	'../views/app',
-	'../views/posts'
-], function($, Backbone, AppView, PostsView) {
+	'../views/posts',
+	'../vendor/fedu/options'
+], function($, Backbone, AppView, PostsView, TheOption) {
 	'use strict';
 
 	var Router = Backbone.Router.extend({
@@ -16,6 +17,7 @@ define([
 			'search/:params' : 'searchAction',
 			'login-success' : 'loginSuccessView',
 			'login-error' : 'loginErrorView',
+			'favorites' : function(){ if(TheOption.isAuth()){ this.favorites(); } else { Backbone.history.navigate('', true); }},
 			'*actions': 'defaultAction'
 		},
 
@@ -32,19 +34,19 @@ define([
 		},
 
 		loginSuccessView: function(){
-			require([
-				'views/login'
-			], function(View) {
+			require(['views/login'], function(View) {
 				View.loginSuccessView();
 			});
 		},
 
 		loginErrorView: function(){
-			require([
-				'views/login'
-			], function(View) {
+			require(['views/login'], function(View) {
 				View.loginErrorView();
 			});
+		},
+
+		favorites: function(){
+			this.postsView.listFavorites();
 		},
 
 		defaultAction: function() {
