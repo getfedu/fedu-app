@@ -179,7 +179,7 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
                 newComprehensibilityExact = parseFloat(newComprehensibilityExact.toFixed(2));
                 newComprehensibilityRounded = parseInt(req.body.comprehensibility, 0);
 
-                newTotalPointsExact =  newQualityExact + newComprehensibilityExact;
+                newTotalPointsExact =  (newQualityExact + newComprehensibilityExact) / 2;
                 newTotalPointsRounded =  Math.round(newTotalPointsExact);
 
             } else {
@@ -193,8 +193,8 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
                 newComprehensibilityExact = parseFloat(newComprehensibilityExact.toFixed(2));
                 newComprehensibilityRounded = Math.round(newComprehensibilityExact);
 
-                newTotalPointsExact =  newQualityExact + newComprehensibilityExact;
-                newTotalPointsRounded =  newQualityRounded + newComprehensibilityRounded;
+                newTotalPointsExact =  (newQualityExact + newComprehensibilityExact) / 2;
+                newTotalPointsRounded =  Math.round(newTotalPointsExact);
 
             }
 
