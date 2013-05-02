@@ -83,7 +83,8 @@ require([
 	'bootstrapAlert'
 ], function(Router, $, BootstrapCollapse, BootstrapTooltip, BootstrapPopover, BootstrapModal, BootstrapDropdown, BootstrapAlert) {
 	'use strict';
-
+	// ajax settings (sent cors cookies)
+    $.ajaxSetup({ xhrFields: { withCredentials: true } });
 	new Router();
 	Backbone.history.start();
 });

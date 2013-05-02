@@ -174,9 +174,6 @@ define([
 
 				$.ajax({
 					url: 'http://localhost:3100/pull-request',
-					xhrFields: {
-						withCredentials: true
-					},
 					data: {
 						type: 'pull-request',
 						id: pullRequestPostId,
