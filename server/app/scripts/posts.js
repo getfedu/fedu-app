@@ -135,14 +135,13 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
 
     app.get('/post-list-favorite', auth.isAuth, function(req, res) {
         var idArray = req.user.favoritePosts;
-        if(idArray.length > 0){
+        if(idArray !== undefined && idArray.length > 0){
             var query = [];
             var BSON = mongodb.BSONPure;
             for (var i = 0; i < idArray.length; i++) {
                 var id = new BSON.ObjectID(idArray[i]);
                 query.push(id);
             }
-            console.log(query);
             collectionPosts.find({ '_id' : { $in: query}}).toArray(function(err, results){
                 res.json(results);
             });
