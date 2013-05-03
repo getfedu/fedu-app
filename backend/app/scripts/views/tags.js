@@ -28,8 +28,7 @@ define([
 			'submit form#add_tag': 'saveTag',
 			'click button.edit_tag': 'editTag',
 			'submit form#edit_tag': 'updateTag',
-			'click button.cancel_tag': function(){ Backbone.history.navigate('/list-tags', true); },
-			'change #edit_tag :input': 'changedHandler'
+			'click button.cancel_tag': function(){ Backbone.history.navigate('/list-tags', true); }
 		},
 
 		initialize: function() {
@@ -98,19 +97,11 @@ define([
 		updateTag: function(e){
 			e.preventDefault();
 
-			var array = $(':input.changed').serializeArray();
+			var array = $(':input').serializeArray();
 			var data = {
-				updateDate: new Moment().format()
+				updateDate: new Moment().format(),
+				description: array[0].value
 			};
-			_.each(array, function(value){
-				if(value.name === 'tags'){
-					var array = value.value.split(',');
-					array.pop();
-					data[value.name] = array;
-				} else {
-					data[value.name] = value.value;
-				}
-			});
 			var that = this;
 			var id = $(e.currentTarget).attr('data-id');
 			var model = this.collection.get(id);
@@ -135,17 +126,7 @@ define([
 				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, cid: value.cid});
 			});
 			this.render('#tags_list', templateItems);
-		},
-
-		changedHandler: function(e){
-			var target = $(e.currentTarget);
-			if(target.is(':checkbox')){
-				$(e.currentTarget).toggleClass('changed');
-			} else {
-				$(e.currentTarget).addClass('changed');
-			}
-		},
-
+		}
 	});
 
 	return new View();

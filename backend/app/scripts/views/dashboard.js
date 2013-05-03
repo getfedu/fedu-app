@@ -55,7 +55,7 @@ define([
 					withCredentials: true
 				}
 			}).done(function(user){
-				that.render(that.username, user.username);
+				that.render(that.username, '<i class="icon-user"></i> ' + user.username);
 			}).fail(function(error){
 				console.log(error.responseText);
 			});

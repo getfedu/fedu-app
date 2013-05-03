@@ -69,7 +69,6 @@ define([
 					//console.log('sorry');
                 }
 			});
-
 		},
 
 		// helpers
@@ -100,7 +99,6 @@ define([
 				this.notificationCounter.hide();
 				this.notifications.html('<li class="no_notifications"><span>No Notifications exists!</span></li>');
 			}
-
 		},
 
 	});

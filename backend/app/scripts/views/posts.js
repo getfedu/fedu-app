@@ -11,9 +11,9 @@ define([
 	'text!../templates/message_template.html',
 	'text!../templates/modal_template.html',
 	'../vendor/fedu/api',
-	'moment',
-	'../collections/tags'
-], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate, TheApi, Moment, TagsCollection ) {
+	'../vendor/fedu/config',
+	'moment'
+], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate, TheApi, TheConfig, Moment) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -25,7 +25,7 @@ define([
 		collection: {},
 		messageTimeout: {},
 		engine: {
-			//Workaround for using underscore templating engine
+			//Workaround for using underscore templating engine at typeahead
 			compile: function(template) {
 				var compiled = _.template(template);
 				return {
@@ -58,7 +58,6 @@ define([
 			this.collection = new TheCollection();
 			this.collection.on('postsFetched', this.getData, this );
 			TheApi.on('apiDataFetched', this.setApiData, this );
-
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -96,7 +95,6 @@ define([
 					$('.tags [type=text]').before('<div class="btn tag">' + value + '</div>');
 				});
 			}
-
 		},
 
 		removeAdditionalWrapperItem: function(e){
@@ -251,7 +249,7 @@ define([
 				name: 'autocomplete-tags',
 				valueKey: 'tagName',
 				prefetch: {
-					url: 'http://localhost:3100/tag', // @todo config file
+					url: TheConfig.nodeUrl + '/tag',
 					ttl: 0
 				},
 				template: [
@@ -303,18 +301,14 @@ define([
 						pullRequestUrl: '',
 						pullRequestPublishDate: new Moment().format()
 					};
-
 				} else if(value.name === 'pullRequestUrl'){
 					additionalInfo[counter].pullRequestUrl = value.value;
 					counter++;
 				}
-
 			});
 
 			return additionalInfo;
-
 		}
-
 	});
 
 	return new View();

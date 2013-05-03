@@ -76,7 +76,6 @@ define([
 					that.render('#message', _.template(MessageTemplate, { message: 'not merged! something went wrong.', type: 'error'}));
                 }
 			});
-
 		},
 
 		removePullRequest: function(e){
@@ -104,7 +103,6 @@ define([
 					that.render('#message', _.template(MessageTemplate, { message: 'not removed! something went wrong.', type: 'error'}));
                 }
 			});
-
 		},
 
 		// helpers
@@ -126,13 +124,11 @@ define([
 				this.notificationCounter.hide();
 				this.notifications.html('<li class="no_notifications"><span>No Notifications exists!</span></li>');
 			}
-
 		},
 
 		getData: function(id){
 			var that = this;
 			var templateItems = '';
-
 
 			this.postModel = new ThePostsModel({_id: id});
 			this.postModel.fetch({
@@ -157,21 +153,17 @@ define([
 							} else {
 								that.render($('.pull_requests_wrapper .pull_requests'), _.template(templateItems));
 							}
-
 						},
 						error: function(){
 						    console.log('error - no data was fetched');
 						}
 					});
-
                 },
                 error: function(){
                     console.log('error - no data was fetched');
                 }
             });
-
 		}
-
 	});
 
 	return new View();

@@ -37,7 +37,6 @@ define([
 			this.socket.on('connect', function(){
 				that.notifyPost();
 			});
-
 		},
 
 		notifyPost: function(){
@@ -54,9 +53,7 @@ define([
 				description = (data.description !== '') ? '<span class="description">' + data.description + '</span>' : '';
 				templateItems = _.template(LatestListItemTemplate, {attributes: data, description: description, publishDate: publishDate, frontendUrl: TheConfig.frontendUrl, backendUrl: TheConfig.backendUrl});
 				that.notification.prepend(templateItems);
-
 			});
-
 		},
 
 		readNotification: function(e){
@@ -65,7 +62,6 @@ define([
 			if(locateCurrentTarget.hasClass('latest')){
 				locateCurrentTarget.removeClass('latest');
 			}
-
 		},
 
 		// helpers
@@ -86,7 +82,6 @@ define([
 			if(currentNotifications === 0){
 				this.notificationCounter.hide();
 			}
-
 		},
 
 		getData: function(){
@@ -97,7 +92,7 @@ define([
 
 			_.each(this.collection.models, function(value){
 				that.oldNotifications = true;
-				publishDate = new Moment(value.attributes.publishDate).format('H:m:s [ Uhr - ] DD.MM.YY');
+				publishDate = new Moment(value.attributes.publishDate).format('H:m:s [ - ] DD.MM.YY');
 				description = (value.attributes.description !== '') ? '<span class="description">' + value.attributes.description + '</span>' : '';
 				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, description: description, publishDate: publishDate, frontendUrl: TheConfig.frontendUrl, backendUrl: TheConfig.backendUrl});
 			});
@@ -117,7 +112,7 @@ define([
 			this.collection.server_api.filter = 'countUnchecked';
 			this.collection.fetch({
                 success: function(collection) {
-                	that.countedNotifications(collection.models[0].attributes.uncheckedNotifications);
+					that.countedNotifications(collection.models[0].attributes.uncheckedNotifications);
                 },
                 error: function(){
                     console.log('error - no data was fetched');

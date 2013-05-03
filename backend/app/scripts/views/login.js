@@ -55,10 +55,7 @@ define([
 		activate: function(code){
 			var that = this;
 			$.ajax({
-				url: TheConfig.nodeUrl + '/activate/' + code,
-				xhrFields: {
-					withCredentials: true
-				}
+				url: TheConfig.nodeUrl + '/activate/' + code
 			}).done(function(res){
 				if(res.key === 'ok'){
 					that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
@@ -76,10 +73,7 @@ define([
 		logout: function(){
 			var that = this;
 			$.ajax({
-				url: TheConfig.nodeUrl + '/logout',
-				xhrFields: {
-					withCredentials: true
-				}
+				url: TheConfig.nodeUrl + '/logout'
 			}).done(function(res){
 				Backbone.history.navigate('/login', true);
 				that.render('#login_message', _.template(MessageTemplate, { message: res.message, type: 'success'}));
@@ -88,18 +82,15 @@ define([
 			});
 		},
 
-		account: function(){
-			console.log(this.userId);
-			$.ajax({
-				url: TheConfig.nodeUrl + '/account',
-				xhrFields: {
-					withCredentials: true
-				}
-			}).done(function(){
-			}).fail(function(error){
-				console.log(error.responseText);
-			});
-		},
+		// account: function(){
+		// 	console.log(this.userId);
+		// 	$.ajax({
+		// 		url: TheConfig.nodeUrl + '/account'
+		// 	}).done(function(){
+		// 	}).fail(function(error){
+		// 		console.log(error.responseText);
+		// 	});
+		// },
 
 		recoverPassword: function(){
 			this.render(this.el, RecoverPasswordTemplate);
@@ -121,9 +112,6 @@ define([
 			$.ajax({
 				type: 'POST',
 				url: TheConfig.nodeUrl + '/login',
-				xhrFields: {
-					withCredentials: true
-				},
 				data: {
 					username: data[0].value,
 					password: password
@@ -147,9 +135,6 @@ define([
 			$.ajax({
 				type: 'POST',
 				url: TheConfig.nodeUrl + '/register',
-				xhrFields: {
-					withCredentials: true
-				},
 				data: {
 					username: data[0].value,
 					password: password
@@ -178,9 +163,6 @@ define([
 			$.ajax({
 				type: 'POST',
 				url: TheConfig.nodeUrl + '/recover-password',
-				xhrFields: {
-					withCredentials: true
-				},
 				data: {
 					username: data[0].value,
 				}
@@ -202,9 +184,6 @@ define([
 			$.ajax({
 				type: 'POST',
 				url: TheConfig.nodeUrl + '/recover-password/' + data[1].value,
-				xhrFields: {
-					withCredentials: true
-				},
 				data: {
 					password: password,
 				}

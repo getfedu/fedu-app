@@ -24,7 +24,6 @@ define([
         },
 
         parseData: function(data){
-
             this.theData = data;
             this.trigger('apiDataFetched');
         }
