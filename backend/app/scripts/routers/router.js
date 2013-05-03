@@ -8,6 +8,9 @@ define([
 ], function($, _, Backbone, AppView, jqueryCookie, MessageTemplate) {
 	'use strict';
 
+	// ajax settings (sent cors cookies)
+	$.ajaxSetup({ xhrFields: { withCredentials: true }});
+
 	var Router = Backbone.Router.extend({
 		appView: new AppView(),
 		routes: {

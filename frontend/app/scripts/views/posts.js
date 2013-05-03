@@ -78,7 +78,6 @@ define([
 		},
 
 		listPosts: function(){
-
 			var templateItems = '';
 			var that = this;
 			if(this.collection.models.length){
@@ -120,7 +119,6 @@ define([
 
 			this.render('.detail_view', templateDetailView);
 			this.postId = $('#post_id').attr('data-post-id');
-
 		},
 
 		search: function(result){
@@ -172,7 +170,6 @@ define([
 					$(e.currentTarget).val('thank you!').addClass('disabled');
 				});
 			}
-
 		},
 
 		pullRequest: function(e){
@@ -203,7 +200,6 @@ define([
 					$(e.currentTarget).val('thank you!').addClass('disabled');
 				});
 			}
-
 		},
 
 		addFavoritePost: function(e){
@@ -274,7 +270,6 @@ define([
 				var comprehensibility = array[1].value;
 
 				if(quality !== '0' && comprehensibility !== '0'){
-
 					$.ajax({
 						url: TheOption.nodeUrl + '/post-rate',
 						type: 'POST',
@@ -290,7 +285,6 @@ define([
 					});
 				}
 			}
-
 		},
 
 		// helper functions
@@ -351,9 +345,7 @@ define([
 						that.currentCollectionLength = that.collection.length;
 					}
 				});
-
 			}
-
 		},
 
 		autoLoad: function(){
@@ -369,7 +361,6 @@ define([
 			if(scrollPosition === documentHeight){
 				this.infiniteLoad();
 			}
-
 		},
 
 		searchHints: function(){
@@ -470,7 +461,6 @@ define([
 				});
 
 				var minutes = '';
-
 				for (var i = 5; i <= 60; i+=5) {
 					minutes += '<option>' + i + '</option>';
 				}
@@ -518,7 +508,6 @@ define([
                 }, 5000);
             }
 		},
-
 	});
 
 	return PostsView;

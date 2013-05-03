@@ -80,8 +80,6 @@ require([
 	'bootstrapDropdown'
 ], function(Router, BootstrapAlert, BootstrapTransition, BootstrapModal, BootstrapTypeahead, BootstrapDropdown) {
 	'use strict';
-	// ajax settings (sent cors cookies)
-    $.ajaxSetup({ xhrFields: { withCredentials: true } });
 	// initialize routing and start Backbone.history()
 	new Router();
 	Backbone.history.start();

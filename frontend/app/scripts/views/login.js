@@ -11,7 +11,6 @@ define([
 		// the App already present in the HTML.
 		el: 'body',
 		appWrapper: '#app-wrapper',
-		// compile template
 
 		render: function(target, value) {
 			$(target).html(value);
@@ -26,8 +25,6 @@ define([
 			$(this.el).html();
 			this.render($(this.el), 'Error - something went wrong, please try it again!');
 		}
-
-
 	});
 
 	return new View();

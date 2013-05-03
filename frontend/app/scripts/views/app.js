@@ -56,20 +56,16 @@ define([
 		displayUsermenu: function(){
 			var that = this;
 			if(TheOption.isAuth()){
+
 				$.ajax({
 					url: TheOption.nodeUrl + '/user',
-					xhrFields: {
-						withCredentials: true
-					}
 				}).done(function(user){
 					if(user.favoritePosts){
 						TheOption.favorites = user.favoritePosts;
 					}
-
 					if(user.ratedPosts){
 						TheOption.rating = user.ratedPosts;
 					}
-
 					that.render($('#user_menu'), _.template(UserMenuTemplate, { username: '<i class="icon-user"></i>' + user.username }));
 				}).fail(function(error){
 					console.log(error.responseText);
@@ -80,9 +76,6 @@ define([
 		logout: function(){
 			$.ajax({
 				url: TheOption.nodeUrl + '/logout',
-				xhrFields: {
-					withCredentials: true
-				}
 			}).done(function(){
 				window.location.reload();
 			}).fail(function(error){

@@ -7,6 +7,9 @@ define([
 ], function($, Backbone, AppView, PostsView, TheOption) {
 	'use strict';
 
+	// ajax settings (sent cors cookies)
+	$.ajaxSetup({ xhrFields: { withCredentials: true }});
+
 	var Router = Backbone.Router.extend({
 		appView: new AppView(),
 		postsView: new PostsView(),
