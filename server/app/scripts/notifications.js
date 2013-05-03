@@ -7,12 +7,12 @@ var moment = require('moment');
 module.exports = function(app, collectionNotifications, socketIo, saltKey, collectionUser){
     var auth = require('./auth.js')(saltKey, collectionUser);
 
-    app.get('/flag-post', function(req, res) {
+    app.post('/flag-post', function(req, res) {
         var data = {
-            id: req.query.id,
-            type: req.query.type,
-            title: req.query.title,
-            description: req.query.description,
+            id: req.body.id,
+            type: req.body.type,
+            title: req.body.title,
+            description: req.body.description,
             checked: false,
             publishDate: moment().format(),
             updateDate: moment().format(),
@@ -20,19 +20,18 @@ module.exports = function(app, collectionNotifications, socketIo, saltKey, colle
         collectionNotifications.insert(data, function(err, result) {
             data.pullRequestId = result[0]._id;
             socketIo.sockets.emit ('notify-post', data); // websocket
-            res.send(JSON.stringify('OK'));
+            res.json('ok');
         });
     });
 
-    app.get('/pull-request', auth.isAuth, function(req, res) {
-
+    app.post('/pull-request', auth.isAuth, function(req, res) {
         var data = {
-            id: req.query.id,
-            type: req.query.type,
-            title: req.query.title,
-            description: req.query.description,
-            pullRequestTitle: req.query.pullRequestTitle,
-            pullRequestUrl: req.query.pullRequestUrl,
+            id: req.body.id,
+            type: req.body.type,
+            title: req.body.title,
+            description: req.body.description,
+            pullRequestTitle: req.body.pullRequestTitle,
+            pullRequestUrl: req.body.pullRequestUrl,
             submitter: req.user.username,
             checked: false,
             publishDate: moment().format(),
@@ -41,30 +40,24 @@ module.exports = function(app, collectionNotifications, socketIo, saltKey, colle
         collectionNotifications.insert(data, function(err, result) {
             data.pullRequestId = result[0]._id;
             socketIo.sockets.emit('notify-post', data); // websocket
-            res.send(JSON.stringify('OK'));
+            res.json('ok');
         });
     });
 
     app.get('/notification', function(req, res) {
         if(req.query.filter === 'all'){
             collectionNotifications.find().sort({'_id': -1}).toArray(function(err, results){
-                res.setHeader('Content-Type', 'application/json');
-                res.send(results);
+                res.json(results);
             });
-
         } else if(req.query.filter === 'partial'){
             collectionNotifications.find({checked: false}).limit(3).sort({_id: -1}).toArray(function(err, results){
-                res.setHeader('Content-Type', 'application/json');
-                res.send(results);
+                res.json(results);
             });
-
         } else if(req.query.filter === 'countUnchecked'){
             collectionNotifications.find({checked: false}).count(function(e, count){
-                res.setHeader('Content-Type', 'application/json');
                 var object = {uncheckedNotifications: count};
-                res.send(object);
+                res.json(object);
             });
-
         }
     });
 
@@ -78,10 +71,8 @@ module.exports = function(app, collectionNotifications, socketIo, saltKey, colle
         };
 
         collectionNotifications.find(queryObj).sort({ _id: -1}).toArray(function(err, results){
-            res.setHeader('Content-Type', 'application/json');
-            res.send(results);
+            res.json(results);
         });
-
     });
 
     app.put('/notification/:id', function(req, res) {
@@ -102,7 +93,7 @@ module.exports = function(app, collectionNotifications, socketIo, saltKey, colle
 
         delete req.body._id;
         collectionNotifications.update({'_id': oId }, body, function(){
-            res.send(JSON.stringify('OK'));
+            res.json('ok');
         });
     });
 };

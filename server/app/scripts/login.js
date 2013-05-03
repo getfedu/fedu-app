@@ -48,9 +48,9 @@ module.exports = function(app, saltKey, collectionUser){
         res.json({key:'logged_out', message: 'You are successfully logged out!' });
     });
 
-    app.get('/account', auth.isAuth, function(req, res){
-        res.send('ok');
-    });
+    // app.get('/account', auth.isAuth, function(req, res){
+    //     res.send('ok');
+    // });
 
     app.get('/user', auth.isAuth, function(req, res){
         res.json({'username': req.user.username, 'favoritePosts': req.user.favoritePosts, 'ratedPosts': req.user.ratedPosts});
@@ -109,7 +109,6 @@ module.exports = function(app, saltKey, collectionUser){
                             res.json({key: 'timeExceeded', message: 'Sorry, but the time limit of your Activation-Code is exceeded. We sent you a new one by Email.'});
                         }
                     });
-
                 }
             } else {
                 res.status(401);
@@ -164,23 +163,18 @@ module.exports = function(app, saltKey, collectionUser){
             if (err) {
                 return next(err);
             }
-
             if (!user) {
                 return res.redirect( frontendHost + '#login-error');
             }
-
             req.logIn(user, function(err) {
                 if (err) {
                     return next(err);
                 }
-
                 var userId = user._id;
                 userId = new Buffer(userId.toHexString()).toString('base64');
                 res.cookie('user_f', userId);
                 return res.redirect( frontendHost + '#login-success');
-
             });
-
         })(req, res, next);
     });
 
@@ -193,23 +187,18 @@ module.exports = function(app, saltKey, collectionUser){
             if (err) {
                 return next(err);
             }
-
             if (!user) {
                 return res.redirect( frontendHost + '#login-error');
             }
-
             req.logIn(user, function(err) {
                 if (err) {
                     return next(err);
                 }
-
                 var userId = user._id;
                 userId = new Buffer(userId.toHexString()).toString('base64');
                 res.cookie('user_f', userId);
                 return res.redirect( frontendHost + '#login-success');
-
             });
-
         })(req, res, next);
     });
 

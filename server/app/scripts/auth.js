@@ -13,6 +13,8 @@ var moment = require('moment');
 module.exports = function(saltKey, collectionUser){
     var auth = {
         init: function(){
+
+            // Local
             passport.use(new localStrategy(
                 function(username, password, done){
                     var saltedPassword = crypto.createHmac('sha256', saltKey + username);
@@ -35,7 +37,7 @@ module.exports = function(saltKey, collectionUser){
 
             // twitter
             passport.use(new twitterStrategy({
-                consumerKey: 'n2Iqlg5E5g9noHuvxtonQ', // local and production use 
+                consumerKey: 'n2Iqlg5E5g9noHuvxtonQ', // local and production use
                 consumerSecret: 'jKSgndSD5NR5phOqDekRHYSsKR9FGn22LBK46UiQo', // local and production use
                 callbackURL: '/auth/twitter/callback'
             },

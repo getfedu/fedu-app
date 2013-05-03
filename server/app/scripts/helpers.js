@@ -40,7 +40,6 @@ module.exports = function(collectionTags){
             },
 
             addTag: function(value){
-
                 var tag = {
                     tagName: value,
                     description: '',
@@ -48,7 +47,6 @@ module.exports = function(collectionTags){
                     createDate: moment().format(),
                     updateDate: moment().format()
                 };
-
                 collectionTags.insert(tag);
             }
         }

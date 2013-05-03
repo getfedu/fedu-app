@@ -159,6 +159,7 @@ define([
 				var flagTitle = array[1].value;
 
 				$.ajax({
+					type: 'POST',
 					url: TheOption.nodeUrl + '/flag-post',
 					data: {
 						type: 'flag',
@@ -187,6 +188,7 @@ define([
 				var pullRequestPostTitle = array[2].value;
 
 				$.ajax({
+					type: 'POST',
 					url: TheOption.nodeUrl + '/pull-request',
 					data: {
 						type: 'pull-request',
@@ -211,7 +213,7 @@ define([
 				data: {
 					postId: this.postId
 				},
-				url: TheOption.nodeUrl + '/post/add-favorite'
+				url: TheOption.nodeUrl + '/post-add-favorite'
 			}).done(function(){
 				$(e.currentTarget).parent().html('<i class="icon-star"></i>');
 				TheOption.favorites.push(that.postId);
@@ -227,7 +229,7 @@ define([
 				data: {
 					postId: this.postId
 				},
-				url: TheOption.nodeUrl + '/post/remove-favorite'
+				url: TheOption.nodeUrl + '/post-remove-favorite'
 			}).done(function(){
 				$(e.currentTarget).parent().html('<i class="icon-star-empty"></i>');
 				TheOption.favorites.pop(that.postId);
@@ -274,7 +276,7 @@ define([
 				if(quality !== '0' && comprehensibility !== '0'){
 
 					$.ajax({
-						url: TheOption.nodeUrl + '/post/rate',
+						url: TheOption.nodeUrl + '/post-rate',
 						type: 'POST',
 						data: {
 							id: this.postId,

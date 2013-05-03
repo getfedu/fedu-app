@@ -28,14 +28,12 @@ module.exports = function(app, collectionTags){
         });
     });
 
-    // Read Tags from db
     app.get('/popular-tags', function(req, res) {
         collectionTags.find().sort({ counter: -1}).limit(5).toArray(function(err, results){
             res.json(results);
         });
     });
 
-    // Read Tags from db
     app.get('/surprise-tags', function(req, res) {
         collectionTags.find().sort({ counter: -1}).limit(10).toArray(function(err, results){
             res.json(results);

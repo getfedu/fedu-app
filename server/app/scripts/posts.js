@@ -8,10 +8,12 @@ var moment = require('moment');
 module.exports = function(app, collectionPosts, collectionTags, collectionNotifications, collectionUser, saltKey){
     var helpers = require('./helpers.js')(collectionTags);
     var auth = require('./auth.js')(saltKey, collectionUser);
+
     // Create Post and save into db
     app.post('/post', function(req, res) {
-        collectionPosts.insert(req.body, function() {
+        collectionPosts.insert(req.body, function(err, docs) {
             helpers.checkTags.init(req.body.tags, true);
+            postHelpers.addRatingStructure(docs[0]._id);
             res.json('ok');
         });
     });
@@ -41,14 +43,80 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
         var BSON = mongodb.BSONPure;
         var oId = new BSON.ObjectID(req.params.id);
         var pullRequestId = new BSON.ObjectID(req.body.pullRequestId);
-
         delete req.body._id;
 
         if(req.body.pullRequestTitle){
+            postHelpers.pullRequest(req, res, collectionPosts, oId, pullRequestId);
+        } else {
+            collectionPosts.findOne({'_id': oId }, function(err, result){
+                helpers.checkTags.init(result.tags, false);
+            });
+            collectionPosts.update({'_id': oId }, req.body, function(){
+                helpers.checkTags.init(req.body.tags, true);
+                res.json('ok');
+            });
+        }
+    });
+
+    // Delete Post in db
+    app.delete('/post/:id', function(req, res) {
+        var BSON = mongodb.BSONPure;
+        var oId = new BSON.ObjectID(req.params.id);
+        collectionPosts.findOne({'_id': oId }, function(err, result){
+            helpers.checkTags.init(result.tags, false);
+        });
+        collectionPosts.remove({'_id': oId }, function(){
+            res.json('ok');
+        });
+    });
+
+    app.post('/post-add-favorite', auth.isAuth, function(req, res) {
+        var postId = req.body.postId;
+        var userId = req.user._id;
+        collectionUser.findAndModify({'_id': userId}, [['_id','asc']], { $push: { favoritePosts: postId }}, {}, function() {
+            res.json('ok');
+        });
+    });
+
+    app.post('/post-remove-favorite', auth.isAuth, function(req, res) {
+        var postId = req.body.postId;
+        var userId = req.user._id;
+        collectionUser.findAndModify({'_id': userId}, [['_id','asc']], { $pull: { favoritePosts: postId }}, {}, function() {
+            res.json('ok');
+        });
+    });
+
+    app.get('/post-list-favorite', auth.isAuth, function(req, res) {
+        var idArray = req.user.favoritePosts;
+        if(idArray !== undefined && idArray.length > 0){
+            var query = [];
+            var BSON = mongodb.BSONPure;
+            for (var i = 0; i < idArray.length; i++) {
+                var id = new BSON.ObjectID(idArray[i]);
+                query.push(id);
+            }
+            collectionPosts.find({ '_id' : { $in: query}}).toArray(function(err, results){
+                res.json(results);
+            });
+        } else {
+            res.status(204);
+            res.json('no favorites');
+        }
+    });
+
+    app.post('/post-rate', auth.isAuth, function(req, res) {
+        var postId = req.body.id;
+        var BSON = mongodb.BSONPure;
+        var oId = new BSON.ObjectID(postId);
+
+        postHelpers.rating(req, res, collectionUser, collectionPosts, oId, postId);
+    });
+
+    var postHelpers = {
+        pullRequest: function(req, res, collectionPosts, oId, pullRequestId){
             var data = {};
 
             collectionPosts.findOne({'_id': oId }, function(err, result){
-
                 if(!result.additionalInfo){ // check if additonalInfo already exists and add the info to the post
 
                     data = {
@@ -61,7 +129,6 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
                             }]
                         }
                     };
-
                 } else { // add additionalInfo to post
                     data = {
                         $set: {
@@ -91,141 +158,78 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
                 };
 
                 collectionNotifications.update({'_id': pullRequestId }, data);
-
             });
+        },
 
-        } else {
+        rating: function(req, res, collectionUser, collectionPosts, oId, postId){
             collectionPosts.findOne({'_id': oId }, function(err, result){
-                helpers.checkTags.init(result.tags, false);
-            });
-            collectionPosts.update({'_id': oId }, req.body, function(){
-                helpers.checkTags.init(req.body.tags, true);
-                res.json('ok');
-            });
-        }
-    });
+                var data = {};
 
-    // Delete Post in db
-    app.delete('/post/:id', function(req, res) {
-        var BSON = mongodb.BSONPure;
-        var oId = new BSON.ObjectID(req.params.id);
-        collectionPosts.findOne({'_id': oId }, function(err, result){
-            helpers.checkTags.init(result.tags, false);
-        });
-        collectionPosts.remove({'_id': oId }, function(){
-            res.json('ok');
-        });
-    });
+                var newTotalUsers = result.rating.totalUsers + 1;
 
-    app.post('/post/add-favorite', auth.isAuth, function(req, res) {
-        var postId = req.body.postId;
-        var userId = req.user._id;
-        collectionUser.findAndModify({'_id': userId}, [['_id','asc']], { $push: { favoritePosts: postId }}, {}, function() {
-            res.json('ok');
-        });
-    });
-
-    app.post('/post/remove-favorite', auth.isAuth, function(req, res) {
-        var postId = req.body.postId;
-        var userId = req.user._id;
-        collectionUser.findAndModify({'_id': userId}, [['_id','asc']], { $pull: { favoritePosts: postId }}, {}, function() {
-            res.json('ok');
-        });
-    });
-
-    app.get('/post-list-favorite', auth.isAuth, function(req, res) {
-        var idArray = req.user.favoritePosts;
-        if(idArray !== undefined && idArray.length > 0){
-            var query = [];
-            var BSON = mongodb.BSONPure;
-            for (var i = 0; i < idArray.length; i++) {
-                var id = new BSON.ObjectID(idArray[i]);
-                query.push(id);
-            }
-            collectionPosts.find({ '_id' : { $in: query}}).toArray(function(err, results){
-                res.json(results);
-            });
-        } else {
-            res.status(204);
-            res.json('no favorites');
-        }
-    });
-
-    app.post('/post/rate', auth.isAuth, function(req, res) {
-        var postId = req.body.id;
-        var BSON = mongodb.BSONPure;
-        var oId = new BSON.ObjectID(postId);
-
-        collectionPosts.findOne({'_id': oId }, function(err, result){
-
-            var data = {};
-            var newTotalUsers = 0;
-            var newQualityExact = 0;
-            var newQualityRounded = 0;
-
-            var newComprehensibilityExact = 0;
-            var newComprehensibilityRounded = 0;
-
-            var newTotalPointsExact = 0;
-            var newTotalPointsRounded = 0;
-
-            if(!result.rating){
-                newTotalUsers = 1;
-
-                newQualityExact = parseInt(req.body.quality, 0);
-                newQualityRounded = parseInt(req.body.quality, 0);
-
-                newComprehensibilityExact = parseInt(req.body.comprehensibility, 0);
-                newComprehensibilityExact = parseFloat(newComprehensibilityExact.toFixed(2));
-                newComprehensibilityRounded = parseInt(req.body.comprehensibility, 0);
-
-                newTotalPointsExact =  (newQualityExact + newComprehensibilityExact) / 2;
-                newTotalPointsRounded =  Math.round(newTotalPointsExact);
-
-            } else {
-                newTotalUsers = result.rating.totalUsers + 1;
-
-                newQualityExact = ((result.rating.quality.exact * result.rating.totalUsers) + parseInt(req.body.quality, 0)) / newTotalUsers;
+                var newQualityExact = ((result.rating.quality.exact * result.rating.totalUsers) + parseInt(req.body.quality, 0)) / newTotalUsers;
                 newQualityExact = parseFloat(newQualityExact.toFixed(2));
-                newQualityRounded = Math.round(newQualityExact);
+                var newQualityRounded = Math.round(newQualityExact);
 
-                newComprehensibilityExact = ((result.rating.comprehensibility.exact * result.rating.totalUsers) + parseInt(req.body.comprehensibility, 0)) / newTotalUsers;
+                var newComprehensibilityExact = ((result.rating.comprehensibility.exact * result.rating.totalUsers) + parseInt(req.body.comprehensibility, 0)) / newTotalUsers;
                 newComprehensibilityExact = parseFloat(newComprehensibilityExact.toFixed(2));
-                newComprehensibilityRounded = Math.round(newComprehensibilityExact);
+                var newComprehensibilityRounded = Math.round(newComprehensibilityExact);
 
-                newTotalPointsExact =  (newQualityExact + newComprehensibilityExact) / 2;
-                newTotalPointsRounded =  Math.round(newTotalPointsExact);
+                var newTotalPointsExact =  (newQualityExact + newComprehensibilityExact) / 2;
+                var newTotalPointsRounded =  Math.round(newTotalPointsExact);
 
-            }
+                data = {
+                    $set: {
+                        rating: {
+                            totalUsers: newTotalUsers,
+                            totalPoints: {
+                                exact: newTotalPointsExact,
+                                rounded: newTotalPointsRounded
+                            },
+                            quality: {
+                                exact: newQualityExact,
+                                rounded: newQualityRounded,
+                            },
+                            comprehensibility: {
+                                exact: newComprehensibilityExact,
+                                rounded: newComprehensibilityRounded,
+                            }
+                        }
+                    }
+                };
 
-            data = {
+                // update post
+                collectionPosts.update({'_id': oId }, data, function(){
+                    var userId = req.user._id;
+                    collectionUser.findAndModify({'_id': userId}, [['_id','asc']], { $push: { ratedPosts: postId }}, {}, function() {
+                        res.json('ok');
+                    });
+                });
+
+            });
+        },
+
+        addRatingStructure: function(oId){
+            var data = {
                 $set: {
                     rating: {
-                        totalUsers: newTotalUsers,
+                        totalUsers: 0,
                         totalPoints: {
-                            exact: newTotalPointsExact,
-                            rounded: newTotalPointsRounded
+                            exact: 0,
+                            rounded: 0
                         },
                         quality: {
-                            exact: newQualityExact,
-                            rounded: newQualityRounded,
+                            exact: 0,
+                            rounded: 0,
                         },
                         comprehensibility: {
-                            exact: newComprehensibilityExact,
-                            rounded: newComprehensibilityRounded,
+                            exact: 0,
+                            rounded: 0,
                         }
                     }
                 }
             };
-
-            // update post
-            collectionPosts.update({'_id': oId }, data, function(){
-                var userId = req.user._id;
-                collectionUser.findAndModify({'_id': userId}, [['_id','asc']], { $push: { ratedPosts: postId }}, {}, function() {
-                    res.json('ok');
-                });
-            });
-
-        });
-    });
+            collectionPosts.update({'_id': oId }, data );
+        }
+    };
 };

@@ -5,7 +5,6 @@
 
 module.exports = function(app, collectionPosts){
     var search = {
-
         generateTitleObject: function(query){
             var titleObject = {};
             var titleArray = [];
