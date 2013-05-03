@@ -10,7 +10,7 @@ require.config({
 			],
 			exports: 'Backbone'
 		},
-		underscore: { // template
+		underscore: {
 			exports: '_'
 		},
 		bootstrapCollapse: {

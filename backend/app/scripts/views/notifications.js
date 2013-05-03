@@ -25,7 +25,7 @@ define([
 			'click form#update_notifications button': 'updateNotifications'
 		},
 
-		initialize: function() {
+		initialize: function(){
 			this.collection = new TheCollection();
 			this.collection.on('notificationsFetched', this.getData, this );
 		},

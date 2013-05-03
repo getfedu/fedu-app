@@ -25,7 +25,7 @@ define([
         },
 
         paginator_core: {
-            // the type of reply 
+            // the type of reply
             dataType: 'json',
 
             url: function() {

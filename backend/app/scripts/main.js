@@ -48,9 +48,6 @@ require.config({
 				'jquery'
 			],
 			exports: 'jQuery.cookie'
-		},
-		cryptoJS: {
-			exports: 'CryptoJS'
 		}
 	},
 	paths: {
@@ -67,7 +64,7 @@ require.config({
 		bootstrapDropdown: '../components/sass-bootstrap/js/bootstrap-dropdown',
 		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator',
 		jqueryCookie: '../components/jquery.cookie/jquery.cookie',
-		cryptoJS: 'vendor/sha256',
+		jsHashes: '../components/jshashes/hashes'
 	}
 });
 

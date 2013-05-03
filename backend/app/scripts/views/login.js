@@ -10,8 +10,8 @@ define([
 	'text!../templates/login/create_new_password_template.html',
 	'text!../templates/message_template.html',
 	'jqueryCookie',
-	'cryptoJS'
-], function( $, _, Backbone, TheConfig, AppTemplate, LoginTemplate, RegisterTemplate, RecoverPasswordTemplate, CreateNewPasswordTemplate, MessageTemplate, jqueryCookie, CryptoJS) {
+	'jsHashes'
+], function( $, _, Backbone, TheConfig, AppTemplate, LoginTemplate, RegisterTemplate, RecoverPasswordTemplate, CreateNewPasswordTemplate, MessageTemplate, jqueryCookie, jsHashes) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -19,6 +19,7 @@ define([
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
 		el: '#wrapper',
+		SHA256: new jsHashes.SHA256(),
 
 		// delegated events
 		events: {
@@ -107,7 +108,7 @@ define([
 			e.preventDefault();
 			var data = $(e.currentTarget).serializeArray();
 			var password = data[1].value;
-			password = CryptoJS.SHA256(password).toString();
+			password = this.SHA256.hex(password);
 			var that = this;
 			$.ajax({
 				type: 'POST',
@@ -130,7 +131,7 @@ define([
 			e.preventDefault();
 			var data = $(e.currentTarget).serializeArray();
 			var password = data[1].value;
-			password = CryptoJS.SHA256(password).toString();
+			password = this.SHA256.hex(password);
 			var that = this;
 			$.ajax({
 				type: 'POST',
@@ -179,7 +180,7 @@ define([
 			e.preventDefault();
 			var data = $(e.currentTarget).serializeArray();
 			var password = data[0].value;
-			password = CryptoJS.SHA256(password).toString();
+			password = this.SHA256.hex(password);
 			var that = this;
 			$.ajax({
 				type: 'POST',

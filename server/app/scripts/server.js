@@ -42,7 +42,7 @@ var init = {
     },
 
     allowedOrigin: function(url){
-        var array = ['http://localhost:9100', 'http://localhost:9000'];
+        var array = ['http://localhost:9100', 'http://localhost:9000', 'http://localhost:10088'];
         if(array.indexOf(url) !== -1){
             return url;
         } else {
