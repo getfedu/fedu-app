@@ -80,7 +80,7 @@ module.exports = function(app, saltKey, collectionUser){
         });
     });
 
-    app.get('/activate/:code', function(req, res){
+    app.get('/activate/:code', auth.isNotAuth, function(req, res){
         var code = req.params.code;
         var force = '';
         if(!req.query.force){
@@ -156,9 +156,9 @@ module.exports = function(app, saltKey, collectionUser){
     });
 
     // Twitter
-    app.get('/auth/twitter', passport.authenticate('twitter'));
+    app.get('/auth/twitter', auth.isNotAuth, passport.authenticate('twitter'));
 
-    app.get('/auth/twitter/callback', function(req, res, next) {
+    app.get('/auth/twitter/callback', auth.isNotAuth, function(req, res, next) {
         passport.authenticate('twitter', function(err, user) {
             if (err) {
                 return next(err);
@@ -180,9 +180,9 @@ module.exports = function(app, saltKey, collectionUser){
 
 
     // Twitter
-    app.get('/auth/facebook', passport.authenticate('facebook'));
+    app.get('/auth/facebook', auth.isNotAuth, passport.authenticate('facebook'));
 
-    app.get('/auth/facebook/callback', function(req, res, next) {
+    app.get('/auth/facebook/callback', auth.isNotAuth, function(req, res, next) {
         passport.authenticate('facebook', function(err, user) {
             if (err) {
                 return next(err);

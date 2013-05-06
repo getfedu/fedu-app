@@ -4,9 +4,10 @@
 'use strict';
 var mongodb = require('mongodb');
 
-module.exports = function(app, collectionTags){
+module.exports = function(app, collectionTags, saltKey, collectionUser){
+    var auth = require('./auth.js')(saltKey, collectionUser);
     // Create Tags and save into db
-    app.post('/tag', function(req, res) {
+    app.post('/tag', auth.isAuth, function(req, res) {
         collectionTags.insert(req.body, function() {
             res.json('ok');
         });
@@ -19,7 +20,7 @@ module.exports = function(app, collectionTags){
         });
     });
 
-    app.put('/tag/:id', function(req, res) {
+    app.put('/tag/:id', auth.isAuth, function(req, res) {
         var BSON = mongodb.BSONPure;
         var oId = new BSON.ObjectID(req.params.id);
         delete req.body._id;

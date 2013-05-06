@@ -88,10 +88,10 @@ var init = {
     serverIsReady: function(){
         auth = require('./auth.js')(saltKey, collectionUser);
         posts = require('./posts.js')(app, collectionPosts, collectionTags, collectionNotifications, collectionUser, saltKey);
-        tags = require('./tags.js')(app, collectionTags);
+        tags = require('./tags.js')(app, collectionTags, saltKey, collectionUser);
         login = require('./login.js')(app, saltKey, collectionUser);
         search = require('./search.js')(app, collectionPosts);
-        api = require('./api.js')(app);
+        api = require('./api.js')(app, saltKey, collectionUser);
         notifications = require('./notifications.js')(app, collectionNotifications, socketIo, saltKey, collectionUser);
         auth.init();
     }

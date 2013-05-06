@@ -10,7 +10,7 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
     var auth = require('./auth.js')(saltKey, collectionUser);
 
     // Create Post and save into db
-    app.post('/post', function(req, res) {
+    app.post('/post', auth.isAuth, function(req, res) {
         collectionPosts.insert(req.body, function(err, docs) {
             helpers.checkTags.init(req.body.tags, true);
             postHelpers.addRatingStructure(docs[0]._id);
@@ -39,7 +39,7 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
     });
 
     // Update Post in db
-    app.put('/post/:id', function(req, res) {
+    app.put('/post/:id', auth.isAuth, function(req, res) {
         var BSON = mongodb.BSONPure;
         var oId = new BSON.ObjectID(req.params.id);
         var pullRequestId = new BSON.ObjectID(req.body.pullRequestId);
@@ -59,7 +59,7 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
     });
 
     // Delete Post in db
-    app.delete('/post/:id', function(req, res) {
+    app.delete('/post/:id', auth.isAuth, function(req, res) {
         var BSON = mongodb.BSONPure;
         var oId = new BSON.ObjectID(req.params.id);
         collectionPosts.findOne({'_id': oId }, function(err, result){

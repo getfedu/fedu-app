@@ -7,8 +7,9 @@ var moment = require('moment');
 var request = require('request');
 require('moment-isoduration');
 
-module.exports = function(app){
-    app.post('/api-call', function(req, res){
+module.exports = function(app, saltKey, collectionUser){
+    var auth = require('./auth.js')(saltKey, collectionUser);
+    app.post('/api-call', auth.isAuth, function(req, res){
 
         var optionsVideo = {};
 
