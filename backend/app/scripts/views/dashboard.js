@@ -2,10 +2,9 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'views/notification_center',
 	'vendor/fedu/config',
 	'text!../templates/dashboard/dashboard_template.html'
-], function( $, _, Backbone, NotificationCenter, TheConfig, DashboardTemplate ) {
+], function( $, _, Backbone, TheConfig, DashboardTemplate ) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -22,7 +21,6 @@ define([
 		},
 
 		initialize: function() {
-			this.initNotficationCenter();
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -36,24 +34,17 @@ define([
 		////////////////////////////////////////
 
 		showDashboard: function(){
-			this.displayUsermenu();
 			this.render(this.inner, DashboardTemplate);
+			this.displayUsermenu();
 		},
 
 		// helper functions
 		////////////////////////////////////////
 
-		initNotficationCenter: function() {
-			new NotificationCenter();
-		},
-
 		displayUsermenu: function(){
 			var that = this;
 			$.ajax({
-				url: TheConfig.nodeUrl + '/user',
-				xhrFields: {
-					withCredentials: true
-				}
+				url: TheConfig.nodeUrl + '/user'
 			}).done(function(user){
 				that.render(that.username, '<i class="icon-user"></i> ' + user.username);
 			}).fail(function(error){
@@ -63,5 +54,5 @@ define([
 
 	});
 
-	return new View();
+	return View;
 });

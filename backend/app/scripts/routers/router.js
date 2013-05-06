@@ -3,9 +3,16 @@ define([
 	'underscore',
 	'backbone',
     '../views/login',
+    '../views/posts',
+    '../views/tags',
+    '../views/notifications',
+    '../views/pull_request',
+    '../views/dashboard',
+    '../views/notification_center',
     'jqueryCookie',
     'text!../templates/message_template.html',
-], function($, _, Backbone, AppView, jqueryCookie, MessageTemplate) {
+    'text!../templates/app_template.html'
+], function($, _, Backbone, AppView, PostsView, TagsView, NotificationsView, PullRequestView, DashboardView, NotificationCenter, jqueryCookie, MessageTemplate, AppTemplate) {
 	'use strict';
 
 	// ajax settings (sent cors cookies)
@@ -13,6 +20,13 @@ define([
 
 	var Router = Backbone.Router.extend({
 		appView: new AppView(),
+		postsView: new PostsView(),
+		tagsView: new TagsView(),
+		notificationsView: new NotificationsView(),
+		pullRequestView: new PullRequestView(),
+		dashboardView: new DashboardView(),
+		firstNotificationInit: true,
+
 		routes: {
 			'add-post' : function(){ if(this.isAuth()){ this.addPost(); }},
 			'list-posts' : function(){ if(this.isAuth()){ this.listPosts(); }},
@@ -38,10 +52,14 @@ define([
 			var userCookie = jqueryCookie('user_b');
 			if(sessionCookie !== '' && sessionCookie !== null && userCookie !== '' && userCookie !== null){
 				if($('#app-wrapper').length === 0){
-					require(['text!templates/app_template.html'], function(AppTemplate) {
-						$('#wrapper').html(AppTemplate);
-					});
+					$('#wrapper').html(AppTemplate);
 				}
+
+				if(this.firstNotificationInit){
+					new NotificationCenter();
+					this.firstNotificationInit = false;
+				}
+
 				return true;
 			} else {
 				Backbone.history.navigate('/login', true);
@@ -61,56 +79,40 @@ define([
 
 		// Post
 		addPost: function(){
-			require(['views/posts'], function(View) {
-				View.addPost();
-			});
+			this.postsView.addPost();
 		},
 
 		listPosts: function(){
-			require(['views/posts'], function(View) {
-				View.listPosts();
-			});
+			this.postsView.listPosts();
 		},
 
 		editPost: function(){
-			require(['views/posts'], function(View) {
-				View.listPosts();
-				Backbone.history.navigate('/list-posts', false);
-			});
+			this.postsView.listPosts();
+			Backbone.history.navigate('/list-posts', false);
 		},
 
 		// Tag
 		addTag: function(){
-			require(['views/tags'], function(View) {
-				View.addTag();
-			});
+			this.tagsView.addTag();
 		},
 
 		listTags: function(){
-			require(['views/tags'], function(View) {
-				View.listTags();
-			});
+			this.tagsView.listTags();
 		},
 
 		editTag: function(){
-			require(['views/tags'], function(View) {
-				View.listTags();
-				Backbone.history.navigate('/list-tags', false);
-			});
+			this.tagsView.listTags();
+			Backbone.history.navigate('/list-tags', false);
 		},
 
 		// Notifications
 		listNotifications: function(){
-			require(['views/notifications'], function(View) {
-				View.listNotifications();
-			});
+			this.notificationsView.listNotifications();
 		},
 
 		// Pull request
 		pullRequest: function(id){
-			require(['views/pull_request'], function(View) {
-				View.detailPullRequest(id);
-			});
+			this.pullRequestView.detailPullRequest(id);
 		},
 
 		//Login
@@ -140,9 +142,7 @@ define([
 
 		// Dashboard
 		dashboard: function(){
-			require(['views/dashboard'], function(View) {
-				View.showDashboard();
-			});
+			this.dashboardView.showDashboard();
 		},
 
 		defaultAction: function() {
