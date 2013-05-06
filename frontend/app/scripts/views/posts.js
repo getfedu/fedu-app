@@ -9,12 +9,11 @@ define([
 	'text!../templates/posts/grid_video_items.html',
 	'text!../templates/posts/info_video_items.html',
 	'text!../templates/posts/player_video_items.html',
-	'text!../templates/posts/detail_video_view.html',
 	'text!../templates/posts/detail_video_content.html',
 	'text!../templates/message_template.html',
 	'text!../templates/posts/surprise_me.html'
 ], function( $, _, Backbone, TheCollection, TheModel, TheOption, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
-	PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate, MessageTemplate, SurpriseMeTemplate) {
+	PlayerVideoItemsTemplate, DetailVideoContentTemplate, MessageTemplate, SurpriseMeTemplate) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -98,7 +97,6 @@ define([
 		},
 
 		detailDefault: function(id){
-			this.render(this.el, DetailVideoViewTemplate);
 			this.getPost(id);
 		},
 
@@ -117,7 +115,7 @@ define([
 			}
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, ratingButton: ratingButton});
 
-			this.render('.detail_view', templateDetailView);
+			this.render(this.el, templateDetailView);
 			this.postId = $('#post_id').attr('data-post-id');
 		},
 
