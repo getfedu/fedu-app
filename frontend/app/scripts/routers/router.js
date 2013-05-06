@@ -3,8 +3,9 @@ define([
 	'backbone',
 	'../views/app',
 	'../views/posts',
+	'../views/login',
 	'../vendor/fedu/options'
-], function($, Backbone, AppView, PostsView, TheOption) {
+], function($, Backbone, AppView, PostsView, LoginView, TheOption) {
 	'use strict';
 
 	// ajax settings (sent cors cookies)
@@ -13,6 +14,7 @@ define([
 	var Router = Backbone.Router.extend({
 		appView: new AppView(),
 		postsView: new PostsView(),
+		loginView: new LoginView(),
 
 		routes: {
 			'' : 'overViewPosts',
@@ -37,15 +39,11 @@ define([
 		},
 
 		loginSuccessView: function(){
-			require(['views/login'], function(View) {
-				View.loginSuccessView();
-			});
+			this.loginView.loginSuccessView();
 		},
 
 		loginErrorView: function(){
-			require(['views/login'], function(View) {
-				View.loginErrorView();
-			});
+			this.loginView.loginErrorView();
 		},
 
 		favorites: function(){

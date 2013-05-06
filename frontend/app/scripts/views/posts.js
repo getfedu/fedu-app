@@ -17,7 +17,7 @@ define([
 	PlayerVideoItemsTemplate, DetailVideoViewTemplate, DetailVideoContentTemplate, MessageTemplate, SurpriseMeTemplate) {
 	'use strict';
 
-	var PostsView = Backbone.View.extend({
+	var View = Backbone.View.extend({
 
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
@@ -203,36 +203,46 @@ define([
 		},
 
 		addFavoritePost: function(e){
-			var that = this;
-			$.ajax({
-				type: 'POST',
-				data: {
-					postId: this.postId
-				},
-				url: TheOption.nodeUrl + '/post-add-favorite'
-			}).done(function(){
-				$(e.currentTarget).parent().html('<i class="icon-star"></i>');
-				TheOption.favorites.push(that.postId);
-			}).fail(function(error){
-				console.log(error.responseText);
-			});
+			if(TheOption.isAuth()){
+				var that = this;
+				$.ajax({
+					type: 'POST',
+					data: {
+						postId: this.postId
+					},
+					url: TheOption.nodeUrl + '/post-add-favorite'
+				}).done(function(){
+					$(e.currentTarget).parent().html('<i class="icon-star"></i>');
+					TheOption.favorites.push(that.postId);
+				}).fail(function(error){
+					console.log(error.responseText);
+				});
+			} else {
+				this.render('#message', _.template(MessageTemplate, { message: 'Sorry... To to favor this post you have to sign in.', type: 'error'}));
+				clearTimeout(this.messageTimeout);
+                this.messageTimeout = setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
+			}
 		},
 
 		removeFavoritePost: function(e){
-			var that = this;
-			$.ajax({
-				type: 'POST',
-				data: {
-					postId: this.postId
-				},
-				url: TheOption.nodeUrl + '/post-remove-favorite'
-			}).done(function(){
-				$(e.currentTarget).parent().html('<i class="icon-star-empty"></i>');
-				TheOption.favorites.pop(that.postId);
-				console.log(TheOption);
-			}).fail(function(error){
-				console.log(error.responseText);
-			});
+			if(TheOption.isAuth()){
+				var that = this;
+				$.ajax({
+					type: 'POST',
+					data: {
+						postId: this.postId
+					},
+					url: TheOption.nodeUrl + '/post-remove-favorite'
+				}).done(function(){
+					$(e.currentTarget).parent().html('<i class="icon-star-empty"></i>');
+					TheOption.favorites.pop(that.postId);
+					console.log(TheOption);
+				}).fail(function(error){
+					console.log(error.responseText);
+				});
+			}
 		},
 
 		listFavorites: function(){
@@ -510,5 +520,5 @@ define([
 		},
 	});
 
-	return PostsView;
+	return View;
 });

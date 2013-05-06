@@ -8,7 +8,7 @@ define([
 ], function( $, _, Backbone, The404Template, UserMenuTemplate, TheOption) {
 	'use strict';
 
-	var AppView = Backbone.View.extend({
+	var View = Backbone.View.extend({
 
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
@@ -85,5 +85,5 @@ define([
 
 	});
 
-	return AppView;
+	return View;
 });
