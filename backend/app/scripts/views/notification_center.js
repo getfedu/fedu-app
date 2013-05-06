@@ -13,10 +13,10 @@ define([
     'use strict';
 
     var View = Backbone.View.extend({
-		el: '#notification_wrapper',
+		el: 'body',
 		socket: null,
-		notification: $('#notifications'),
-		notificationCounter: $('#notification_counter'),
+		notification: '',
+		notificationCounter: '',
 		oldNotifications: false,
 		collection: {},
 
@@ -27,8 +27,8 @@ define([
 
 		initialize: function(){
 			this.collection = new TheCollection();
-			this.collection.on('notificationsFetched', this.getData, this);
 			this.collection.server_api.filter = 'partial';
+			this.collection.on('notificationsFetched', this.getData, this);
 			this.collection.fetchData();
 
 			this.getUncheckedNotificationsCounted();
@@ -67,7 +67,8 @@ define([
 		// helpers
 		////////////////////////////////////////
 		countedNotifications: function(count){
-			var currentNotifications = parseInt($('#notification_counter').text(), 0);
+			this.notificationCounter = $('#notification_counter');
+			var currentNotifications = parseInt(this.notificationCounter.text(), 0);
 
 			if(count === 1){
 				currentNotifications = currentNotifications + 1;
@@ -85,6 +86,8 @@ define([
 		},
 
 		getData: function(){
+			this.notification = $('#notifications');
+			this.notificationCounter = $('#notification_counter');
 			var that = this;
 			var description = '',
 				templateItems = '',
@@ -96,7 +99,6 @@ define([
 				description = (value.attributes.description !== '') ? '<span class="description">' + value.attributes.description + '</span>' : '';
 				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, description: description, publishDate: publishDate, frontendUrl: TheConfig.frontendUrl, backendUrl: TheConfig.backendUrl});
 			});
-
 			this.notification.append(templateItems);
 
 			if(!this.oldNotifications){

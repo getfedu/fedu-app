@@ -16,10 +16,10 @@ define([
 
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
-		el: '#app-wrapper',
+		el: '#wrapper',
 		inner: '#app',
-		notifications: $('#notifications'),
-		notificationCounter: $('#notification_counter'),
+		notifications: '',
+		notificationCounter: '',
 		postModel: {},
 		notificationModel: {},
 
@@ -68,8 +68,8 @@ define([
 			this.postModel.save(null, {
                 success: function(){
 					locateElement.parents('.pull_request_item').html('<h5>Request:</h5>Request successfully merged!');
-					that.notifications.find('.notification_item[data-id="' + pullRequestId + '"]').remove();
-					that.currentNotifications = that.notificationCounter.text();
+					$('#notifications').find('.notification_item[data-id="' + pullRequestId + '"]').remove();
+					that.currentNotifications = $('#notification_counter').text();
 					that.countedNotifications(-1);
 				},
                 error: function(){
@@ -94,8 +94,8 @@ define([
 			this.notificationModel.save(null, {
                 success: function(){
 					locateElement.parents('.pull_request_item').html('<h5>Request:</h5>Request successfully removed!');
-					that.notifications.find('.notification_item[data-id="' + pullRequestId + '"]').remove();
-					that.currentNotifications = that.notificationCounter.text();
+					$('#notifications').find('.notification_item[data-id="' + pullRequestId + '"]').remove();
+					that.currentNotifications = $('#notification_counter').text();
 					that.countedNotifications(-1);
 
 				},
@@ -109,6 +109,8 @@ define([
 		////////////////////////////////////////
 
 		countedNotifications: function(count){
+			this.notifications = $('#notifications');
+			this.notificationCounter = $('#notification_counter');
 			var currentNotifications = parseInt($('#notification_counter').text(), 0);
 			if(count === 1){
 				currentNotifications += 1;
@@ -166,5 +168,5 @@ define([
 		}
 	});
 
-	return new View();
+	return View;
 });

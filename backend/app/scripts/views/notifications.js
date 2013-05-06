@@ -14,7 +14,7 @@ define([
 
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
-		el: '#app-wrapper',
+		el: '#wrapper',
 		inner: '#app',
 		notifications: $('#notifications'),
 		notificationCounter: $('#notification_counter'),
@@ -47,10 +47,10 @@ define([
 
 		updateNotifications: function(e){
 			e.preventDefault();
+			this.notifications = $('#notifications');
 			var that = this;
 			var id = $(e.currentTarget).attr('data-notification-id');
 			var model = this.collection.get(id);
-
 			var data = {
 				updateDate: new Moment().format(),
 				checked: true
@@ -82,8 +82,9 @@ define([
 		},
 
 		countedNotifications: function(count){
-
-			var currentNotifications = parseInt($('#notification_counter').text(), 0);
+			this.notifications = $('#notifications');
+			this.notificationCounter = $('#notification_counter');
+			var currentNotifications = parseInt(this.notificationCounter.text(), 0);
 
 			if(count === 1){
 				currentNotifications += 1;
@@ -103,5 +104,5 @@ define([
 
 	});
 
-	return new View();
+	return View;
 });
