@@ -25,56 +25,26 @@ define([
 		notificationsView: new NotificationsView(),
 		pullRequestView: new PullRequestView(),
 		dashboardView: new DashboardView(),
-		firstNotificationInit: true,
+		statusBar: true,
 
 		routes: {
-			'add-post' : function(){ if(this.isAuth()){ this.addPost(); }},
-			'list-posts' : function(){ if(this.isAuth()){ this.listPosts(); }},
-			'edit-post' : function(){ if(this.isAuth()){ this.editPost(); }},
-			'add-tag' : function(){ if(this.isAuth()){ this.addTag(); }},
-			'list-tags' : function(){ if(this.isAuth()){ this.listTags(); }},
-			'edit-tag' : function(){ if(this.isAuth()){ this.editTag(); }},
-			'list-notifications' : function(){ if(this.isAuth()){ this.listNotifications(); }},
-			'login' : function(){ if(this.isNotAuth()){ this.login(); }},
-			'logout' : function(){ if(this.isAuth()){ this.logout(); }},
-			'register' : function(){ if(this.isNotAuth()){ this.register(); }},
-			'activate/:code' : function(code){ if(this.isNotAuth()){ this.activate(code); }},
-			'recover-password' : function(){ if(this.isNotAuth()){ this.recoverPassword(); }},
-			'recover-password/:code' : function(code){ if(this.isNotAuth()){ this.createNewPassword(code); }},
-			'pull-request/:id' : function(id){ if(this.isAuth()){ this.pullRequest(id); }},
-			'dashboard' : function(){ if(this.isAuth()){ this.dashboard(); }},
-			'': function(){ if(this.isAuth()){ this.dashboard(); }},
+			'add-post' : function(){ if(this.beforeRoute(true)){ this.addPost(); }},
+			'list-posts' : function(){ if(this.beforeRoute(true)){ this.listPosts(); }},
+			'edit-post' : function(){ if(this.beforeRoute(true)){ this.editPost(); }},
+			'add-tag' : function(){ if(this.beforeRoute(true)){ this.addTag(); }},
+			'list-tags' : function(){ if(this.beforeRoute(true)){ this.listTags(); }},
+			'edit-tag' : function(){ if(this.beforeRoute(true)){ this.editTag(); }},
+			'list-notifications' : function(){ if(this.beforeRoute(true)){ this.listNotifications(); }},
+			'login' : function(){ if(this.beforeRoute(false)){ this.login(); }},
+			'logout' : function(){ if(this.beforeRoute(true)){ this.logout(); }},
+			'register' : function(){ if(this.beforeRoute(false)){ this.register(); }},
+			'activate/:code' : function(code){ if(this.beforeRoute(false)){ this.activate(code); }},
+			'recover-password' : function(){ if(this.beforeRoute(false)){ this.recoverPassword(); }},
+			'recover-password/:code' : function(code){ if(this.beforeRoute(false)){ this.createNewPassword(code); }},
+			'pull-request/:id' : function(id){ if(this.beforeRoute(true)){ this.pullRequest(id); }},
+			'dashboard' : function(){ if(this.beforeRoute(true)){ this.dashboard(); }},
+			'': function(){ if(this.beforeRoute(true)){ this.dashboard(); }},
 			'*actions': 'defaultAction'
-		},
-
-		isAuth: function(){
-			var sessionCookie = jqueryCookie('connect.sid');
-			var userCookie = jqueryCookie('user_b');
-			if(sessionCookie !== '' && sessionCookie !== null && userCookie !== '' && userCookie !== null){
-				if($('#app-wrapper').length === 0){
-					$('#wrapper').html(AppTemplate);
-				}
-
-				if(this.firstNotificationInit){
-					new NotificationCenter();
-					this.firstNotificationInit = false;
-				}
-
-				return true;
-			} else {
-				Backbone.history.navigate('/login', true);
-				$('#login_message').html(_.template(MessageTemplate, { message: 'Sorry, for this action you have to sign in.', type: 'error'}));
-			}
-		},
-
-		isNotAuth: function(){
-			var userCookie = jqueryCookie('user_b');
-			if(userCookie === '' || userCookie === null){
-				return true;
-			} else {
-				Backbone.history.navigate('/dashboard', true);
-				$('#message').html(_.template(MessageTemplate, { message: 'Sorry, for this action you have to sign out.', type: 'error'}));
-			}
 		},
 
 		// Post
@@ -145,8 +115,54 @@ define([
 			this.dashboardView.showDashboard();
 		},
 
-		defaultAction: function() {
-			this.appView.render();
+		defaultAction: function(url) {
+			Backbone.history.navigate('/dashboard', true);
+			$('#message').html(_.template(MessageTemplate, { message: 'Sorry, but the site "' + url + '" is not known...', type: 'error'}));
+		},
+
+		/////////////////////////
+		// Helpers
+		/////////////////////////
+
+		beforeRoute: function(auth){
+			if(auth){
+				var isAuth = this.isAuth();
+				if(isAuth){
+					if(!$('#app-wrapper').length){
+						$('#wrapper').html(AppTemplate);
+					}
+					if(this.statusBar){
+						new NotificationCenter();
+						this.dashboardView.displayUsermenu();
+						this.statusBar = false;
+					}
+				}
+				return isAuth;
+			} else {
+				return this.isNotAuth();
+			}
+		},
+
+		isAuth: function(){
+			var sessionCookie = jqueryCookie('connect.sid');
+			var userCookie = jqueryCookie('user_b');
+			if(sessionCookie !== '' && sessionCookie !== null && userCookie !== '' && userCookie !== null){
+				return true;
+			} else {
+				Backbone.history.navigate('/login', true);
+				$('#login_message').html(_.template(MessageTemplate, { message: 'Sorry, for this action you have to sign in.', type: 'error'}));
+			}
+		},
+
+		isNotAuth: function(){
+			var userCookie = jqueryCookie('user_b');
+			console.log(userCookie);
+			if(userCookie === '' || userCookie === null){
+				return true;
+			} else {
+				Backbone.history.navigate('/dashboard', true);
+				$('#message').html(_.template(MessageTemplate, { message: 'Sorry, for this action you have to sign out.', type: 'error'}));
+			}
 		}
 
 	});

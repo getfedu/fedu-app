@@ -46,6 +46,7 @@ define([
 		////////////////////////////////////////
 
 		login: function(){
+			console.log('ssd');
 			this.render(this.el, LoginTemplate);
 		},
 
