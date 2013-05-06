@@ -19,7 +19,7 @@ module.exports = function(app, collectionNotifications, socketIo, saltKey, colle
         };
         collectionNotifications.insert(data, function(err, result) {
             data.pullRequestId = result[0]._id;
-            socketIo.sockets.emit ('notify-post', data); // websocket
+            socketIo.sockets.emit ('notify-post', data);
             res.json('ok');
         });
     });
@@ -39,12 +39,12 @@ module.exports = function(app, collectionNotifications, socketIo, saltKey, colle
         };
         collectionNotifications.insert(data, function(err, result) {
             data.pullRequestId = result[0]._id;
-            socketIo.sockets.emit('notify-post', data); // websocket
+            socketIo.sockets.emit('notify-post', data);
             res.json('ok');
         });
     });
 
-    app.get('/notification', function(req, res) {
+    app.get('/notification',  auth.isAuth, function(req, res) {
         if(req.query.filter === 'all'){
             collectionNotifications.find().sort({'_id': -1}).toArray(function(err, results){
                 res.json(results);
@@ -61,7 +61,7 @@ module.exports = function(app, collectionNotifications, socketIo, saltKey, colle
         }
     });
 
-    app.get('/notification/:id', function(req, res) {
+    app.get('/notification/:id', auth.isAuth, function(req, res) {
         var queryObj = {
             $and : [
                 {id: req.params.id},
@@ -75,7 +75,7 @@ module.exports = function(app, collectionNotifications, socketIo, saltKey, colle
         });
     });
 
-    app.put('/notification/:id', function(req, res) {
+    app.put('/notification/:id', auth.isAuth, function(req, res) {
         var BSON = mongodb.BSONPure;
         var oId = new BSON.ObjectID(req.params.id);
         var body = {};
