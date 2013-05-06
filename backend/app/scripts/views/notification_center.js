@@ -13,7 +13,7 @@ define([
     'use strict';
 
     var View = Backbone.View.extend({
-		el: 'body',
+		el: '#wrapper',
 		socket: null,
 		notification: '',
 		notificationCounter: '',

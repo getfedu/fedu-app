@@ -18,7 +18,7 @@ define([
 
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
-		el: '#app-wrapper',
+		el: '#wrapper',
 		inner: '#app',
 		collection: {},
 		messageTimeout: {},
