@@ -158,7 +158,7 @@ define([
 					array.pop();
 					data[value.name] = array;
 				} else {
-					console.log(value.name, value.value);
+					//console.log(value.name, value.value);
 					data[value.name] = value.value;
 				}
 			});

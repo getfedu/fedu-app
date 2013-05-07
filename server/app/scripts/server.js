@@ -32,10 +32,11 @@ var init = {
                 throw err;
             }
             console.log('connected');
-            collectionPosts = db.collection('posts');
-            collectionTags = db.collection('tags');
-            collectionNotifications = db.collection('notifications');
-            collectionUser = db.collection('user');
+            var theDb = db.db('fedu');
+            collectionPosts = theDb.collection('posts');
+            collectionTags = theDb.collection('tags');
+            collectionNotifications = theDb.collection('notifications');
+            collectionUser = theDb.collection('user');
 
             that.serverIsReady();
         });

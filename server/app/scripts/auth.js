@@ -9,6 +9,7 @@ var mongodb = require('mongodb');
 var passport = require('passport');
 var crypto = require('crypto');
 var moment = require('moment');
+var frontendHost = 'http://localhost:3100';
 
 module.exports = function(saltKey, collectionUser){
     var auth = {
@@ -39,7 +40,7 @@ module.exports = function(saltKey, collectionUser){
             passport.use(new twitterStrategy({
                 consumerKey: 'n2Iqlg5E5g9noHuvxtonQ', // local and production use
                 consumerSecret: 'jKSgndSD5NR5phOqDekRHYSsKR9FGn22LBK46UiQo', // local and production use
-                callbackURL: '/auth/twitter/callback'
+                callbackURL: frontendHost + '/auth/twitter/callback'
             },
             function(token, tokenSecret, profile, done) {
                 collectionUser.findOne({'socialId.twitter': profile.id}, function(err, user) {
@@ -68,7 +69,7 @@ module.exports = function(saltKey, collectionUser){
             passport.use(new facebookStrategy({
                 clientID: 235650393244226, // production use = 442238072532571
                 clientSecret: 'b0dbebf4583c10d334f650428ee70c0e', // production use = 11be1b0c9fa03e0bcd8f8b412f5044a6
-                callbackURL: '/auth/facebook/callback'
+                callbackURL: frontendHost + '/auth/facebook/callback'
             },
             function(accessToken, refreshToken, profile, done) {
                 collectionUser.findOne({'socialId.facebook': profile.id}, function(err, user) {
