@@ -156,7 +156,6 @@ define([
 
 		isNotAuth: function(){
 			var userCookie = jqueryCookie('user_b');
-			console.log(userCookie);
 			if(userCookie === '' || userCookie === null){
 				return true;
 			} else {
