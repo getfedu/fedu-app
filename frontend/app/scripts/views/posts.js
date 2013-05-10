@@ -115,6 +115,7 @@ define([
 			}
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, ratingButton: ratingButton});
 
+			window.scroll(0); // small screens start now on top of detailpage
 			this.render(this.el, templateDetailView);
 			this.postId = $('#post_id').attr('data-post-id');
 		},
@@ -479,7 +480,8 @@ define([
 			});
 		},
 
-		checkPullRequest: function(){
+		checkPullRequest: function(e){
+			e.preventDefault();
 			if(TheOption.isAuth()){
 				$('#pull_request_modal').modal();
 			} else {

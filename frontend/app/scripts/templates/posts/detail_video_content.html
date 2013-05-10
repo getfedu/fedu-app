@@ -1,63 +1,59 @@
+<h1><%=attributes.title %></h1>
 <div class="detail_view row-fluid">
 	<div id="post_id" data-post-id="<%=attributes._id %>">
-		<div class="video_container span12">
+		<div class="video_container span10">
 			<iframe width="1000" height="563" src="<%=attributes.foreign.embedUrl %>" frameborder="0" allowfullscreen></iframe>
+			<p><%=attributes.description %></p>
 		</div>
-		<div class="info_container row-fluid">
-			<div class="span2">
-				<div class="rating">
-					<h3><% if(attributes.rating){ print(attributes.rating.totalPoints.exact); } else { print(0); } %></h3>
-					<span>
-						<%
-							if(attributes.rating){
-								for(var i=0; i < attributes.rating.totalPoints.rounded; i++){
-									print('<i class="icon-star"></i> ');
-								}
-								var emptyStars = 5 - attributes.rating.totalPoints.rounded;
-								for(var i=0; i< emptyStars; i++){
-									print('<i class="icon-star-empty"></i> ');
-								}
-								print('<br />rated by ' + attributes.rating.totalUsers + ' persons');
-							} else {
-								print('not rated yet');
+		<div class="span2 info_container">
+			<div class="rating well well-small">
+				<h3><% if(attributes.rating){ print(attributes.rating.totalPoints.exact); } else { print(0); } %></h3>
+				<span>
+					<%
+						if(attributes.rating){
+							for(var i=0; i < attributes.rating.totalPoints.rounded; i++){
+								print('<i class="icon-star"></i> ');
 							}
-						%>
-					</span>
-				</div>
-
-				<div id="favorite" class="well well-small">
-					<span><%= iconStar %></span>
-					<p class="text-center">favorite this post</p>
-				</div>
+							var emptyStars = 5 - attributes.rating.totalPoints.rounded;
+							for(var i=0; i< emptyStars; i++){
+								print('<i class="icon-star-empty"></i> ');
+							}
+							print('<p>rated by ' + attributes.rating.totalUsers + ' persons</p>');
+						} else {
+							print('not rated yet');
+						}
+					%>
+				</span>
+				<button type="button" class="btn <%= ratingButton %>" id="btn_rating"><i class="icon-star"></i> rate it</button>
 			</div>
-			<div class="right span10">
-				<h1><%=attributes.title %></h1>
-				<p><%=attributes.description %></p>
-				<div class="row-fluid">
-					<div class="meta span4">
-						TAGS:<br/>
-				        <ul>
-					        <%
-				                _.each(attributes.tags, function(value){
-				                    print('<li><span class="label label-inverse tag"><a href="' + encodeURI('#search/[' + value + ']')  + '">' + value + '</a></span></li>');
-				                });
-				            %>
-				        </ul><br />
-				        ADDITIONAL INFOS:<br />
-			            <ul>
-			    	        <%
-			                    _.each(attributes.additionalInfo, function(value){
-			                        print('<li class="list"><a href="' + encodeURI(value.pullRequestUrl)  + '" target="_blank">' + value.pullRequestTitle + '</a><br />(merged: ' + value.pullRequestPublishDate + ')</li>');
-			                    });
-			                %>
-			            </ul>
-					</div>
-					<div class="additional span8">
-						<button type="button" class="btn" data-toggle="modal" data-target="#flag_modal"><i class="icon-flag"></i> flag it</button>
-						<button type="button" class="btn" id="btn_pull_request"><i class="icon-link"></i> pull request</button>
-						<button type="button" class="btn <%= ratingButton %>" id="btn_rating"><i class="icon-star"></i> rate it</button>
-					</div>
-				</div>
+
+			<div id="favorite" class="well well-small">
+				<h3><%= iconStar %></h3>
+				<span>favor this post</span>
+			</div>
+
+			<div class="meta well well-small">
+		        <ul>
+			        <%
+		                _.each(attributes.tags, function(value){
+		                    print('<li><span class="label label-inverse tag"><a href="' + encodeURI('#search/[' + value + ']')  + '">' + value + '</a></span></li>');
+		                });
+		            %>
+		        </ul>
+			</div>
+			<div class="additional well well-small">
+	            <button type="button" class="btn" id="btn_pull_request"><i class="icon-link"></i> pull request</button>
+		        <h5>ADDITIONAL INFOS:</h5>
+	            <ul>
+	    	        <%
+	                    _.each(attributes.additionalInfo, function(value){
+	                        print('<li class="list"><a href="' + encodeURI(value.pullRequestUrl)  + '" target="_blank">' + value.pullRequestTitle + '</a><br />(merged: ' + value.pullRequestPublishDate + ')</li>');
+	                    });
+	                %>
+	            </ul>
+			</div>
+			<div class="actions well well-small">
+				<button type="button" class="btn" data-toggle="modal" data-target="#flag_modal"><i class="icon-flag"></i> flag it</button>
 			</div>
 		</div>
 	</div>
