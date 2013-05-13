@@ -11,9 +11,10 @@ define([
 	'text!../templates/posts/player_video_items.html',
 	'text!../templates/posts/detail_video_content.html',
 	'text!../templates/message_template.html',
-	'text!../templates/posts/surprise_me.html'
+	'text!../templates/posts/surprise_me.html',
+	'moment'
 ], function( $, _, Backbone, TheCollection, TheModel, TheOption, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
-	PlayerVideoItemsTemplate, DetailVideoContentTemplate, MessageTemplate, SurpriseMeTemplate) {
+	PlayerVideoItemsTemplate, DetailVideoContentTemplate, MessageTemplate, SurpriseMeTemplate, Moment) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -81,6 +82,7 @@ define([
 			var that = this;
 			if(this.collection.models.length){
 				_.each(this.collection.models, function(value){
+					value.attributes.foreign.uploadDate = new Moment(value.attributes.foreign.uploadDate).format('l');
 					if(that.viewType === 'grid'){
 						templateItems += _.template(GridVideoItemsTemplate, {attributes: value.attributes});
 					} else if(that.viewType === 'player'){
@@ -113,6 +115,8 @@ define([
 			if(rating.indexOf(results[0]._id) !== -1){
 				ratingButton = 'disabled';
 			}
+			results[0].foreign.uploadDate = new Moment(results[0].foreign.uploadDate).format('l');
+			results[0].publishDate = new Moment(results[0].publishDate).format('l');
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, ratingButton: ratingButton});
 
 			window.scroll(0); // small screens start now on top of detailpage

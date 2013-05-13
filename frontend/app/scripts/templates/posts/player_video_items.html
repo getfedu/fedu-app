@@ -2,6 +2,7 @@
     <div class="left">
         <a href="#detail-view-post/<%=attributes._id %>" target="_self">
             <h4><%=attributes.title %></h4>
+            <p class="date"><%=attributes.foreign.uploadDate %></p>
         </a>
         <ul>
         <%
@@ -10,7 +11,6 @@
             });
         %>
         </ul>
-        <span class="label label-inverse"></span>
     </div>
     <div class="right video_container no_player" data-video="<%=attributes.foreign.embedUrl %>">
         <div class="img" style="background-image:url(<%=attributes.foreign.thumbnail.large %>)"></div>

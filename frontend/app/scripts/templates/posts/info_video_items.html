@@ -8,9 +8,10 @@
             <a href="#detail-view-post/<%=attributes._id %>" target="_self">
 	            <h4><%=attributes.title %></h4>
                 <p><%=attributes.description %></p>
+                <span class="date"><%=attributes.foreign.uploadDate %></span>
             </a>
             <ul>
-    	        <%
+                <%
                     _.each(attributes.tags, function(value){
                         print('<li><span class="label label-inverse tag"><a href="' + encodeURI('#search/[' + value + ']')  + '">' + value + '</a></span></li>');
                     });

@@ -68,7 +68,8 @@ require.config({
 		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',
 		bootstrapDropdown: '../components/sass-bootstrap/js/bootstrap-dropdown',
 		bootstrapAlert: '../components/sass-bootstrap/js/bootstrap-alert',
-		jqueryCookie: '../components/jquery.cookie/jquery.cookie'
+		jqueryCookie: '../components/jquery.cookie/jquery.cookie',
+		moment: '../components/moment/moment'
 	}
 });
 
