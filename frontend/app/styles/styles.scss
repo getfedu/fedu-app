@@ -37,7 +37,7 @@ html, body {
         width: 100%;
         margin-bottom: 50px;
         > .container {
-            padding-top: 90px;
+            padding-top: 60px;
         }
         #message {
             text-align: center;
@@ -46,6 +46,16 @@ html, body {
             width: 70%;
             left: 15%;
             z-index: 999999;
+        }
+        #popular_tags {
+            a {
+                color: white;
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+        }
+        #surprise_me {
         }
     }
 }
@@ -59,10 +69,35 @@ html, body {
 /* Detailpage -------------------------------------------------- */
 
 .detail_view {
+    h1 {
+        margin: 25px 0 10px 0;
+    }
     .video_container {
         iframe {
             width: 100%;
         }
+    }
+    .tags {
+        list-style: none;
+        margin: 5px 0 10px 0;
+        float: left;
+        ul {
+            margin: 0;
+            li {
+                display: inline-block;
+                margin: 0 5px 0 0;
+                a {
+                    color: white;
+                }
+            }
+        }
+    }
+    .date {
+        line-height: 30px;
+        font-weight: bold;
+    }
+    #btn_pull_request {
+        float: right;
     }
     .info_container {
         .meta, .additional {
@@ -84,6 +119,7 @@ html, body {
             text-align: center;
         }
         .rating {
+            cursor: pointer;
             text-align: center;
             h3 {
                 margin-top: 0;

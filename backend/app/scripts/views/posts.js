@@ -158,7 +158,6 @@ define([
 					array.pop();
 					data[value.name] = array;
 				} else {
-					//console.log(value.name, value.value);
 					data[value.name] = value.value;
 				}
 			});
@@ -273,7 +272,7 @@ define([
 
 		addTag: function(target, value){
 			var val = $(target).parent().siblings('[type=hidden]').val();
-			$(target).parent().siblings('[type=hidden]').val(value + ',' + val).addClass('changed');
+			$(target).parent().siblings('[type=hidden]').val(value.trim() + ',' + val).addClass('changed');
 			$(target).val('').parent().before('<div class="btn tag">' + value + '</div>');
 			$(target).typeahead('destroy');
 			$('.typeahead').focus();

@@ -34,7 +34,7 @@ define([
 		// delegated events
 		events: {
 			'click .type' : 'setViewType',
-			'click .video_container' : 'addVideoIframe',
+			'click .video_container.no_player' : 'addVideoIframe',
 			'keyup form#search' : 'handleSearchEvents',
 			'submit form#search' : 'handleSearchEvents',
 			'click form#flag_post .flag_submit': 'flagPost',
@@ -42,12 +42,11 @@ define([
 			'click #btn_pull_request': 'checkPullRequest',
 			'click .search_hint': 'searchHints',
 			'click .popover .icon-remove': function(e){ e.stopPropagation(); $('.icon-question-sign').popover('hide');},
-			'click #favorite i.icon-star-empty': 'addFavoritePost',
-			'click #favorite i.icon-star': 'removeFavoritePost',
+			'click #favorite': function(e){ if($(e.currentTarget).find('i').hasClass('icon-bookmark-empty')){ this.addFavoritePost(e); } else { this.removeFavoritePost(e); }},
 			'click form#surprise_me #submit': 'surpriseMeSearch',
 			'click form#rate_post .rating_scale li': 'ratingScale',
 			'click form#rate_post .rate_submit': 'rating',
-			'click #btn_rating:not(".disabled")': 'checkRating'
+			'click #btn_rating': 'checkRating'
 		},
 
 		initialize: function() {
@@ -105,19 +104,20 @@ define([
 		listPost: function(results){
 			var templateDetailView = '';
 			var favorites = TheOption.favorites;
-			var favoriteStar = '<i class="icon-star-empty"></i>';
+			var favoriteStar = '<i class="icon-bookmark-empty"></i>';
 			if(favorites.indexOf(results[0]._id) !== -1){
-				favoriteStar = '<i class="icon-star"></i>';
+				favoriteStar = '<i class="icon-bookmark"></i>';
 			}
 
 			var rating = TheOption.rating;
-			var ratingButton = '';
+			var isRated = '';
 			if(rating.indexOf(results[0]._id) !== -1){
-				ratingButton = 'disabled';
+				isRated = 'rated';
 			}
 			results[0].foreign.uploadDate = new Moment(results[0].foreign.uploadDate).format('l');
 			results[0].publishDate = new Moment(results[0].publishDate).format('l');
-			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, ratingButton: ratingButton});
+			results[0].foreign.duration = new Moment.duration(results[0].foreign.duration, 'seconds').minutes();
+			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, isRated: isRated});
 
 			window.scroll(0); // small screens start now on top of detailpage
 			this.render(this.el, templateDetailView);
@@ -215,7 +215,7 @@ define([
 					},
 					url: TheOption.nodeUrl + '/post-add-favorite'
 				}).done(function(){
-					$(e.currentTarget).parent().html('<i class="icon-star"></i>');
+					$(e.currentTarget).html('<i class="icon-bookmark"></i>');
 					TheOption.favorites.push(that.postId);
 				}).fail(function(error){
 					console.log(error.responseText);
@@ -239,7 +239,7 @@ define([
 					},
 					url: TheOption.nodeUrl + '/post-remove-favorite'
 				}).done(function(){
-					$(e.currentTarget).parent().html('<i class="icon-star-empty"></i>');
+					$(e.currentTarget).html('<i class="icon-bookmark-empty"></i>');
 					TheOption.favorites.pop(that.postId);
 					console.log(TheOption);
 				}).fail(function(error){
@@ -455,7 +455,7 @@ define([
 			}).done(function(tags){
 				var string = '';
 				_.each(tags, function(value){
-					string += '<li><a href="#search/' + encodeURI('[' + value.tagName + ']') + '">' + value.tagName + '</a></li>';
+					string += '<li><span class="label label-inverse tag"><a href="#search/' + encodeURI('[' + value.tagName + ']') + '">' + value.tagName + '</a></span></li>';
 				});
 				that.render(that.popularTags, string);
 			}).fail(function(error){
@@ -511,9 +511,17 @@ define([
 			}
 		},
 
-		checkRating: function(){
+		checkRating: function(e){
 			if(TheOption.isAuth()){
-				$('#rating_modal').modal();
+				if($(e.currentTarget).hasClass('rated')){
+					this.render('#message', _.template(MessageTemplate, { message: 'Sorry... You can rate a Post only once...', type: 'error'}));
+					clearTimeout(this.messageTimeout);
+	                this.messageTimeout = setTimeout(function() {
+						$('.alert').alert('close');
+	                }, 5000);
+				} else {
+					$('#rating_modal').modal();
+				}
 			} else {
 				this.render('#message', _.template(MessageTemplate, { message: 'Sorry... To to rate this post you have to sign in.', type: 'error'}));
 				clearTimeout(this.messageTimeout);

@@ -1,149 +1,159 @@
-<h1><%=attributes.title %></h1>
-<div class="detail_view row-fluid">
-	<div id="post_id" data-post-id="<%=attributes._id %>">
-		<div class="video_container span10">
-			<iframe width="1000" height="563" src="<%=attributes.foreign.embedUrl %>" frameborder="0" allowfullscreen></iframe>
-			<p><%=attributes.description %></p>
+<div class="detail_view">
+	<div class="row-fluid">
+		<h1><%=attributes.title %></h1>
+		<div class="tags">
+		    <ul>
+		        <%
+		            _.each(attributes.tags, function(value){
+		                print('<li><span class="label label-inverse tag"><a href="' + encodeURI('#search/[' + value + ']')  + '">' + value + '</a></span></li>');
+		            });
+		        %>
+		    </ul>
 		</div>
-		<div class="span2 info_container">
-			<div class="rating well well-small">
-				<h3><% if(attributes.rating){ print(attributes.rating.totalPoints.exact); } else { print(0); } %></h3>
-				<span>
-					<%
-						if(attributes.rating){
-							for(var i=0; i < attributes.rating.totalPoints.rounded; i++){
-								print('<i class="icon-star"></i> ');
-							}
-							var emptyStars = 5 - attributes.rating.totalPoints.rounded;
-							for(var i=0; i< emptyStars; i++){
-								print('<i class="icon-star-empty"></i> ');
-							}
-							print('<p>rated by ' + attributes.rating.totalUsers + ' persons</p>');
-						} else {
-							print('not rated yet');
-						}
-					%>
-				</span>
-				<button type="button" class="btn <%= ratingButton %>" id="btn_rating"><i class="icon-star"></i> rate it</button>
-			</div>
-
-			<div id="favorite" class="well well-small">
-				<h3><%= iconStar %></h3>
-				<span>favor this post</span>
-			</div>
-
-			<div class="meta well well-small">
-		        <ul>
-			        <%
-		                _.each(attributes.tags, function(value){
-		                    print('<li><span class="label label-inverse tag"><a href="' + encodeURI('#search/[' + value + ']')  + '">' + value + '</a></span></li>');
-		                });
-		            %>
-		        </ul>
-			</div>
-			<div class="additional well well-small">
-	            <button type="button" class="btn" id="btn_pull_request"><i class="icon-link"></i> pull request</button>
-		        <h5>ADDITIONAL INFOS:</h5>
-	            <ul>
-	    	        <%
-	                    _.each(attributes.additionalInfo, function(value){
-	                        print('<li class="list"><a href="' + encodeURI(value.pullRequestUrl)  + '" target="_blank">' + value.pullRequestTitle + '</a><br />(merged: ' + value.pullRequestPublishDate + ')</li>');
-	                    });
-	                %>
-	            </ul>
-			</div>
-			<div class="actions well well-small">
-				<button type="button" class="btn" data-toggle="modal" data-target="#flag_modal"><i class="icon-flag"></i> flag it</button>
-				<p class="date">Foreign-Date:<%=attributes.foreign.uploadDate %></p>
-				<p class="date">Fedu-Date:<%=attributes.publishDate %></p>
-			</div>
-		</div>
+		<span class="date"> - uploaded <%=attributes.foreign.uploadDate %></span>
 	</div>
-
-	<!-- Modal flagging -->
-	<div id="flag_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<form id="flag_post">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h3 id="myModalLabel"><i class="icon-flag"></i> Flag this post</h3>
-			</div>
-			<div class="modal-body">
-				<p>You want to flag this post? Please select one reason.</p>
-				<select name="description">
-					<option>Audio and video stutter</option>
-					<option>Video stutters, but audio is fine</option>
-					<option>Audio and video arent´s synced</option>
-					<option>Content is not legal</option>
-				</select>
-				<input type="hidden" name="flag-title" value="<%=attributes.title %>" />
-			</div>
-			<div class="modal-footer">
-				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<input type="submit"  class="btn btn-primary flag_submit" value="flag it">
-			</div>
-		</form>
-	</div>
-
-
-	<!-- Modal pull request -->
-	<div id="pull_request_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<form id="pull_request">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h3 id="myModalLabel"><i class="icon-link"></i>  Pull request</h3>
-			</div>
-			<div class="modal-body">
-				<p>You have additional infos? Please let us know!</p>
-				<div class="well well-small">
-					<h5>Please insert your link & title:</h5>
-					<input type="text" name="title" class="span12" placeholder="Titel">
-					<input type="text" name="url" class="span12" placeholder="Link to your additional source">
+	<div class="row-fluid">
+		<div id="post_id" data-post-id="<%=attributes._id %>">
+			<div class="video_container span10">
+				<iframe width="1000" height="563" src="<%=attributes.foreign.embedUrl %>?portrait=0&byline=0&title=0&showinfo=0&theme=light" frameborder="0" allowfullscreen></iframe>
+				<p><%=attributes.description %></p>
+				<div class="row-fluid">
+					<div class="video_info well well-small span6">
+						<b>Video Information:</b>
+						<ul>
+							<li><a href="<%= attributes.foreign.linkUrl%>" target="_blank">Link to <%= attributes.videoType %></a></li>
+							<li>uploaded to <%= attributes.videoType %> on <b><%=attributes.foreign.uploadDate %></b></li>
+							<li>added to fedu on <b><%=attributes.publishDate %></b></li>
+							<li>Video duration is about <b><%= attributes.foreign.duration %></b> minutes</li>
+							<li>the Video got a playcount of <b><%= attributes.foreign.playCount %></b> on <%= attributes.videoType %></li>
+						</ul>
+					</div>
+					<div class="additional well well-small span6">
+				        <b>Additional Information:</b>
+	    	        	<% if(!attributes.additionalInfo){print('<p>Sorry, there is no additional information available. Be the first to suggest a pull request...</p>')} %>
+			            <ul>
+			    	        <%
+			                    _.each(attributes.additionalInfo, function(value){
+			                        print('<li class="list"><a href="' + encodeURI(value.pullRequestUrl)  + '" target="_blank">' + value.pullRequestTitle + '</a></li>');
+			                    });
+			                %>
+			            </ul>
+			            <button type="button" class="btn" id="btn_pull_request"><i class="icon-link"></i> pull request</button>
+					</div>
 				</div>
-				<input type="hidden" name="pull-title" value="<%=attributes.title %>" />
-			</div>
-			<div class="modal-footer">
-				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<input type="submit"  class="btn btn-primary pull_request_submit" value="pull request">
-			</div>
-		</form>
-	</div>
-
-	<!-- Modal pull request -->
-	<div id="rating_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<form id="rate_post">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h3 id="myModalLabel"><i class="icon-star"></i> Rate this post</h3>
-			</div>
-			<div class="modal-body">
-				<p>Please rate (you have to rate all):</p>
-				<div class="well well-small">
-					<h5>Video-Quality</h5>
-					<ul class="rating_scale">
-						<li class="icon-star-empty"></li>
-						<li class="icon-star-empty"></li>
-						<li class="icon-star-empty"></li>
-						<li class="icon-star-empty"></li>
-						<li class="icon-star-empty"></li>
-					</ul>
-					<input type="hidden" name="rating" value="0">
-
-					<h5>Comprehensibility</h5>
-					<ul class="rating_scale">
-						<li class="icon-star-empty"></li>
-						<li class="icon-star-empty"></li>
-						<li class="icon-star-empty"></li>
-						<li class="icon-star-empty"></li>
-						<li class="icon-star-empty"></li>
-					</ul>
-					<input type="hidden" name="rating" value="0">
-
+				<div class="row-fluid well well-small">
+					<button type="button" id="favorite" class="btn span1" title="bookmark"><%= iconStar %></button>
+					<button type="button" class="btn span1 offset10" data-toggle="modal" data-target="#flag_modal" title="flag this video"><i class="icon-flag"></i></button>
 				</div>
 			</div>
-			<div class="modal-footer">
-				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<input type="submit"  class="btn btn-primary rate_submit" value="rate">
+			<div class="span2 info_container">
+				<div class="rating well well-small <%= isRated %>" id="btn_rating">
+					<h3><% if(attributes.rating){ print(attributes.rating.totalPoints.exact); } else { print(0); } %></h3>
+					<span>
+						<%
+							if(attributes.rating){
+								for(var i=0; i < attributes.rating.totalPoints.rounded; i++){
+									print('<i class="icon-star"></i> ');
+								}
+								var emptyStars = 5 - attributes.rating.totalPoints.rounded;
+								for(var i=0; i< emptyStars; i++){
+									print('<i class="icon-star-empty"></i> ');
+								}
+								print('<p>rated by ' + attributes.rating.totalUsers + ' persons</p>');
+							} else {
+								print('not rated yet');
+							}
+						%>
+					</span>
+				</div>
 			</div>
-		</form>
+		</div>
+
+		<!-- Modal flagging -->
+		<div id="flag_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<form id="flag_post">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3 id="myModalLabel"><i class="icon-flag"></i> Flag this post</h3>
+				</div>
+				<div class="modal-body">
+					<p>You want to flag this post? Please select one reason.</p>
+					<select name="description">
+						<option>Audio and video stutter</option>
+						<option>Video stutters, but audio is fine</option>
+						<option>Audio and video arent´s synced</option>
+						<option>Content is not legal</option>
+					</select>
+					<input type="hidden" name="flag-title" value="<%=attributes.title %>" />
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+					<input type="submit"  class="btn btn-primary flag_submit" value="flag it">
+				</div>
+			</form>
+		</div>
+
+
+		<!-- Modal pull request -->
+		<div id="pull_request_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<form id="pull_request">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3 id="myModalLabel"><i class="icon-link"></i>  Pull request</h3>
+				</div>
+				<div class="modal-body">
+					<p>You have additional infos? Please let us know!</p>
+					<div class="well well-small">
+						<h5>Please insert your link & title:</h5>
+						<input type="text" name="title" class="span12" placeholder="Titel">
+						<input type="text" name="url" class="span12" placeholder="Link to your additional source">
+					</div>
+					<input type="hidden" name="pull-title" value="<%=attributes.title %>" />
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+					<input type="submit"  class="btn btn-primary pull_request_submit" value="pull request">
+				</div>
+			</form>
+		</div>
+
+		<!-- Modal pull request -->
+		<div id="rating_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<form id="rate_post">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3 id="myModalLabel"><i class="icon-star"></i> Rate this post</h3>
+				</div>
+				<div class="modal-body">
+					<p>Please rate (you have to rate all):</p>
+					<div class="well well-small">
+						<h5>Video-Quality</h5>
+						<ul class="rating_scale">
+							<li class="icon-star-empty"></li>
+							<li class="icon-star-empty"></li>
+							<li class="icon-star-empty"></li>
+							<li class="icon-star-empty"></li>
+							<li class="icon-star-empty"></li>
+						</ul>
+						<input type="hidden" name="rating" value="0">
+
+						<h5>Comprehensibility</h5>
+						<ul class="rating_scale">
+							<li class="icon-star-empty"></li>
+							<li class="icon-star-empty"></li>
+							<li class="icon-star-empty"></li>
+							<li class="icon-star-empty"></li>
+							<li class="icon-star-empty"></li>
+						</ul>
+						<input type="hidden" name="rating" value="0">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+					<input type="submit"  class="btn btn-primary rate_submit" value="rate">
+				</div>
+			</form>
+		</div>
 	</div>
 </div>

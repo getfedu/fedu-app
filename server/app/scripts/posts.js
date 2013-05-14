@@ -49,10 +49,9 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
             postHelpers.pullRequest(req, res, collectionPosts, oId, pullRequestId);
         } else {
             collectionPosts.findOne({'_id': oId }, function(err, result){
-                helpers.checkTags.init(result.tags, false);
+                postHelpers.comparePostsTags(req.body.tags, result.tags);
             });
             collectionPosts.update({'_id': oId }, req.body, function(){
-                helpers.checkTags.init(req.body.tags, true);
                 res.json('ok');
             });
         }
@@ -230,6 +229,31 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
                 }
             };
             collectionPosts.update({'_id': oId }, data );
+        },
+
+        comparePostsTags: function(newTags, oldTags){
+            var addedTags = [];
+            var removedTags = [];
+            var isInArray = '';
+            for(var i = 0; i < newTags.length; i++){
+                isInArray = oldTags.indexOf(newTags[i]);
+                if(isInArray === -1){
+                    addedTags.push(newTags[i]);
+                }
+                if(i === newTags.length - 1){
+                    helpers.checkTags.init(addedTags, true);
+                }
+            }
+            for(var j = 0; j < oldTags.length; j++){
+                isInArray = newTags.indexOf(oldTags[j]);
+                if(isInArray === -1){
+                    removedTags.push(oldTags[j]);
+                }
+                if(j === oldTags.length - 1){
+                    helpers.checkTags.init(removedTags, false);
+                }
+            }
+            console.log(addedTags, removedTags);
         }
     };
 };

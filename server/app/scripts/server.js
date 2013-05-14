@@ -27,7 +27,7 @@ var init = {
 
     db: function(){
         var that = this;
-        mongodb.connect('mongodb://localhost/fedu', function(err, db) {
+        mongodb.connect('mongodb://localhost', function(err, db) {
             if(err){
                 throw err;
             }

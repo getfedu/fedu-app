@@ -2,12 +2,17 @@
 ///////////////////////////////////////////////////////////
 'use strict';
 var moment = require('moment');
+
 module.exports = function(collectionTags){
     var helpers = {
         checkTags: {
             init: function(tags, increaseOrDecrease){ // true = increase, false = decrease
                 collectionTags = collectionTags;
-                if(tags.length > 0){
+                this.loop(tags, increaseOrDecrease);
+            },
+
+            loop: function(tags, increaseOrDecrease){
+                if(tags.length){
                     for (var i = 0; i < tags.length; i++){
                         this.queryTags(tags[i], increaseOrDecrease);
                     }
