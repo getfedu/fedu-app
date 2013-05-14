@@ -32,7 +32,7 @@ var init = {
                 throw err;
             }
             console.log('connected');
-            var theDb = db.db('fedu');
+            var theDb = db.db('admin');
             collectionPosts = theDb.collection('posts');
             collectionTags = theDb.collection('tags');
             collectionNotifications = theDb.collection('notifications');

@@ -1,13 +1,20 @@
-<form action="#" method="POST" id="surprise_me">
-	<p class="span10"><b>Not sure what to learn?</b>
-	Find
-	<select class="span2" name="minutes">
-		<%= minutes %>
-	</select>
-	minutes of fancy
-	<select class="span4" name="lesson">
-		<%= lessons %>
-	</select>
-	lesson.</p>
-	<input type="submit" id="submit" class="btn span2" value="surprise me" />
+<form action="#" method="POST" id="surprise_me" class="form-horizontal">
+	<b>Surprise Search</b>
+	<div class="control-group">
+		<label class="control-label minutes_label" for="inputPassword">Time (in minutes)</label>
+		<div class="controls minutes_controls">
+			<select name="minutes">
+				<%= minutes %>
+			</select>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="inputPassword">Lesson</label>
+		<div class="controls">
+			<select name="lesson">
+				<%= lessons %>
+			</select>
+		</div>
+	</div>
+	<input type="submit" id="submit" class="btn span4" value="go for it!" />
 </form>
