@@ -253,7 +253,6 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
                     helpers.checkTags.init(removedTags, false);
                 }
             }
-            console.log(addedTags, removedTags);
         }
     };
 };
