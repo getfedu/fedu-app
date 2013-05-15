@@ -168,6 +168,7 @@ html, body {
     #rating_modal{
         .rating_scale{
             margin: 0;
+            display: inline-block;
             cursor: pointer;
         }
     }
