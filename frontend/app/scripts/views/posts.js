@@ -57,6 +57,7 @@ define([
 		    $(window).scroll(function(){
 				that.scrolling();
 		    });
+		    $('body').keydown(function(e){ that.keyDownHandler(e); });
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -170,7 +171,7 @@ define([
 					}
 				}).done(function() {
 					locateModalBody.html('<p><b>Post was flagged.</b> Thank you!</p>');
-					$(e.currentTarget).val('thank you!').addClass('disabled');
+					$(e.currentTarget).addClass('disabled');
 				});
 			}
 		},
@@ -199,8 +200,8 @@ define([
 						pullRequestTitle: pullRequestTitle
 					}
 				}).done(function() {
-					locateModalBody.html('<p><b>Pull request was sent.</b> We will check and merge it!</p>');
-					$(e.currentTarget).val('thank you!').addClass('disabled');
+					locateModalBody.html('<p><b>Thank you! Pull request was sent.</b> We will check and merge it!</p>');
+					$(e.currentTarget).addClass('disabled');
 				});
 			}
 		},
@@ -241,7 +242,6 @@ define([
 				}).done(function(){
 					$(e.currentTarget).html('<i class="icon-bookmark-empty"></i>');
 					TheOption.favorites.pop(that.postId);
-					console.log(TheOption);
 				}).fail(function(error){
 					console.log(error.responseText);
 				});
@@ -340,7 +340,7 @@ define([
 
 		addVideoIframe: function(e){
 			var videoUrl = $(e.currentTarget).attr('data-video');
-			$(e.currentTarget).removeClass('no_player').append('<iframe src="' + videoUrl + '?portrait=0&byline=0&title=0&autoplay=1&color=00adef&showinfo=0&theme=light&autohide=0&fs=1" frameborder="0" allowfullscreen></iframe>');
+			$(e.currentTarget).removeClass('no_player').append('<iframe src="' + videoUrl + '?portrait=0&byline=0&title=0&autoplay=1&color=00adef&showinfo=0&theme=light&autohide=0&fs=1&version=3&enablejsapi=1" frameborder="0" allowfullscreen></iframe>');
 			$(e.currentTarget).find('iframe').fadeIn();
 		},
 
@@ -530,6 +530,14 @@ define([
                 }, 5000);
             }
 		},
+
+		keyDownHandler: function(e){
+			if(e.keyCode === 32 && e.target.tagName !== 'INPUT'){
+				// for pausing the video @TODO load video per yt/vimeo api (not iframe only)
+				// console.log(e);
+				// e.preventDefault();
+			}
+		}
 	});
 
 	return View;

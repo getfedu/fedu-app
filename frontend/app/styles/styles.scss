@@ -32,6 +32,12 @@ html, body {
     box-sizing:         border-box;
 }
 
+.label-inverse {
+    &:hover {
+        background-color: lighten(#333333, 20%);
+    }
+}
+
 #wrap {
     #main {
         width: 100%;

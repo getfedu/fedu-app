@@ -13,6 +13,11 @@ require.config({
 		underscore: {
 			exports: '_'
 		},
+		bootstrapTransitions: {
+			deps: [
+				'jquery'
+			]
+		},
 		bootstrapCollapse: {
 			deps: [
 				'jquery'
@@ -62,6 +67,7 @@ require.config({
 		backbone: '../components/backbone/backbone',
 		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator',
 		text: '../components/requirejs-text/text',
+		bootstrapTransitions: '../components/sass-bootstrap/js/bootstrap-transition',
 		bootstrapCollapse: '../components/sass-bootstrap/js/bootstrap-collapse',
 		bootstrapTooltip: '../components/sass-bootstrap/js/bootstrap-tooltip',
 		bootstrapPopover: '../components/sass-bootstrap/js/bootstrap-popover',
@@ -76,13 +82,14 @@ require.config({
 require([
 	'routers/router',
 	'jquery',
+	'bootstrapTransitions',
 	'bootstrapCollapse',
 	'bootstrapTooltip',
 	'bootstrapPopover',
 	'bootstrapModal',
 	'bootstrapDropdown',
 	'bootstrapAlert'
-], function(Router, $, BootstrapCollapse, BootstrapTooltip, BootstrapPopover, BootstrapModal, BootstrapDropdown, BootstrapAlert) {
+], function(Router, $, BootstrapTransitions, BootstrapCollapse, BootstrapTooltip, BootstrapPopover, BootstrapModal, BootstrapDropdown, BootstrapAlert) {
 	'use strict';
 	new Router();
 	Backbone.history.start();
