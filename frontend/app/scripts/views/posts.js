@@ -30,6 +30,7 @@ define([
 		surpriseMe: '#surprise_me',
 		messageTimeout: {},
 		postId: '',
+		clickedRating: false,
 
 		// delegated events
 		events: {
@@ -45,6 +46,8 @@ define([
 			'click #favorite': function(e){ if($(e.currentTarget).find('i').hasClass('icon-bookmark-empty')){ this.addFavoritePost(e); } else { this.removeFavoritePost(e); }},
 			'click form#surprise_me #submit': 'surpriseMeSearch',
 			'click form#rate_post .rating_scale li': 'ratingScale',
+			'mouseover form#rate_post .rating_scale li': 'ratingScale',
+			'mouseleave form#rate_post .rating_scale': 'removeRatingScale',
 			'click form#rate_post .rate_submit': 'rating',
 			'click #btn_rating': 'checkRating'
 		},
@@ -292,7 +295,7 @@ define([
 							comprehensibility: comprehensibility
 						}
 					}).done(function() {
-						$(e.currentTarget).val('thank you!').addClass('disabled');
+						$(e.currentTarget).addClass('disabled');
 						locateForm.find('.modal-body').html('<p><b>Your rating was sent!</b></p>');
 						TheOption.rating.push(that.postId);
 					});
@@ -503,11 +506,27 @@ define([
 			var parent = clickedElement.parent();
 			var children = parent.children();
 			var index = clickedElement.index();
-			parent.find('li').removeClass('icon-star').addClass('icon-star-empty');
-			parent.next().val(index+1);
+			parent.find('li').removeClass('icon-star hover rated').addClass('icon-star-empty');
+			if(e.type === 'click'){
+				parent.next().val(index+1);
+				for(var i=0; i<=index; i++){
+					children.eq(i).removeClass('icon-star-empty').addClass('icon-star rated');
+				}
+			} else {
+				for(var j=0; j<=index; j++){
+					children.eq(j).removeClass('icon-star-empty').addClass('icon-star hover');
+				}
+			}
 
-			for(var i=0; i<=index; i++){
-				children.eq(i).removeClass('icon-star-empty').addClass('icon-star');
+		},
+
+		removeRatingScale: function(e){
+			e.preventDefault();
+			var clickedElement = $(e.currentTarget);
+			var countElements = clickedElement.next().val() - 1;
+			clickedElement.find('li.hover').removeClass('icon-star hover').addClass('icon-star-empty');
+			for(var i=0; i<=countElements; i++){
+				clickedElement.children().eq(i).removeClass('icon-star-empty').addClass('icon-star rated');
 			}
 		},
 
