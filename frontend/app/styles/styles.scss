@@ -242,6 +242,31 @@ html, body {
         height: 14em;
         margin: 0 0 1% 0;
         padding: 1%;
+
+        &.favorites_view{
+            .left{
+
+                .img_overlay{
+                    text-align: center;
+                    font-weight: bold;
+                    font-size: 18px;
+                    padding-top:80px;
+                    height: 182px;
+                    width: 9%;
+                    z-index: 3;
+                    position: absolute;
+                    background-color: white;
+                    @include opacity(0.9);
+
+                    &:hover{
+                        cursor: pointer;
+                        @include opacity(0.95);
+                    }
+                }
+            }
+        }
+
+
         a {
             text-decoration: none;
         }
