@@ -263,7 +263,7 @@ html, body {
                     font-size: 18px;
                     padding-top:80px;
                     height: 182px;
-                    width: 230px;
+                    width: 100%;
                     z-index: 3;
                     position: absolute;
                     background-color: white;
@@ -285,6 +285,7 @@ html, body {
             overflow: hidden;
             float: left;
             width: 30%;
+            position: relative;
             padding: 0 2% 0 0;
             .img {
                 height: 13em;
