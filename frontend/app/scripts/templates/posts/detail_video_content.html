@@ -31,7 +31,7 @@
 					</div>
 					<div class="additional well well-small span6">
 				        <b>Additional Information:</b>
-	    	        	<% if(!attributes.additionalInfo){print('<p>Sorry, there is no additional information available. Be the first to suggest a pull request...</p>')} %>
+	    	        	<% if(!attributes.additionalInfo){print('<p>Sorry, there is no additional information available. Be the first...</p>')} %>
 			            <ul>
 			    	        <%
 			                    _.each(attributes.additionalInfo, function(value){
@@ -39,12 +39,12 @@
 			                    });
 			                %>
 			            </ul>
-			            <button type="button" class="btn" id="btn_pull_request"><i class="icon-link"></i> pull request</button>
+			            <button type="button" class="btn" id="btn_pull_request"><i class="icon-plus"></i> add content</button>
 					</div>
 				</div>
 				<div class="row-fluid well well-small">
-					<button type="button" id="favorite" class="btn span1" title="bookmark"><%= iconStar %></button>
-					<button type="button" class="btn span1 offset10" data-toggle="modal" data-target="#flag_modal" title="flag this video"><i class="icon-flag"></i></button>
+					<button type="button" id="favorite" class="btn span2"><%= iconStar %></button>
+					<button type="button" class="btn span2 offset8" data-toggle="modal" data-target="#flag_modal" title="flag this video"><i class="icon-flag"></i> flag it</button>
 				</div>
 			</div>
 			<div class="span2 info_container">
@@ -100,7 +100,7 @@
 			<form id="pull_request">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h3 id="myModalLabel"><i class="icon-link"></i>  Pull request</h3>
+					<h3 id="myModalLabel"><i class="icon-plus"></i>  Add content</h3>
 				</div>
 				<div class="modal-body">
 					<p>You have additional infos? Please let us know!</p>
@@ -113,7 +113,7 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-					<input type="submit"  class="btn btn-primary pull_request_submit" value="pull request">
+					<input type="submit"  class="btn btn-primary pull_request_submit" value="add content">
 				</div>
 			</form>
 		</div>

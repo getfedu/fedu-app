@@ -1,6 +1,11 @@
-<li class="info_video_item clearfix thumbnail">
+<li class="info_video_item clearfix thumbnail <% if(favorites){ print('favorites_view');} %>">
         <div class="left">
-	        <a href="#detail-view-post/<%=attributes._id %>" target="_self">
+            <% 
+            if(favorites){ 
+                print('<div class="img_overlay" data-id="' + attributes._id + '"><span><i class="icon-bookmark"></i> unsave</span></div>');
+            }
+            %>
+            <a href="#detail-view-post/<%=attributes._id %>" target="_self">
                 <div class="img" style="background-image:url(<%=attributes.foreign.thumbnail.large %>)"></div>
             </a>
         </div>

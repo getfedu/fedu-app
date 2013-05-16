@@ -29,6 +29,7 @@ define([
 		delaySearch: 0,
 		popularTags: '#popular_tags',
 		surpriseMe: '#surprise_me',
+		viewControlPanel: '#view_control_panel',
 		messageTimeout: {},
 		postId: '',
 		clickedRating: false,
@@ -50,7 +51,8 @@ define([
 			'mouseover form#rate_post .rating_scale li': 'ratingScale',
 			'mouseleave form#rate_post .rating_scale': 'removeRatingScale',
 			'click form#rate_post .rate_submit': 'rating',
-			'click #btn_rating': 'checkRating'
+			'click #btn_rating': 'checkRating',
+			'click .favorites_view .img_overlay': 'removeFavorite'
 		},
 
 		initialize: function() {
@@ -85,8 +87,16 @@ define([
 		listPosts: function(){
 			var templateItems = '';
 			var that = this;
+			var favorites = false;
+
 			if(this.collection.models.length){
 				_.each(this.collection.models, function(value){
+
+					if($.inArray(value.attributes._id, TheOption.favorites) !== -1 && Backbone.history.fragment === 'favorites'){
+						favorites = true;
+						that.viewType = 'info';
+						$(that.viewControlPanel).hide();
+					}
 
 					value.attributes.foreign.uploadDate = new Moment(value.attributes.foreign.uploadDate).format('l');
 
@@ -106,7 +116,7 @@ define([
 					} else if(that.viewType === 'player'){
 						templateItems += _.template(PlayerVideoItemsTemplate, {attributes: value.attributes});
 					} else if(that.viewType === 'info'){
-						templateItems += _.template(InfoVideoItemsTemplate, {attributes: value.attributes});
+						templateItems += _.template(InfoVideoItemsTemplate, {attributes: value.attributes, favorites: favorites});
 					}
 				});
 			} else {
@@ -126,7 +136,9 @@ define([
 			var favorites = TheOption.favorites;
 			var favoriteStar = '<i class="icon-bookmark-empty"></i>';
 			if(favorites.indexOf(results[0]._id) !== -1){
-				favoriteStar = '<i class="icon-bookmark"></i>';
+				favoriteStar = '<i class="icon-bookmark"></i> unsave';
+			} else {
+				favoriteStar = '<i class="icon-bookmark-empty"></i> save for later';
 			}
 
 			var rating = TheOption.rating;
@@ -233,7 +245,7 @@ define([
 						pullRequestTitle: pullRequestTitle
 					}
 				}).done(function() {
-					locateModalBody.html('<p><b>Thank you! Pull request was sent.</b> We will check and merge it!</p>');
+					locateModalBody.html('<p><b>Thank you!</b> We will check your additional content and merge it!</p>');
 					$(e.currentTarget).addClass('disabled');
 				});
 			}
@@ -249,7 +261,7 @@ define([
 					},
 					url: TheOption.nodeUrl + '/post-add-favorite'
 				}).done(function(){
-					$(e.currentTarget).html('<i class="icon-bookmark"></i>');
+					$(e.currentTarget).html('<i class="icon-bookmark"></i> unsave');
 					TheOption.favorites.push(that.postId);
 				}).fail(function(error){
 					console.log(error.responseText);
@@ -263,18 +275,26 @@ define([
 			}
 		},
 
-		removeFavoritePost: function(e){
+		removeFavoritePost: function(e, removeFavoritId){
+			var postId = '';
+			if(removeFavoritId){ // postId from favorite overview
+				postId = removeFavoritId;
+			} else {
+				postId = this.postId;
+			}
+
 			if(TheOption.isAuth()){
-				var that = this;
 				$.ajax({
 					type: 'POST',
 					data: {
-						postId: this.postId
+						postId: postId
 					},
 					url: TheOption.nodeUrl + '/post-remove-favorite'
 				}).done(function(){
-					$(e.currentTarget).html('<i class="icon-bookmark-empty"></i>');
-					TheOption.favorites.pop(that.postId);
+					if(!removeFavoritId){
+						$(e.currentTarget).html('<i class="icon-bookmark-empty"></i> save for later');
+					}
+					TheOption.favorites.pop(postId);
 				}).fail(function(error){
 					console.log(error.responseText);
 				});
@@ -332,6 +352,13 @@ define([
 					});
 				}
 			}
+		},
+
+		removeFavorite: function(e){
+			e.preventDefault();
+			var clickedElement = $(e.currentTarget);
+			this.removeFavoritePost(e, clickedElement.attr('data-id'));
+			clickedElement.parents('.info_video_item').remove();
 		},
 
 		// helper functions
