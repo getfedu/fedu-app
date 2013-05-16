@@ -50,7 +50,7 @@ define([
 			'focus :input.typeahead': function(e) { if(!$(e.currentTarget).hasClass('tt-query')){ this.initAutoComplete(); }},
 			'click .tag': function(e){ this.removeTag($(e.currentTarget)); },
 			'typeahead:autocompleted': function(e){ this.addTag(e.target, e.target.value); },
-			'typeahead:selected': function(e){ this.addTag(e.target, e.target.value); },
+			'typeahead:selected': function(e){ console.log(e); this.addTag(e.target, e.target.value); },
 			'click #edit_post .additional_wrapper_item .remove': 'removeAdditionalWrapperItem'
 		},
 
@@ -82,6 +82,13 @@ define([
 		editPost: function(e){
 			var id = $(e.currentTarget).attr('data-id');
 			var model = this.collection.get(id);
+
+			var tagsArray = [];
+			_.each(model.attributes.tags, function(value){
+				tagsArray.push(value.tagName);
+			});
+			model.attributes.tags = tagsArray;
+
 			this.render(this.inner, _.template(EditTemplate, { attributes: model.attributes, cid: model.cid }));
 			Backbone.history.navigate('/edit-post', false);
 
@@ -272,8 +279,8 @@ define([
 
 		addTag: function(target, value){
 			var val = $(target).parent().siblings('[type=hidden]').val();
-			$(target).parent().siblings('[type=hidden]').val(value.trim() + ',' + val).addClass('changed');
-			$(target).val('').parent().before('<div class="btn tag">' + value + '</div>');
+			$(target).parent().siblings('[type=hidden]').val(value.trim().toLowerCase() + ',' + val).addClass('changed');
+			$(target).val('').parent().before('<div class="btn tag">' + value.toLowerCase() + '</div>');
 			$(target).typeahead('destroy');
 			$('.typeahead').focus();
 		},
@@ -281,7 +288,9 @@ define([
 		removeTag: function(target, type){
 			var value = target.text();
 			var valueList = target.siblings('[type=hidden]').val();
-			valueList = valueList.replace(value + ',', '');
+			if(valueList){
+				valueList = valueList.replace(value + ',', '');
+			}
 			target.siblings('[type=hidden]').val(valueList).addClass('changed');
 			if(type){
 				$('.typeahead').val(value);

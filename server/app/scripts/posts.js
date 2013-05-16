@@ -20,10 +20,21 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
 
     // Read Posts from db
     app.get('/post', function(req, res) {
+
         var top = parseInt(req.query.top, 0);
         var skip = parseInt(req.query.skip, 0);
-        collectionPosts.find().skip(skip).limit(top).sort({ _id: -1}).toArray(function(err, results){
-            res.json(results);
+        var thePosts = [];
+        var posts = collectionPosts.find().skip(skip).limit(top).sort({ _id: -1}).stream();
+        posts.on('data', function(item) {
+            posts.pause(); // pause stream until data is manipulated
+            collectionTags.find({ tagName: { $in: item.tags } }).toArray(function(err, tag_results){
+                item.tags = tag_results;
+                thePosts.push(item);
+                posts.resume();
+            });
+        });
+        posts.on('end', function(){
+            res.json(thePosts);
         });
     });
 
@@ -33,7 +44,10 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
             var BSON = mongodb.BSONPure;
             var oId = new BSON.ObjectID(req.params.id);
             collectionPosts.find({'_id': oId }).toArray(function(err, results){
-                res.json(results);
+                collectionTags.find({ tagName: { $in: results[0].tags } }).toArray(function(err, tag_results){
+                    results[0].tags = tag_results;
+                    res.json(results);
+                });
             });
         }
     });

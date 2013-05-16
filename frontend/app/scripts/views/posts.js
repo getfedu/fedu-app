@@ -87,7 +87,20 @@ define([
 			var that = this;
 			if(this.collection.models.length){
 				_.each(this.collection.models, function(value){
+
 					value.attributes.foreign.uploadDate = new Moment(value.attributes.foreign.uploadDate).format('l');
+
+					var tagsSpeakerArray = [];
+					var tagsArray = [];
+					_.each(value.attributes.tags, function(tags_value){
+						if(tags_value.type === 'speaker'){
+							tagsSpeakerArray.push(tags_value);
+						} else {
+							tagsArray.push(tags_value);
+						}
+					});
+					value.attributes.tags = tagsArray.concat(tagsSpeakerArray);
+
 					if(that.viewType === 'grid'){
 						templateItems += _.template(GridVideoItemsTemplate, {attributes: value.attributes});
 					} else if(that.viewType === 'player'){
@@ -109,6 +122,7 @@ define([
 
 		listPost: function(results){
 			var templateDetailView = '';
+
 			var favorites = TheOption.favorites;
 			var favoriteStar = '<i class="icon-bookmark-empty"></i>';
 			if(favorites.indexOf(results[0]._id) !== -1){
@@ -120,9 +134,22 @@ define([
 			if(rating.indexOf(results[0]._id) !== -1){
 				isRated = 'rated';
 			}
+
 			results[0].foreign.uploadDate = new Moment(results[0].foreign.uploadDate).format('l');
 			results[0].publishDate = new Moment(results[0].publishDate).format('l');
 			results[0].foreign.duration = new Moment.duration(results[0].foreign.duration, 'seconds').minutes();
+
+			var tagsSpeakerArray = [];
+			var tagsArray = [];
+			_.each(results[0].tags, function(value){
+				if(value.type === 'speaker'){
+					tagsSpeakerArray.push(value);
+				} else {
+					tagsArray.push(value);
+				}
+			});
+			results[0].tags = tagsArray.concat(tagsSpeakerArray);
+
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, isRated: isRated});
 
 			window.scroll(0); // small screens start now on top of detailpage
@@ -462,6 +489,7 @@ define([
 			}).done(function(tags){
 				var string = '';
 				_.each(tags, function(value){
+					var speaker = '';
 					string += '<li><span class="label label-inverse tag"><a href="#search/' + encodeURI('[' + value.tagName + ']') + '">' + value.tagName + '</a></span></li>';
 				});
 				that.render(that.popularTags, string);

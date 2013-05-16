@@ -8,6 +8,11 @@
         <label>Description</label>
         <textarea rows="5" class="span12" name="description"><%= attributes.description %></textarea>
 
+        <label>Type</label>
+        <select name="type">
+            <%= type %>
+        </select>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Save Changes</button>
             <button type="button" class="btn cancel_tag">Cancel</button>

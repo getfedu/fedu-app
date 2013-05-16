@@ -7,7 +7,9 @@
         <ul>
         <%
             _.each(attributes.tags, function(value){
-                print('<li><span class="label label-inverse tag"><a href="' + encodeURI('#search/[' + value + ']')  + '">' + value + '</a></span></li>');
+                var speaker = '';
+                if(value.type === 'speaker'){ speaker = 'speaker'; }
+                print('<li><span class="label label-inverse tag ' + speaker +'"><a href="' + encodeURI('#search/[' + value.tagName + ']')  + '">' + value.tagName + '</a></span></li>');
             });
         %>
         </ul>

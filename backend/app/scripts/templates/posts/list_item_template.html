@@ -2,7 +2,13 @@
     <td><%= attributes.title %></td>
     <td><%= attributes.videoId %></td>
     <td><%= attributes.videoType %></td>
-    <td><%= attributes.tags %></td>
+    <td>
+        <%
+            _.each(attributes.tags, function(value){
+                print(value.tagName + ', ');
+            });
+        %>
+    </td>
     <td><img src="<%= attributes.foreign.thumbnail.small %>" alt=""></td>
     <td>
         <button class="btn btn-primary edit_post" data-id="<%= cid %>"><i class="icon-edit"></i></button>

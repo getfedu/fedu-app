@@ -36,6 +36,17 @@ html, body {
     &:hover {
         background-color: lighten(#333333, 20%);
     }
+    &.speaker {
+        background-color: white;
+        border: 1px solid black;
+        a {
+            color:black!important;
+            text-shadow: none;
+        }
+        &:hover {
+            background-color: lighten(#333333, 40%);
+        }
+    }
 }
 
 #wrap {

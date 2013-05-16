@@ -22,6 +22,7 @@ define([
 		inner: '#app',
 		collection: {},
 		messageTimeout: {},
+		types: ['technology', 'speaker', 'conference'],
 
 		// delegated events
 		events: {
@@ -47,7 +48,11 @@ define([
 		////////////////////////////////////////
 
 		addTag: function(){
-			this.render(this.inner, _.template(AddTemplate));
+			var type = '';
+			for (var i = 0; i < this.types.length; i++) {
+				type += '<option>' + this.types[i] + '</option>';
+			}
+			this.render(this.inner, _.template(AddTemplate, {type: type}));
 		},
 
 		listTags: function(){ // called from collections/video.js
@@ -58,7 +63,18 @@ define([
 		editTag: function(e){
 			var id = $(e.currentTarget).attr('data-id');
 			var model = this.collection.get(id);
-			this.render(this.inner, _.template(EditTemplate, { attributes: model.attributes, cid: model.cid }));
+
+			var type = '';
+			for (var i = 0; i < this.types.length; i++) {
+				if(model.attributes.type === this.types[i]){
+					type += '<option selected="selected">' + this.types[i] + '</option>';
+				} else {
+					type += '<option>' + this.types[i] + '</option>';
+				}
+
+			}
+
+			this.render(this.inner, _.template(EditTemplate, { attributes: model.attributes, cid: model.cid, type: type }));
 			Backbone.history.navigate('/edit-tag', false);
 		},
 
@@ -100,7 +116,8 @@ define([
 			var array = $(':input').serializeArray();
 			var data = {
 				updateDate: new Moment().format(),
-				description: array[0].value
+				description: array[0].value,
+				type: array[1].value
 			};
 			var that = this;
 			var id = $(e.currentTarget).attr('data-id');

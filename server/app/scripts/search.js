@@ -3,7 +3,7 @@
 
 'use strict';
 
-module.exports = function(app, collectionPosts){
+module.exports = function(app, collectionPosts, collectionTags){
     var search = {
         generateTitleObject: function(query){
             var titleObject = {};
@@ -65,9 +65,20 @@ module.exports = function(app, collectionPosts){
         var queryObj = search.generateQuery(req.query);
         var skip = parseInt(req.query.skip, 0);
         var top = parseInt(req.query.top, 0);
+        var thePosts = [];
+        var posts = collectionPosts.find(queryObj).skip(skip).limit(top).sort({ _id: -1}).stream();
 
-        collectionPosts.find(queryObj).skip(skip).limit(top).sort({ _id: -1}).toArray(function(err, results){
-            res.json(results);
+        posts.on('data', function(item) {
+            posts.pause(); // pause stream until data is manipulated
+            collectionTags.find({ tagName: { $in: item.tags } }).toArray(function(err, tag_results){
+                item.tags = tag_results;
+                thePosts.push(item);
+                posts.resume();
+            });
+        });
+
+        posts.on('end', function(){
+            res.json(thePosts);
         });
     });
 
