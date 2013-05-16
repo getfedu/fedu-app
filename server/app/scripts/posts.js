@@ -108,8 +108,18 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
                 var id = new BSON.ObjectID(idArray[i]);
                 query.push(id);
             }
-            collectionPosts.find({ '_id' : { $in: query}}).toArray(function(err, results){
-                res.json(results);
+            var thePosts = [];
+            var posts = collectionPosts.find({ '_id' : { $in: query}}).sort({ _id: -1}).stream();
+            posts.on('data', function(item) {
+                posts.pause(); // pause stream until data is manipulated
+                collectionTags.find({ tagName: { $in: item.tags } }).toArray(function(err, tag_results){
+                    item.tags = tag_results;
+                    thePosts.push(item);
+                    posts.resume();
+                });
+            });
+            posts.on('end', function(){
+                res.json(thePosts);
             });
         } else {
             res.status(204);
