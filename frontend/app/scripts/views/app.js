@@ -47,6 +47,7 @@ define([
 			errorHash = window.location.hash;
 			errorView = _.template(The404Template, {errorHash: errorHash});
 
+			this.render(this.breadcrumb, ''); //clean breadcrumb
 			this.render(this.appWrapper, errorView);
 		},
 

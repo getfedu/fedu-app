@@ -22,6 +22,7 @@ define([
 		// Instead of generating a new element, bind to the existing skeleton of
 		// the App already present in the HTML.
 		el: '#app-wrapper',
+		breadcrumb: '#breadcrumb',
 		collection: {},
 		viewType: 'info',
 		currentCollectionLength: 0,
@@ -71,6 +72,7 @@ define([
 
 		listDefault: function(){
 			this.collection.paginator_core.url = TheOption.nodeUrl + '/post';
+			this.render(this.breadcrumb, ''); //clean breadcrumb
 			this.render(this.el, VideoTemplate);
 			$('.type[data-type=' + this.viewType + ']').addClass('active'); // set type button active-state
 			// set page start to 0
@@ -124,6 +126,7 @@ define([
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, isRated: isRated});
 
 			window.scroll(0); // small screens start now on top of detailpage
+			this.render(this.breadcrumb, ''); //clean breadcrumb
 			this.render(this.el, templateDetailView);
 			this.postId = $('#post_id').attr('data-post-id');
 		},
@@ -261,6 +264,7 @@ define([
 			this.collection.goTo(0);
 			this.getPosts();
 			$('.search-query').val('');
+			this.render(this.breadcrumb, '<a href="#">Home</a> &raquo; Saved For Later');
 		},
 
 		surpriseMeSearch: function(e){
