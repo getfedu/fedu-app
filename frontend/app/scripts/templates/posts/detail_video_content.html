@@ -31,7 +31,7 @@
 					</div>
 					<div class="additional well well-small span6">
 				        <b>Additional Information:</b>
-	    	        	<% if(!attributes.additionalInfo){print('<p>Sorry, there is no additional information available. Be the first...</p>')} %>
+	    	        	<% if(!attributes.additionalInfo.length){print('<p>Sorry, there is no additional information available.<br/> Be the first...</p>')} %>
 			            <ul>
 			    	        <%
 			                    _.each(attributes.additionalInfo, function(value){

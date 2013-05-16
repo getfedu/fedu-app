@@ -146,7 +146,6 @@ define([
 			if(rating.indexOf(results[0]._id) !== -1){
 				isRated = 'rated';
 			}
-
 			results[0].foreign.uploadDate = new Moment(results[0].foreign.uploadDate).format('l');
 			results[0].publishDate = new Moment(results[0].publishDate).format('l');
 			results[0].foreign.duration = new Moment.duration(results[0].foreign.duration, 'seconds').minutes();
