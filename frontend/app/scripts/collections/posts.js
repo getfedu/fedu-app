@@ -29,7 +29,7 @@ define([
             currentPage: 0,
 
             // how many items per page should be shown
-            perPage: 3
+            perPage: 15
 
         },
 

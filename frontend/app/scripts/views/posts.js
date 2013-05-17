@@ -33,6 +33,7 @@ define([
 		messageTimeout: {},
 		postId: '',
 		clickedRating: false,
+		overviewAlreadyLoaded: false,
 
 		// delegated events
 		events: {
@@ -80,8 +81,12 @@ define([
 			// set page start to 0
 			this.renderPopularTags();
 			this.renderSurpriseMe();
-			this.collection.goTo(0);
-			this.getPosts();
+			if(this.overviewAlreadyLoaded){
+				this.getPostsAgain();			
+			} else {
+				this.getPosts();
+				this.overviewAlreadyLoaded = true;
+			}
 		},
 
 		listPosts: function(){
@@ -370,7 +375,20 @@ define([
 			    success: function(collection) {
 					that.collection = collection;
 					that.listPosts();
-					that.autoLoad();
+			    },
+			    error: function(){
+			        console.log('error - no data was fetched');
+			    }
+			});
+		},
+
+		getPostsAgain: function(){
+			var that = this;
+			
+			this.collection.goTo(0, {
+			    success: function(collection) {
+					that.collection = collection;
+					that.listPosts();
 			    },
 			    error: function(){
 			        console.log('error - no data was fetched');
@@ -383,9 +401,6 @@ define([
 			$(e.currentTarget).addClass('active');
 			this.viewType = $(e.currentTarget).attr('data-type');
 			this.listPosts();
-
-			// check if more videos needed at this view type
-			this.autoLoad();
 		},
 
 		getPost: function(id){
@@ -414,17 +429,9 @@ define([
 					remove: false,
 					success: function(){
 						that.listPosts();
-						that.autoLoad();
 						that.currentCollectionLength = that.collection.length;
 					}
 				});
-			}
-		},
-
-		autoLoad: function(){
-			// load until scrollbar exists
-			if($(document).height() === $(window).height()){
-				this.infiniteLoad();
 			}
 		},
 
