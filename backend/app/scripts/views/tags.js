@@ -112,7 +112,6 @@ define([
 
 		updateTag: function(e){
 			e.preventDefault();
-
 			var array = $(':input').serializeArray();
 			var data = {
 				updateDate: new Moment().format(),
