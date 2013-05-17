@@ -16,7 +16,7 @@ module.exports = function(app, saltKey, collectionUser){
         if(req.body.type === 'youtube'){
             optionsVideo.url = 'https://www.googleapis.com/youtube/v3/videos/?id=' + req.body.id + '&key=' + req.body.key + '&part=snippet,contentDetails,statistics,status';
         } else if(req.body.type === 'vimeo') {
-            optionsVideo.url = 'http://vimeo.com/api/v2/video/' + req.body.id + '.json';
+            optionsVideo.url = 'https://vimeo.com/api/v2/video/' + req.body.id + '.json';
         } else {
             res.send(500);
         }
@@ -32,8 +32,8 @@ module.exports = function(app, saltKey, collectionUser){
                     parsedData.description = apiData.description;
                     parsedData.tags = apiData.tags;
                     parsedData.foreign = {};
-                    parsedData.foreign.embedUrl = 'http://player.vimeo.com/video/' + apiData.id;
-                    parsedData.foreign.linkUrl = 'http://vimeo.com/' + apiData.id;
+                    parsedData.foreign.embedUrl = 'https://player.vimeo.com/video/' + apiData.id;
+                    parsedData.foreign.linkUrl = 'https://vimeo.com/' + apiData.id;
                     parsedData.foreign.uploadDate = moment(apiData.upload_date).format();
                     parsedData.foreign.duration = apiData.duration;
                     parsedData.foreign.thumbnail = {};
@@ -60,8 +60,8 @@ module.exports = function(app, saltKey, collectionUser){
                     parsedData.description = apiData.snippet.description;
                     parsedData.tags = '';
                     parsedData.foreign = {};
-                    parsedData.foreign.embedUrl = 'http://www.youtube.com/embed/' + apiData.id;
-                    parsedData.foreign.linkUrl = 'http://youtu.be/' + apiData.id;
+                    parsedData.foreign.embedUrl = 'https://www.youtube.com/embed/' + apiData.id;
+                    parsedData.foreign.linkUrl = 'https://youtu.be/' + apiData.id;
                     parsedData.foreign.uploadDate = moment(apiData.snippet.publishedAt).format();
                     parsedData.foreign.duration = moment.duration.fromIsoduration(apiData.contentDetails.duration).asSeconds();
                     parsedData.foreign.thumbnail = {};

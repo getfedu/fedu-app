@@ -3,8 +3,9 @@ define([
 	'underscore',
 	'backbone',
 	'vendor/fedu/config',
-	'text!../templates/dashboard/dashboard_template.html'
-], function( $, _, Backbone, TheConfig, DashboardTemplate ) {
+	'text!../templates/dashboard/dashboard_template.html',
+	'jqueryCookie'
+], function( $, _, Backbone, TheConfig, DashboardTemplate, jqueryCookie ) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -48,6 +49,10 @@ define([
 			}).done(function(user){
 				that.render(that.username, '<i class="icon-user"></i> ' + user.username);
 			}).fail(function(error){
+				if(error.status === 401){
+					jqueryCookie('user_b', '');
+					window.reload();
+				}
 				console.log(error.responseText);
 			});
 		}

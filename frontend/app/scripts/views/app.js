@@ -4,8 +4,9 @@ define([
 	'backbone',
 	'text!../templates/404.html',
 	'text!../templates/login/user_menu_template.html',
-	'../vendor/fedu/options'
-], function( $, _, Backbone, The404Template, UserMenuTemplate, TheOption) {
+	'../vendor/fedu/options',
+	'jqueryCookie'
+], function( $, _, Backbone, The404Template, UserMenuTemplate, TheOption, jqueryCookie) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -69,6 +70,10 @@ define([
 					}
 					that.render($('#user_menu'), _.template(UserMenuTemplate, { username: '<i class="icon-user"></i>' + user.username }));
 				}).fail(function(error){
+					if(error.status === 401){
+						jqueryCookie('user_f', '');
+						window.reload();
+					}
 					console.log(error.responseText);
 				});
 			}
