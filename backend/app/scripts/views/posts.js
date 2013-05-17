@@ -278,14 +278,26 @@ define([
 		},
 
 		addTag: function(target, value){
-			var val = $(target).parent().siblings('[type=hidden]').val();
-			$(target).parent().siblings('[type=hidden]').val(value.trim().toLowerCase() + ',' + val).addClass('changed');
-			$(target).val('').parent().before('<div class="btn tag">' + value.toLowerCase() + '</div>');
-			$(target).typeahead('destroy');
-			$('.typeahead').focus();
+			var countTags = $(target).parents('.uneditable-input');
+			countTags = $(countTags).find('.btn').length+1;
+			if(countTags !== 6){
+				var val = $(target).parent().siblings('[type=hidden]').val();
+				$(target).parent().siblings('[type=hidden]').val(value.trim().toLowerCase() + ',' + val).addClass('changed');
+				$(target).val('').parent().before('<div class="btn tag">' + value.toLowerCase() + '</div>');
+				$(target).typeahead('destroy');
+				$('.typeahead').focus();
+			}
+
+			if(countTags === 5){
+				$(target).attr('placeholder', 'only 5 tags allowed');
+				$(target).attr('disabled', 'disabled');
+			}
+
 		},
 
 		removeTag: function(target, type){
+			var countTags = $(target).parent('.uneditable-input');
+			countTags = $(countTags).find('.btn').length;
 			var value = target.text();
 			var valueList = target.siblings('[type=hidden]').val();
 			if(valueList){
@@ -295,7 +307,15 @@ define([
 			if(type){
 				$('.typeahead').val(value);
 			}
+
+			if(countTags === 5){
+				var inputField = $(target).siblings('.twitter-typeahead').find('.tt-query');
+				inputField.attr('placeholder', 'enter some tags');
+				inputField.removeAttr('disabled');
+			}
+
 			target.remove();
+
 		},
 
 		generateAdditionalDataObject: function(data){

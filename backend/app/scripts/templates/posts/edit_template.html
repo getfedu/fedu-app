@@ -6,14 +6,14 @@
         <input type="text" name="videoId" class="span12 disabled" placeholder="enter the Id" value="<%= attributes.videoId %>" disabled>
 
         <label>Title</label>
-        <input type="text" name="title" class="span12" placeholder="enter the Title" value="<%= attributes.title %>">
+        <input type="text" name="title" class="span12" placeholder="enter the Title" value="<%= attributes.title %>" autofocus required>
 
         <label>Description</label>
-        <textarea rows="5" class="span12" name="description"><%= attributes.description %></textarea>
+        <textarea rows="5" class="span12" name="description" required><%= attributes.description %></textarea>
 
         <label>Tags</label>
         <div class="tags uneditable-input">
-            <input type="text" class="typeahead" placeholder="enter some tags" data-provide="typeahead" autocomplete="off">
+            <input type="text" class="typeahead" placeholder="enter some tags" data-provide="typeahead" autocomplete="off" required>
             <input type="hidden" name="tags" value="<%= attributes.tags %>" class="changed">
         </div>
     </fieldset>
@@ -24,8 +24,8 @@
             _.each(attributes.additionalInfo, function(value){
                 print('<div class="additional_wrapper_item">');
                     print('<label>Info:</label>');
-                    print('<input type="text" name="pullRequestTitle" class="span12" placeholder="Pull request title" value="' + value.pullRequestTitle + '">');
-                    print('<input type="text" name="pullRequestUrl" class="span12" placeholder="Pull request url" value="' + value.pullRequestUrl + '">');
+                    print('<input type="text" name="pullRequestTitle" class="span12" placeholder="Pull request title" value="' + value.pullRequestTitle + '" required>');
+                    print('<input type="text" name="pullRequestUrl" class="span12" placeholder="Pull request url" value="' + value.pullRequestUrl + '" required>');
                     print('<button class="btn remove"><i class="icon-remove" ></i> Remove</button>');
                 print('</div>');
             });
