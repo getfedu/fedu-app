@@ -194,8 +194,12 @@ define([
 			this.collection.server_api.tag = query.tag;
 			this.collection.server_api.duration = query.duration;
 
-			this.collection.goTo(0);
-			this.getPosts();
+			if(this.overviewAlreadyLoaded){
+				this.getPostsAgain();			
+			} else {
+				this.getPosts();
+				this.overviewAlreadyLoaded = true;
+			}
 		},
 
 		flagPost: function(e){
