@@ -101,7 +101,6 @@ module.exports = function(saltKey, collectionUser){
                 },
                 function(identifier, profile, done) {
                     collectionUser.findOne({'socialId.google': identifier}, function(err, user) {
-                        console.log(identifier, profile);
                         if(user) {
                             done(null, user);
                         } else {
