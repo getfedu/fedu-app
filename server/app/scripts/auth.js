@@ -5,6 +5,7 @@
 var localStrategy = require('passport-local').Strategy;
 var twitterStrategy = require('passport-twitter').Strategy;
 var facebookStrategy = require('passport-facebook').Strategy;
+var googleStrategy = require('passport-google').Strategy;
 var mongodb = require('mongodb');
 var passport = require('passport');
 var crypto = require('crypto');
@@ -92,6 +93,35 @@ module.exports = function(saltKey, collectionUser){
                     }
                 });
             }));
+
+            // google
+            passport.use(new googleStrategy({
+                    returnURL: frontendHost + '/auth/google/callback',
+                    realm: frontendHost
+                },
+                function(identifier, profile, done) {
+                    collectionUser.findOne({'socialId.google': identifier}, function(err, user) {
+                        console.log(identifier, profile);
+                        if(user) {
+                            done(null, user);
+                        } else {
+                            var body = {
+                                username: profile.displayName,
+                                registrationDate: moment().format(),
+                                socialId: {
+                                    google: identifier
+                                },
+                                activated: 'activated'
+                            };
+
+                            collectionUser.insert(body, function(err, user) {
+                                done(null, user[0]);
+                            });
+
+                        }
+                    });
+                }
+            ));
 
             passport.serializeUser(function(user, done){
                 var userId = user._id;

@@ -82,7 +82,7 @@ define([
 			this.renderPopularTags();
 			this.renderSurpriseMe();
 			if(this.overviewAlreadyLoaded){
-				this.getPostsAgain();			
+				this.getPostsAgain();
 			} else {
 				this.getPosts();
 				this.overviewAlreadyLoaded = true;
@@ -168,7 +168,7 @@ define([
 
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, isRated: isRated});
 
-			window.scroll(0); // small screens start now on top of detailpage
+			//window.scroll(0); // small screens start now on top of detailpage
 			this.render(this.breadcrumb, ''); //clean breadcrumb
 			this.render(this.el, templateDetailView);
 			this.postId = $('#post_id').attr('data-post-id');
@@ -384,7 +384,7 @@ define([
 
 		getPostsAgain: function(){
 			var that = this;
-			
+
 			this.collection.goTo(0, {
 			    success: function(collection) {
 					that.collection = collection;
@@ -522,7 +522,6 @@ define([
 			}).done(function(tags){
 				var string = '';
 				_.each(tags, function(value){
-					var speaker = '';
 					string += '<li><span class="label label-inverse tag"><a href="#search/' + encodeURI('[' + value.tagName + ']') + '">' + value.tagName + '</a></span></li>';
 				});
 				that.render(that.popularTags, string);

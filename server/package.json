@@ -13,7 +13,8 @@
     "cookie": "~0.0.6",
     "nodemailer": "~0.4.1",
     "passport-twitter": "~0.1.4",
-    "passport-facebook": "~0.1.5"
+    "passport-facebook": "~0.1.5",
+    "passport-google": "~0.3.0"
     },
   "devDependencies": {
     "grunt": "~0.4.0",

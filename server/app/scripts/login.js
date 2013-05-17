@@ -202,6 +202,30 @@ module.exports = function(app, saltKey, collectionUser){
         })(req, res, next);
     });
 
+    //Google
+    app.get('/auth/google', auth.isNotAuth, passport.authenticate('google'));
+
+    app.get('/auth/google/callback', auth.isNotAuth, function(req, res, next) {
+        passport.authenticate('google', function(err, user) {
+            if (err) {
+                return next(err);
+            }
+            if (!user) {
+                return res.redirect( frontendHost + '#login-error');
+            }
+            req.logIn(user, function(err) {
+                if (err) {
+                    return next(err);
+                }
+                var userId = user._id;
+                userId = new Buffer(userId.toHexString()).toString('base64');
+                res.cookie('user_f', userId);
+                return res.redirect( frontendHost + '#login-success');
+            });
+        })(req, res, next);
+    });
+
+
     var helpers = {
         registrationEmail: function(activationHash, username, res){
             var transport = nodemailer.createTransport('sendmail');

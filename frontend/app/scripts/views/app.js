@@ -21,6 +21,7 @@ define([
 		events: {
 			'click #login_twitter' : 'redirectToTwitter',
 			'click #login_facebook' : 'redirectToFacebook',
+			'click #login_google' : 'redirectToGoogle',
 			'click #logout' : 'logout'
 		},
 
@@ -40,6 +41,11 @@ define([
 		redirectToFacebook: function(e){
 			e.preventDefault();
 			window.open( TheOption.nodeUrl + '/auth/facebook', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+		},
+
+		redirectToGoogle: function(e){
+			e.preventDefault();
+			window.open( TheOption.nodeUrl + '/auth/google', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
 		},
 
 		errorDefault: function(){
