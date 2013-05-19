@@ -154,6 +154,7 @@ define([
 			results[0].foreign.uploadDate = new Moment(results[0].foreign.uploadDate).format('l');
 			results[0].publishDate = new Moment(results[0].publishDate).format('l');
 			results[0].foreign.duration = new Moment.duration(results[0].foreign.duration, 'seconds').minutes();
+			results[0].description = this.replaceURLWithHTMLLinks(results[0].description);
 
 			var tagsSpeakerArray = [];
 			var tagsArray = [];
@@ -620,6 +621,12 @@ define([
 				// console.log(e);
 				// e.preventDefault();
 			}
+		},
+
+		// From Stackoverflow: http://stackoverflow.com/questions/37684
+		replaceURLWithHTMLLinks: function(text){
+		    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+		    return text.replace(exp,'<a href="$1" target="_blank">$1</a>');
 		}
 	});
 
