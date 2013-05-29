@@ -50,7 +50,7 @@ define([
 				that.render(that.username, '<i class="icon-user"></i> ' + user.username);
 			}).fail(function(error){
 				if(error.status === 401){
-					jqueryCookie('user_b', '');
+					jqueryCookie('user_b', '', { path: '/' });
 					window.reload();
 				}
 				console.log(error.responseText);
