@@ -21,6 +21,7 @@ define([
 			tags: '',
 			publishDate: '',
 			updateDate: '',
+			additionalInfo: [],
 			foreign: {
 				embedUrl: '',
 				uploadDate: '',
