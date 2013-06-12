@@ -359,7 +359,6 @@ define([
 		        type = 'youtube';
 		        $('#video_id_hidden').val(theId);
 		        $('#videoType').val(type);
-		        $('.alert').alert('close');
 		        this.checkVideoId(theId, type);
 		    } else if(vimeoRegex.test(url)){
 		        var match = url.match(vimeoRegex);
@@ -367,16 +366,10 @@ define([
 		        type = 'vimeo';
 		        $('#video_id_hidden').val(theId);
 		        $('#videoType').val(type);
-		        $('.alert').alert('close');
 		        this.checkVideoId(theId, type);
 		    } else {
                 $('#loader').hide();
-                $('#video_id_hidden').val('');
-                $('form#add_post :input[name="title"]').val('').attr('disabled', 'disabled');
-                $('form#add_post :input[name="description"]').val('').attr('disabled', 'disabled');
-                $('form#add_post :input.typeahead').attr('disabled', 'disabled');
-                $('form#add_post .tags').addClass('disabled');
-                $('form#add_post .suggestions').hide();
+                this.disableFormFields();
 		        theId = false;
                 this.render('#message', _.template(MessageTemplate, { message: 'Sorry, this is no valid url...', type: 'warning'}));
                 clearTimeout(this.messageTimeout);
@@ -388,13 +381,15 @@ define([
 
 		checkVideoId: function(id, type){
 			var that = this;
+			$('.alert').alert('close');
 			$.ajax({
 				type: 'GET',
 				url: TheConfig.nodeUrl + '/post-exists/' + id,
 			}).done(function(res){
 				if(res){
 					$('#loader').hide();
-	                that.render('#message', _.template(MessageTemplate, { message: 'Sorry, this video already is in our database...', type: 'warning'}));
+					that.disableFormFields();
+	                that.render('#message', _.template(MessageTemplate, { message: 'Sorry, this video is already in our database...', type: 'warning'}));
 	                clearTimeout(that.messageTimeout);
 	                that.messageTimeout = setTimeout(function() {
 						$('.alert').alert('close');
@@ -406,6 +401,15 @@ define([
 			}).fail(function(error){
 				console.log(error);
 			});
+		},
+
+		disableFormFields: function(){
+			$('#video_id_hidden').val('');
+			$('form#add_post :input[name="title"]').val('').attr('disabled', 'disabled');
+			$('form#add_post :input[name="description"]').val('').attr('disabled', 'disabled');
+			$('form#add_post :input.typeahead').attr('disabled', 'disabled');
+			$('form#add_post .tags').addClass('disabled');
+			$('form#add_post .suggestions').hide();
 		}
 	});
 
