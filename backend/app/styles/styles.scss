@@ -61,48 +61,46 @@ $fontAwesomePath: "../components/font-awesome/font";
             box-shadow: none;
         }
     }
+    &.disabled {
+        cursor: not-allowed;
+        background-color: #eeeeee;
+    }
+}
+
+#loader {
+    display: none;
 }
 
 #notification_wrapper{
-
     #notification_counter{
         display: none;
     }
-
     #notifications{
         .no_notifications{
             padding:5px 10px 5px 15px;
         }
-
         .notification_item{
             border-bottom:1px dotted gray;
             min-width: 300px;
-
             &.latest{
                 background-color:$grayLighter;
                 border-left: 2px solid gray;
             }
-
             .description{
                 font-size: 0.9em;
                 display: block;
             }
-
             h6{
                 color:$grayLight;
             }
-
         }
-
         .show_all{
             display: block;
             text-align: center;
             line-height: 20px;
             padding: 5px;
         }
-
     }
-
 }
 
 #edit_post{
@@ -110,4 +108,20 @@ $fontAwesomePath: "../components/font-awesome/font";
         margin-bottom:20px;
     }
 
+}
+
+.tags_pull_request {
+    list-style: none;
+    margin: 5px 0 10px 0;
+    ul {
+        margin: 0;
+        li {
+            display: inline-block;
+            margin: 0 5px 0 0;
+            a {
+                color: white;
+                text-decoration: none;
+            }
+        }
+    }
 }

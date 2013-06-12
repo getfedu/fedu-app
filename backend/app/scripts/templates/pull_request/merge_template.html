@@ -20,8 +20,17 @@
         <%= attributes.description %>
 
         <h5>Tags:</h5>
-        <%= attributes.tags %>
-
+        <div class="tags_pull_request">
+            <ul>
+            <%
+                _.each(attributes.tags, function(value){
+                    var speaker = '';
+                    if(value.type === 'speaker'){ speaker = 'speaker'; }
+                    print('<li><span class="label label-inverse tag_pull_request ' + speaker + '">' + value.tagName + '</span></li>');
+                });
+            %>
+            </ul>
+        </div>
         <h5>Additional Infos:</h5>
         <ol>
             <%

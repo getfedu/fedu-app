@@ -51,7 +51,7 @@ define([
 			}).fail(function(error){
 				if(error.status === 401){
 					jqueryCookie('user_b', '', { path: '/' });
-					window.reload();
+					window.location.reload(false);
 				}
 				console.log(error.responseText);
 			});

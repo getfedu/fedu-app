@@ -34,6 +34,7 @@ module.exports = function(app, saltKey, collectionUser){
                 }
                 var userId = user._id;
                 res.cookie('user_b', new Buffer(userId.toHexString()).toString('base64'));
+                res.cookie('user_f', new Buffer(userId.toHexString()).toString('base64'));
                 res.json('Ok');
                 return;
             });

@@ -45,13 +45,13 @@ define([
 			'submit form#edit_post': 'updatePost',
 			'click button.cancel_post': function(){ Backbone.history.navigate('/list-posts', true); },
 			'change #edit_post :input': 'changedHandler',
-			'click button.search_api': 'searchApi',
 			'keydown :input.typeahead': 'autoCompleteKeyHandler',
 			'focus :input.typeahead': function(e) { if(!$(e.currentTarget).hasClass('tt-query')){ this.initAutoComplete(); }},
 			'click .tag': function(e){ this.removeTag($(e.currentTarget)); },
 			'typeahead:autocompleted': function(e){ this.addTag(e.target, e.target.value); },
 			'typeahead:selected': function(e){ console.log(e); this.addTag(e.target, e.target.value); },
-			'click #edit_post .additional_wrapper_item .remove': 'removeAdditionalWrapperItem'
+			'click #edit_post .additional_wrapper_item .remove': 'removeAdditionalWrapperItem',
+			'input #video_id': 'getIdsFromUrl'
 		},
 
 		initialize: function(){
@@ -113,6 +113,12 @@ define([
 
 		savePost: function(e){
 			e.preventDefault();
+
+			if($('#video_id_hidden').val() === ''){
+                this.render('#message', _.template(MessageTemplate, { message: 'Sorry, this video is either already in our database, or the url is not valid, please try again...', type: 'warning'}));
+				return;
+			}
+
 			var model = new TheModel();
 			var array = $('form').serializeArray();
 			var data = {
@@ -232,21 +238,17 @@ define([
 			}
 		},
 
-		searchApi: function(e){
-			var id = $(e.currentTarget).siblings('.video_id').val();
-			var type = $(e.currentTarget).siblings('.video_type').val();
-
-			TheApi.getData(id, type);
-		},
-
 		setApiData: function(){
 			_.each(TheApi.theData, function(value, key){
 				if(key === 'tags' && value){
 					$('form#add_post .suggestions').append(value).show();
 				} else {
-					$('form#add_post :input[name="' + key + '"]').val(value);
+					$('form#add_post :input[name="' + key + '"]').val(value).removeAttr('disabled');
+					$('form#add_post :input.typeahead').removeAttr('disabled');
+					$('form#add_post .tags').removeClass('disabled');
 				}
 			});
+			$('#loader').fadeOut();
 		},
 
 		initAutoComplete: function(){
@@ -336,6 +338,74 @@ define([
 			});
 
 			return additionalInfo;
+		},
+
+		getIdsFromUrl: function(e){
+			$('#loader').fadeIn();
+			var url = e.target.value;
+		    var theId = '';
+		    var type = '';
+
+		    // regex from: http://stackoverflow.com/questions/5830387/how-to-find-all-youtube-video-ids-in-a-string-using-a-regex/5831191#5831191
+		    var youtubeRegex = /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube\.com\S*[^\w\-\s])([\w\-]{11})(?=[^\w\-]|$)(?![?=&+%\w]*(?:['"][^<>]*>|<\/a>))[?=&+%\w-]*/ig;
+
+		    // regex from: http://stackoverflow.com/questions/13286785/match-vimeo-video-id/13286930#13286930
+		    var vimeoRegex = /https?:\/\/(?:www\.)?vimeo.com\/(?:channels\/|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|)(\d+)(?:$|\/|\?)/;
+
+		    if(youtubeRegex.test(url)){
+		        url.replace(youtubeRegex, '$1');
+		        var exec = youtubeRegex.exec(url); //second time matching, to ensure urls like: https://www.youtube.com/watch?v=kiUnJ1d8vvw&feature=youtu.be work
+		        theId = exec[1];
+		        type = 'youtube';
+		        $('#video_id_hidden').val(theId);
+		        $('#videoType').val(type);
+		        $('.alert').alert('close');
+		        this.checkVideoId(theId, type);
+		    } else if(vimeoRegex.test(url)){
+		        var match = url.match(vimeoRegex);
+		        theId = match[3];
+		        type = 'vimeo';
+		        $('#video_id_hidden').val(theId);
+		        $('#videoType').val(type);
+		        $('.alert').alert('close');
+		        this.checkVideoId(theId, type);
+		    } else {
+                $('#loader').hide();
+                $('#video_id_hidden').val('');
+                $('form#add_post :input[name="title"]').val('').attr('disabled', 'disabled');
+                $('form#add_post :input[name="description"]').val('').attr('disabled', 'disabled');
+                $('form#add_post :input.typeahead').attr('disabled', 'disabled');
+                $('form#add_post .tags').addClass('disabled');
+                $('form#add_post .suggestions').hide();
+		        theId = false;
+                this.render('#message', _.template(MessageTemplate, { message: 'Sorry, this is no valid url...', type: 'warning'}));
+                clearTimeout(this.messageTimeout);
+                this.messageTimeout = setTimeout(function() {
+					$('.alert').alert('close');
+                }, 5000);
+		    }
+		},
+
+		checkVideoId: function(id, type){
+			var that = this;
+			$.ajax({
+				type: 'GET',
+				url: TheConfig.nodeUrl + '/post-exists/' + id,
+			}).done(function(res){
+				if(res){
+					$('#loader').hide();
+	                that.render('#message', _.template(MessageTemplate, { message: 'Sorry, this video already is in our database...', type: 'warning'}));
+	                clearTimeout(that.messageTimeout);
+	                that.messageTimeout = setTimeout(function() {
+						$('.alert').alert('close');
+	                }, 5000);
+	                $('#video_id_hidden').val('');
+				} else {
+	                TheApi.getData(id, type);
+				}
+			}).fail(function(error){
+				console.log(error);
+			});
 		}
 	});
 
