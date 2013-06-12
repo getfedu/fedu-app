@@ -13,7 +13,7 @@ define([
             $.ajax({
                 type: 'POST',
                 url: TheConfig.nodeUrl + '/api-call',
-                data: { key: TheConfig.youtubeApiKey, id: id, type: type }
+                data: { id: id, type: type }
             }).done(function(result, textStatus, jqXHR){
                 if(jqXHR.status === 204){
                     console.log('Für diese ID haben wir kein Video gefunden...');

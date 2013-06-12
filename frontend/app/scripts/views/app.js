@@ -4,9 +4,10 @@ define([
 	'backbone',
 	'text!../templates/404.html',
 	'text!../templates/login/user_menu_template.html',
+	'text!../templates/message_template.html',
 	'../vendor/fedu/options',
 	'jqueryCookie'
-], function( $, _, Backbone, The404Template, UserMenuTemplate, TheOption, jqueryCookie) {
+], function( $, _, Backbone, The404Template, UserMenuTemplate, MessageTemplate, TheOption, jqueryCookie) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -35,17 +36,29 @@ define([
 
 		redirectToTwitter: function(e){
 			e.preventDefault();
-			window.open( TheOption.nodeUrl + '/auth/twitter', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			if(!navigator.cookieEnabled){
+				this.render('#message', _.template(MessageTemplate, { message: 'Sorry.. You have to enable Cookies, to login', type: 'error'}));
+			} else {
+				window.open( TheOption.nodeUrl + '/auth/twitter', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			}
 		},
 
 		redirectToFacebook: function(e){
 			e.preventDefault();
-			window.open( TheOption.nodeUrl + '/auth/facebook', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			if(!navigator.cookieEnabled){
+				this.render('#message', _.template(MessageTemplate, { message: 'Sorry.. You have to enable Cookies, to login', type: 'error'}));
+			} else {
+				window.open( TheOption.nodeUrl + '/auth/facebook', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			}
 		},
 
 		redirectToGoogle: function(e){
 			e.preventDefault();
-			window.open( TheOption.nodeUrl + '/auth/google', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			if(!navigator.cookieEnabled){
+				this.render('#message', _.template(MessageTemplate, { message: 'Sorry.. You have to enable Cookies, to login', type: 'error'}));
+			} else {
+				window.open( TheOption.nodeUrl + '/auth/google', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			}
 		},
 
 		errorDefault: function(){

@@ -6,6 +6,7 @@
 var moment = require('moment');
 var request = require('request');
 require('moment-isoduration');
+var youtubeApiKey = 'AIzaSyB4b8cdEoaJ_rlaKcBU5A3bg012b4id1xU';
 
 module.exports = function(app, saltKey, collectionUser){
     var auth = require('./auth.js')(saltKey, collectionUser);
@@ -14,7 +15,7 @@ module.exports = function(app, saltKey, collectionUser){
         var optionsVideo = {};
 
         if(req.body.type === 'youtube'){
-            optionsVideo.url = 'https://www.googleapis.com/youtube/v3/videos/?id=' + req.body.id + '&key=' + req.body.key + '&part=snippet,contentDetails,statistics,status';
+            optionsVideo.url = 'https://www.googleapis.com/youtube/v3/videos/?id=' + req.body.id + '&key=' + youtubeApiKey + '&part=snippet,contentDetails,statistics,status';
         } else if(req.body.type === 'vimeo') {
             optionsVideo.url = 'https://vimeo.com/api/v2/video/' + req.body.id + '.json';
         } else {
