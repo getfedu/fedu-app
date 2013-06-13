@@ -67,6 +67,7 @@ require.config({
 		backbone: '../components/backbone/backbone',
 		backbonePaginator: '../components/backbone.paginator/lib/backbone.paginator',
 		text: '../components/requirejs-text/text',
+		json: '../components/requirejs-plugins/src/json',
 		bootstrapTransitions: '../components/sass-bootstrap/js/bootstrap-transition',
 		bootstrapCollapse: '../components/sass-bootstrap/js/bootstrap-collapse',
 		bootstrapTooltip: '../components/sass-bootstrap/js/bootstrap-tooltip',

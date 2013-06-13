@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    './config'
+    'json!../../settings.json'
 ], function( $, _, Backbone, TheConfig) {
     'use strict';
 

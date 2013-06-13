@@ -11,7 +11,7 @@ define([
 	'text!../templates/message_template.html',
 	'text!../templates/modal_template.html',
 	'../vendor/fedu/api',
-	'../vendor/fedu/config',
+	'json!../../settings.json',
 	'moment'
 ], function( $, _, Backbone, TheCollection, TheModel, AddTemplate, ListTemplate, ListItemTemplate, EditTemplate, MessageTemplate, ModalTemplate, TheApi, TheConfig, Moment) {
 	'use strict';
@@ -49,7 +49,7 @@ define([
 			'focus :input.typeahead': function(e) { if(!$(e.currentTarget).hasClass('tt-query')){ this.initAutoComplete(); }},
 			'click .tag': function(e){ this.removeTag($(e.currentTarget)); },
 			'typeahead:autocompleted': function(e){ this.addTag(e.target, e.target.value); },
-			'typeahead:selected': function(e){ console.log(e); this.addTag(e.target, e.target.value); },
+			'typeahead:selected': function(e){ this.addTag(e.target, e.target.value); },
 			'click #edit_post .additional_wrapper_item .remove': 'removeAdditionalWrapperItem',
 			'input #video_id': 'getIdsFromUrl'
 		},

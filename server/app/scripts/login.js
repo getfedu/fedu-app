@@ -7,8 +7,9 @@ var crypto = require('crypto');
 var moment = require('moment');
 var nodemailer = require('nodemailer');
 
-var backendHost = 'http://localhost:9100/';
-var frontendHost = 'http://localhost:9000/';
+var settings = require('../settings.json');
+var backendHost = settings.backendHost;
+var frontendHost = settings.frontendHost;
 
 module.exports = function(app, saltKey, collectionUser){
     var auth = require('./auth.js')(saltKey, collectionUser);

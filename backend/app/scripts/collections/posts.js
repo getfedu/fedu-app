@@ -1,5 +1,9 @@
 define([
-    'jquery', 'underscore', 'backbone', '../models/posts', '../vendor/fedu/config'
+    'jquery',
+    'underscore',
+    'backbone',
+    '../models/posts',
+    'json!../../settings.json'
 ], function($, _, Backbone, TheModel, TheConfig) {
     'use strict';
 

@@ -6,7 +6,8 @@
 var moment = require('moment');
 var request = require('request');
 require('moment-isoduration');
-var youtubeApiKey = 'AIzaSyB4b8cdEoaJ_rlaKcBU5A3bg012b4id1xU';
+var settings = require('../settings.json');
+var youtubeApiKey = settings.youtubeApiKey;
 
 module.exports = function(app, saltKey, collectionUser){
     var auth = require('./auth.js')(saltKey, collectionUser);

@@ -4,7 +4,7 @@ define([
     'backbone',
     'backbonePaginator',
     '../models/notifications',
-    '../vendor/fedu/config'
+    'json!../../settings.json'
 ], function($, _, Backbone, Paginator, TheModel, TheConfig) {
     'use strict';
 

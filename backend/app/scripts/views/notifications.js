@@ -5,7 +5,7 @@ define([
 	'../collections/notifications',
 	'text!../templates/notifications/list_template.html',
 	'text!../templates/notifications/list_item_template.html',
-	'../vendor/fedu/config',
+	'json!../../settings.json',
 	'moment'
 ], function( $, _, Backbone, TheCollection, ListTemplate, ListItemTemplate, TheConfig, Moment) {
 	'use strict';

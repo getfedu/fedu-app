@@ -4,3 +4,4 @@ dist
 .sass-cache
 .tern-port
 app/components
+settings.json

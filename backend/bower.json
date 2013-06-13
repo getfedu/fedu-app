@@ -5,6 +5,7 @@
     "sass-bootstrap": "~2.3.0",
     "requirejs": "~2.0.6",
     "requirejs-text": "~2.0.5",
+    "requirejs-plugins": "v1.0.2",
     "modernizr": "~2.6.2",
     "jquery": "~1.9.1",
     "backbone": "~1.0.0",

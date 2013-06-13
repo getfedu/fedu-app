@@ -1,5 +1,9 @@
 define([
-    'jquery', 'underscore', 'backbone', '../models/tags', '../vendor/fedu/config'
+    'jquery',
+    'underscore',
+    'backbone',
+    '../models/tags',
+    'json!../../settings.json'
 ], function($, _, Backbone, TheModel, TheConfig) {
     'use strict';
 

@@ -5,7 +5,7 @@ define([
 	'../collections/notifications',
 	'../models/notifications',
 	'socketIo',
-	'vendor/fedu/config',
+	'json!../../settings.json',
 	'moment',
 	'text!../templates/notification_center/list_item_template.html',
 	'text!../templates/notification_center/latest_list_item_template.html'

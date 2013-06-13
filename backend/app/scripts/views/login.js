@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'vendor/fedu/config',
+	'json!../../settings.json',
 	'text!../templates/app_template.html',
 	'text!../templates/login/login_template.html',
 	'text!../templates/login/register_template.html',
