@@ -11,6 +11,10 @@ Stylesheet: Main Stylesheet
 // IMPORTING STYLES
 //
 
+@import "fonts";
+$sansFontFamily: "sf_arborcrest_medium", "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+
+$linkColor: #00ac9c;
 @import "sass-bootstrap/lib/bootstrap";
 @import "sass-bootstrap/lib/responsive";
 @import "compass/css3";
@@ -30,6 +34,10 @@ html, body {
     -webkit-box-sizing: border-box;
     -moz-box-sizing:    border-box;
     box-sizing:         border-box;
+}
+
+p {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .label-inverse {
@@ -56,6 +64,25 @@ html, body {
         > .container {
 
         }
+        .muted {
+            height: 40px;
+            margin: 10px 20px;
+            a {
+                color: #034f4f;
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+            img {
+                height: 100%;
+                padding: 0 10px 0 0;
+            }
+            span {
+                padding: 0 0 0 10px;
+                font-size: 16px;
+                color: #00ac9c;
+            }
+        }
         #message {
             text-align: center;
             position: fixed;
@@ -65,7 +92,7 @@ html, body {
             z-index: 999999;
         }
         .breadcrumb_container {
-            padding-top: 60px;
+            padding-top: 70px;
             p {
                 height: 20px;
             }
@@ -150,21 +177,6 @@ html, body {
         float: right;
     }
     .info_container {
-        .meta, .additional {
-            ul {
-                margin: 0;
-                li {
-                    list-style: none;
-                    display: inline-block;
-                    margin: 0 1% 0 0;
-                }
-            }
-            .label {
-                a {
-                    color: white;
-                }
-            }
-        }
         #favorite {
             text-align: center;
         }
@@ -177,6 +189,11 @@ html, body {
             &:hover{
                 @include box-shadow(inset 0 0px 1px rgba(0, 0, 0, 0.9));
             }
+        }
+    }
+    .additional {
+        p {
+            font-family: "sf_arborcrest_medium", "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
     }
 
