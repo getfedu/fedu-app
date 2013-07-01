@@ -5,10 +5,11 @@ define([
 	'text!../templates/404.html',
 	'text!../templates/login/user_menu_template.html',
 	'text!../templates/message_template.html',
+	'text!../templates/about.html',
 	'../vendor/fedu/options',
 	'json!../../settings.json',
 	'jqueryCookie'
-], function( $, _, Backbone, The404Template, UserMenuTemplate, MessageTemplate, TheOption, TheConfig, jqueryCookie) {
+], function( $, _, Backbone, The404Template, UserMenuTemplate, MessageTemplate, AboutTemplate, TheOption, TheConfig, jqueryCookie) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -70,6 +71,10 @@ define([
 
 			this.render(this.breadcrumb, ''); //clean breadcrumb
 			this.render(this.appWrapper, errorView);
+		},
+
+		about: function(){
+			this.render(this.appWrapper, _.template(AboutTemplate));
 		},
 
 		// helper functions
