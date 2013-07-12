@@ -411,3 +411,13 @@ p {
 .login_wrapper{
     display:none;
 }
+
+.about {
+    .dml_video {
+        margin: 0 0 30px 0;
+        iframe {
+            width: 100%;
+            min-height: 414px;
+        }
+    }
+}
