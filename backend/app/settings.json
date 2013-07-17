@@ -1,0 +1,7 @@
+{
+    "name": "backend_fedu_settings",
+    "frontendUrl": "http://localhost:9000",
+    "backendUrl": "http://localhost:9100",
+    "nodeUrl": "http://localhost:3100",
+    "websocketUrl": "http://localhost:4321"
+}
