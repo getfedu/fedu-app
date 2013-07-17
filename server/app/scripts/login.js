@@ -60,26 +60,29 @@ module.exports = function(app, saltKey, collectionUser){
 
     app.post('/register', function(req, res){
 
-        var username = req.body.username;
-        var saltedPassword = helpers.generateSaltedPassword(username, req.body.password);
-        var activationHash = helpers.generateHash(username);
+        res.status(409);
+        res.json({key:'noRegistration', message: 'Sorry... You cannot register for fedu now!'});
 
-        var userObj = {
-            username: username,
-            password: saltedPassword,
-            activated: activationHash,
-            registrationDate: moment().format()
-        };
+        // var username = req.body.username;
+        // var saltedPassword = helpers.generateSaltedPassword(username, req.body.password);
+        // var activationHash = helpers.generateHash(username);
 
-        collectionUser.findOne({ username: username }, function(err, user) {
-            if(user){
-                res.status(409);
-                res.json({key:'usernameTaken', message: 'Sorry... This username is already taken by another person...'});
-            } else {
-                collectionUser.insert(userObj);
-                helpers.registrationEmail(activationHash, username, res);
-            }
-        });
+        // var userObj = {
+        //     username: username,
+        //     password: saltedPassword,
+        //     activated: activationHash,
+        //     registrationDate: moment().format()
+        // };
+
+        // collectionUser.findOne({ username: username }, function(err, user) {
+        //     if(user){
+        //         res.status(409);
+        //         res.json({key:'usernameTaken', message: 'Sorry... This username is already taken by another person...'});
+        //     } else {
+        //         collectionUser.insert(userObj);
+        //         helpers.registrationEmail(activationHash, username, res);
+        //     }
+        // });
     });
 
     app.get('/activate/:code', auth.isNotAuth, function(req, res){

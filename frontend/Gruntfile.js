@@ -211,6 +211,7 @@ module.exports = function (grunt) {
                         '*.{ico,txt}',
                         '.htaccess',
                         'components/font-awesome/font/*',
+                        'styles/fonts/*',
                         'settings.json'
                     ]
                 }]

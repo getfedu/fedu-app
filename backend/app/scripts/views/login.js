@@ -50,7 +50,9 @@ define([
 		},
 
 		register: function(){
-			this.render(this.el, RegisterTemplate);
+			Backbone.history.navigate('/login', true);
+			this.render('#login_message', _.template(MessageTemplate, { message: 'Sorry, you cannot register for fedu now.', type: 'error'}));
+			//this.render(this.el, RegisterTemplate);
 		},
 
 		activate: function(code){
