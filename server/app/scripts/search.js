@@ -51,7 +51,8 @@ module.exports = function(app, collectionPosts, collectionTags){
             } else if(query.tag && query.query){
                 queryObj =  { $and: [{ tags: query.tag }, titleObject] };
             } else if(query.query && !query.tag) {
-                queryObj = { $or: [{ tags: query.query }, titleObject] };
+                var queryString = query.query;
+                queryObj = { $or: [{ tags: queryString.trim() }, titleObject] };
             } else if(query.tag && !query.query) {
                 queryObj = { tags: query.tag };
             }
@@ -67,7 +68,7 @@ module.exports = function(app, collectionPosts, collectionTags){
         var top = parseInt(req.query.top, 0);
         var thePosts = [];
         var posts = collectionPosts.find(queryObj).skip(skip).limit(top).sort({ _id: -1}).stream();
-
+        console.log(queryObj);
         posts.on('data', function(item) {
             posts.pause(); // pause stream until data is manipulated
             collectionTags.find({ tagName: { $in: item.tags } }).toArray(function(err, tag_results){
