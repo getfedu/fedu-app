@@ -6,10 +6,11 @@ define([
 	'text!../templates/login/user_menu_template.html',
 	'text!../templates/message_template.html',
 	'text!../templates/about.html',
+	'text!../templates/contact.html',
 	'../vendor/fedu/options',
 	'json!../../settings.json',
 	'jqueryCookie'
-], function( $, _, Backbone, The404Template, UserMenuTemplate, MessageTemplate, AboutTemplate, TheOption, TheConfig, jqueryCookie) {
+], function( $, _, Backbone, The404Template, UserMenuTemplate, MessageTemplate, AboutTemplate, ContactTemplate, TheOption, TheConfig, jqueryCookie) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -75,6 +76,10 @@ define([
 
 		about: function(){
 			this.render(this.appWrapper, _.template(AboutTemplate));
+		},
+
+		contact: function(){
+			this.render(this.appWrapper, _.template(ContactTemplate));
 		},
 
 		// helper functions

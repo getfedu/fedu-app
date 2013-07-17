@@ -24,6 +24,7 @@ define([
 			'login-error' : 'loginErrorView',
 			'favorites' : function(){ if(TheOption.isAuth()){ this.favorites(); } else { Backbone.history.navigate('', true); }},
 			'about': 'about',
+			'contact': 'contact',
 			'*actions': 'defaultAction'
 		},
 
@@ -53,6 +54,10 @@ define([
 
 		about: function(){
 			this.appView.about();
+		},
+
+		contact: function(){
+			this.appView.contact();
 		},
 
 		defaultAction: function() {
