@@ -26,7 +26,7 @@ define([
 		breadcrumb: '#breadcrumb',
 		collection: {},
 		viewType: 'info',
-		currentCollectionLength: 0,
+		oldScrollPositionTop: 0,
 		delaySearch: 0,
 		popularTags: '#popular_tags',
 		surpriseMe: '#surprise_me',
@@ -427,15 +427,17 @@ define([
 
 		infiniteLoad: function(){
 			var that = this;
-
+			var newScrollPositionTop = $(window).scrollTop();
+			
 			// send request only if new data exists
-			if(this.collection.length !== this.currentCollectionLength){
+			if(newScrollPositionTop !== this.oldScrollPositionTop){
+				console.log('ddd');
 				this.collection.nextPage({
 					update: true, // add to collection
 					remove: false,
 					success: function(){
 						that.listPosts();
-						that.currentCollectionLength = that.collection.length;
+						that.oldScrollPositionTop = newScrollPositionTop;
 					}
 				});
 			}
