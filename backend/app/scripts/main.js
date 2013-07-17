@@ -55,6 +55,7 @@ require.config({
 		underscore: '../components/underscore/underscore',
 		backbone: '../components/backbone/backbone',
 		text: '../components/requirejs-text/text',
+		json: '../components/requirejs-plugins/src/json',
 		bootstrapAlert: '../components/sass-bootstrap/js/bootstrap-alert',
 		bootstrapTransition: '../components/sass-bootstrap/js/bootstrap-transition',
 		bootstrapModal: '../components/sass-bootstrap/js/bootstrap-modal',

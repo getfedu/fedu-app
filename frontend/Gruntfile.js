@@ -210,7 +210,8 @@ module.exports = function (grunt) {
                     src: [
                         '*.{ico,txt}',
                         '.htaccess',
-                        'components/font-awesome/font/*'
+                        'components/font-awesome/font/*',
+                        'settings.json'
                     ]
                 }]
             }

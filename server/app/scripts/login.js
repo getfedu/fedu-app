@@ -7,8 +7,9 @@ var crypto = require('crypto');
 var moment = require('moment');
 var nodemailer = require('nodemailer');
 
-var backendHost = 'http://localhost:9100/';
-var frontendHost = 'http://localhost:9000/';
+var settings = require('../settings.json');
+var backendHost = settings.backendHost;
+var frontendHost = settings.frontendHost;
 
 module.exports = function(app, saltKey, collectionUser){
     var auth = require('./auth.js')(saltKey, collectionUser);
@@ -34,6 +35,7 @@ module.exports = function(app, saltKey, collectionUser){
                 }
                 var userId = user._id;
                 res.cookie('user_b', new Buffer(userId.toHexString()).toString('base64'));
+                res.cookie('user_f', new Buffer(userId.toHexString()).toString('base64'));
                 res.json('Ok');
                 return;
             });

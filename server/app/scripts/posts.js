@@ -9,6 +9,17 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
     var helpers = require('./helpers.js')(collectionTags);
     var auth = require('./auth.js')(saltKey, collectionUser);
 
+    // Check by videoId if a Post already is in DB
+    app.get('/post-exists/:videoId', auth.isAuth, function(req, res) {
+        collectionPosts.find({'videoId': req.params.videoId }).toArray(function(err, results){
+            if(results.length){
+                res.json(true);
+            } else {
+                res.json(false);
+            }
+        });
+    });
+
     // Create Post and save into db
     app.post('/post', auth.isAuth, function(req, res) {
         collectionPosts.insert(req.body, function(err, docs) {

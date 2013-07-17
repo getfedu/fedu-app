@@ -4,7 +4,6 @@ define([
     'use strict';
 
     var options = {
-        nodeUrl: 'http://localhost:3100',
         favorites: [],
         rating: [],
 

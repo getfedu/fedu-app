@@ -4,9 +4,12 @@ define([
 	'backbone',
 	'text!../templates/404.html',
 	'text!../templates/login/user_menu_template.html',
+	'text!../templates/message_template.html',
+	'text!../templates/about.html',
 	'../vendor/fedu/options',
+	'json!../../settings.json',
 	'jqueryCookie'
-], function( $, _, Backbone, The404Template, UserMenuTemplate, TheOption, jqueryCookie) {
+], function( $, _, Backbone, The404Template, UserMenuTemplate, MessageTemplate, AboutTemplate, TheOption, TheConfig, jqueryCookie) {
 	'use strict';
 
 	var View = Backbone.View.extend({
@@ -35,17 +38,29 @@ define([
 
 		redirectToTwitter: function(e){
 			e.preventDefault();
-			window.open( TheOption.nodeUrl + '/auth/twitter', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			if(!navigator.cookieEnabled){
+				this.render('#message', _.template(MessageTemplate, { message: 'Sorry.. You have to enable Cookies, to login', type: 'error'}));
+			} else {
+				window.open( TheConfig.nodeUrl + '/auth/twitter', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			}
 		},
 
 		redirectToFacebook: function(e){
 			e.preventDefault();
-			window.open( TheOption.nodeUrl + '/auth/facebook', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			if(!navigator.cookieEnabled){
+				this.render('#message', _.template(MessageTemplate, { message: 'Sorry.. You have to enable Cookies, to login', type: 'error'}));
+			} else {
+				window.open( TheConfig.nodeUrl + '/auth/facebook', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			}
 		},
 
 		redirectToGoogle: function(e){
 			e.preventDefault();
-			window.open( TheOption.nodeUrl + '/auth/google', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			if(!navigator.cookieEnabled){
+				this.render('#message', _.template(MessageTemplate, { message: 'Sorry.. You have to enable Cookies, to login', type: 'error'}));
+			} else {
+				window.open( TheConfig.nodeUrl + '/auth/google', '_blank', 'toolbar=0, menubar=0, width=600, height=600');
+			}
 		},
 
 		errorDefault: function(){
@@ -58,6 +73,10 @@ define([
 			this.render(this.appWrapper, errorView);
 		},
 
+		about: function(){
+			this.render(this.appWrapper, _.template(AboutTemplate));
+		},
+
 		// helper functions
 		////////////////////////////////////////
 
@@ -66,7 +85,7 @@ define([
 			if(TheOption.isAuth()){
 
 				$.ajax({
-					url: TheOption.nodeUrl + '/user',
+					url: TheConfig.nodeUrl + '/user',
 				}).done(function(user){
 					if(user.favoritePosts){
 						TheOption.favorites = user.favoritePosts;
@@ -87,7 +106,7 @@ define([
 
 		logout: function(){
 			$.ajax({
-				url: TheOption.nodeUrl + '/logout',
+				url: TheConfig.nodeUrl + '/logout',
 			}).done(function(){
 				window.location.reload();
 			}).fail(function(error){

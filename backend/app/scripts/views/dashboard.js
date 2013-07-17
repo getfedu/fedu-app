@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'vendor/fedu/config',
+	'json!../../settings.json',
 	'text!../templates/dashboard/dashboard_template.html',
 	'jqueryCookie'
 ], function( $, _, Backbone, TheConfig, DashboardTemplate, jqueryCookie ) {
@@ -21,7 +21,7 @@ define([
 			// 'click #logout' : 'logout'
 		},
 
-		initialize: function() {
+		initialize: function(){
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -51,7 +51,7 @@ define([
 			}).fail(function(error){
 				if(error.status === 401){
 					jqueryCookie('user_b', '', { path: '/' });
-					window.reload();
+					window.location.reload(false);
 				}
 				console.log(error.responseText);
 			});

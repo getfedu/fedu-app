@@ -8,7 +8,7 @@ define([
 	'text!../templates/pull_request/merge_template.html',
 	'text!../templates/pull_request/list_item_template.html',
 	'text!../templates/modal_template.html',
-	'../vendor/fedu/config',
+	'json!../../settings.json',
 	'moment'
 ], function( $, _, Backbone, ThePostsModel, TheNotificationsModel, MergeTemplate, ListItemTemplate, MessageTemplate, TheConfig, Moment) {
 	'use strict';

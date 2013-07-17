@@ -5,6 +5,7 @@ define([
 	'../collections/posts',
 	'../models/posts',
 	'../vendor/fedu/options',
+	'json!../../settings.json',
 	'text!../templates/posts/video.html',
 	'text!../templates/posts/grid_video_items.html',
 	'text!../templates/posts/info_video_items.html',
@@ -13,7 +14,7 @@ define([
 	'text!../templates/message_template.html',
 	'text!../templates/posts/surprise_me.html',
 	'moment'
-], function( $, _, Backbone, TheCollection, TheModel, TheOption, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
+], function( $, _, Backbone, TheCollection, TheModel, TheOption, TheConfig, VideoTemplate, GridVideoItemsTemplate, InfoVideoItemsTemplate,
 	PlayerVideoItemsTemplate, DetailVideoContentTemplate, MessageTemplate, SurpriseMeTemplate, Moment) {
 	'use strict';
 
@@ -74,7 +75,7 @@ define([
 		},
 
 		listDefault: function(){
-			this.collection.paginator_core.url = TheOption.nodeUrl + '/post';
+			this.collection.paginator_core.url = TheConfig.nodeUrl + '/post';
 			this.render(this.breadcrumb, ''); //clean breadcrumb
 			this.render(this.el, VideoTemplate);
 			$('.type[data-type=' + this.viewType + ']').addClass('active'); // set type button active-state
@@ -190,13 +191,13 @@ define([
 
 			var query = this.searchQuery(result);
 
-			this.collection.paginator_core.url = TheOption.nodeUrl + '/search';
+			this.collection.paginator_core.url = TheConfig.nodeUrl + '/search';
 			this.collection.server_api.query = query.query;
 			this.collection.server_api.tag = query.tag;
 			this.collection.server_api.duration = query.duration;
 
 			if(this.overviewAlreadyLoaded){
-				this.getPostsAgain();			
+				this.getPostsAgain();
 			} else {
 				this.getPosts();
 				this.overviewAlreadyLoaded = true;
@@ -216,7 +217,7 @@ define([
 
 				$.ajax({
 					type: 'POST',
-					url: TheOption.nodeUrl + '/flag-post',
+					url: TheConfig.nodeUrl + '/flag-post',
 					data: {
 						type: 'flag',
 						id: flagId,
@@ -244,7 +245,7 @@ define([
 
 				$.ajax({
 					type: 'POST',
-					url: TheOption.nodeUrl + '/pull-request',
+					url: TheConfig.nodeUrl + '/pull-request',
 					data: {
 						type: 'pull-request',
 						id: pullRequestPostId,
@@ -268,7 +269,7 @@ define([
 					data: {
 						postId: this.postId
 					},
-					url: TheOption.nodeUrl + '/post-add-favorite'
+					url: TheConfig.nodeUrl + '/post-add-favorite'
 				}).done(function(){
 					$(e.currentTarget).html('<i class="icon-bookmark"></i> unsave');
 					TheOption.favorites.push(that.postId);
@@ -298,7 +299,7 @@ define([
 					data: {
 						postId: postId
 					},
-					url: TheOption.nodeUrl + '/post-remove-favorite'
+					url: TheConfig.nodeUrl + '/post-remove-favorite'
 				}).done(function(){
 					if(!removeFavoritId){
 						$(e.currentTarget).html('<i class="icon-bookmark-empty"></i> save for later');
@@ -316,7 +317,7 @@ define([
 				this.renderPopularTags();
 				this.renderSurpriseMe();
 			}
-			this.collection.paginator_core.url = TheOption.nodeUrl + '/post-list-favorite';
+			this.collection.paginator_core.url = TheConfig.nodeUrl + '/post-list-favorite';
 			this.collection.goTo(0);
 			this.getPosts();
 			$('.search-query').val('');
@@ -347,7 +348,7 @@ define([
 
 				if(quality !== '0' && comprehensibility !== '0'){
 					$.ajax({
-						url: TheOption.nodeUrl + '/post-rate',
+						url: TheConfig.nodeUrl + '/post-rate',
 						type: 'POST',
 						data: {
 							id: this.postId,
@@ -523,7 +524,7 @@ define([
 		renderPopularTags: function(){
 			var that = this;
 			$.ajax({
-				url: TheOption.nodeUrl + '/popular-tags'
+				url: TheConfig.nodeUrl + '/popular-tags'
 			}).done(function(tags){
 				var string = '';
 				_.each(tags, function(value){
@@ -538,7 +539,7 @@ define([
 		renderSurpriseMe: function(){
 			var that = this;
 			$.ajax({
-				url: TheOption.nodeUrl + '/surprise-tags'
+				url: TheConfig.nodeUrl + '/surprise-tags'
 			}).done(function(tags){
 				var lessons = '';
 				_.each(tags, function(value){

@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'vendor/fedu/config',
+	'json!../../settings.json',
 	'text!../templates/app_template.html',
 	'text!../templates/login/login_template.html',
 	'text!../templates/login/register_template.html',
@@ -110,21 +110,26 @@ define([
 			var password = data[1].value;
 			password = this.SHA256.hex(password);
 			var that = this;
-			$.ajax({
-				type: 'POST',
-				url: TheConfig.nodeUrl + '/login',
-				data: {
-					username: data[0].value,
-					password: password
-				}
-			}).done(function(){
-				that.render(that.el, AppTemplate);
-				Backbone.history.navigate('/dashboard', true);
-				$('.alert').alert('close');
-			}).fail(function(res){
-				var msg = JSON.parse(res.responseText);
-				that.render('#login_message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
-			});
+			if(!navigator.cookieEnabled){
+				this.render('#login_message', _.template(MessageTemplate, { message: 'Sorry.. You have to enable Cookies, to login', type: 'error'}));
+			} else {
+				$.ajax({
+					type: 'POST',
+					url: TheConfig.nodeUrl + '/login',
+					data: {
+						username: data[0].value,
+						password: password
+					}
+				}).done(function(){
+					that.render(that.el, AppTemplate);
+					Backbone.history.navigate('/dashboard', true);
+					$('.alert').alert('close');
+				}).fail(function(res){
+					var msg = JSON.parse(res.responseText);
+					that.render('#login_message', _.template(MessageTemplate, { message: msg.message, type: 'error'}));
+				});
+
+			}
 		},
 
 		handleRegister: function(e){

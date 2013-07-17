@@ -4,8 +4,8 @@ define([
     'backbone',
     'backbonePaginator',
     '../models/posts',
-    '../vendor/fedu/options'
-], function($, _, Backbone, Paginator, TheModel, TheOptions) {
+    'json!../../settings.json'
+], function($, _, Backbone, Paginator, TheModel, TheConfig) {
     'use strict';
 
     var paginatedCollection = Backbone.Paginator.requestPager.extend({
@@ -16,7 +16,7 @@ define([
             dataType: 'json',
 
             url: function() {
-                return  TheOptions.nodeUrl + '/post';
+                return  TheConfig.nodeUrl + '/post';
             }
         },
 

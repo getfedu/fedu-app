@@ -1,7 +1,7 @@
 define([
 	'underscore',
 	'backbone',
-	'../vendor/fedu/config'
+	'json!../../settings.json'
 ], function( _, Backbone, TheConfig) {
 	'use strict';
 

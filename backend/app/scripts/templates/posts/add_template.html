@@ -3,26 +3,26 @@
         <legend>Add a Post</legend>
 
         <div class="controls controls-row">
-            <label>Video Id</label>
-            <input type="text" name="videoId" class="video_id span6" placeholder="enter video id" autofocus required>
-            <select class="span4 video_type" name="videoType">
-              <option value="youtube">youtube</option>
-              <option value="vimeo">vimeo</option>
-            </select>
-            <button type="button" class="btn btn-primary span2 search_api"><i class="icon-search"></i></button>
+            <label>Video Url</label>
+            <input type="text" id="video_id" class="video_id span12" placeholder="enter video url" autofocus required>
+            <input type="hidden" id="video_id_hidden" name="videoId">
+            <input type="hidden" id="videoType" name="videoType">
         </div>
-        <span class="help-block">Add an id of a Video from Youtube, Vimeo, etc..</span>
+        <span class="help-block">Add an url of a Video from Youtube or Vimeo</span>
+        <div id="loader" class="span1">
+            <i class="icon-spinner icon-spin icon-large"></i>
+        </div>
         <br/><br/>
 
         <label>Title</label>
-        <input type="text" name="title" class="span12" placeholder="enter the Title" required >
+        <input type="text" name="title" class="span12" placeholder="enter the Title" required disabled>
 
         <label>Description</label>
-        <textarea rows="5" class="span12" name="description" required></textarea>
+        <textarea rows="5" class="span12" name="description" required disabled></textarea>
 
         <label>Tags</label>
-        <div class="tags uneditable-input">
-            <input type="text" class="typeahead" placeholder="enter some tags" data-provide="typeahead" autocomplete="off">
+        <div class="tags uneditable-input disabled">
+            <input type="text" class="typeahead" placeholder="enter some tags" data-provide="typeahead" autocomplete="off" disabled>
             <input type="hidden" name="tags">
         </div>
         <div class="well well-small suggestions">

@@ -2,6 +2,7 @@
 var express = require('express');
 var mongodb = require('mongodb');
 var passport = require('passport');
+var settings = require('../settings.json');
 var auth = null;
 var tags = null;
 var posts = null;
@@ -14,7 +15,7 @@ require('socket.io');
 var app = null;
 var appSocketIo = null;
 var socketIo = null;
-var saltKey = 'aGvcVZtRMjdddFxtjyur5vwpNIKp2i';
+var saltKey = settings.saltKey;
 var collectionPosts = {};
 var collectionTags = {};
 var collectionNotifications = {};
@@ -27,12 +28,12 @@ var init = {
 
     db: function(){
         var that = this;
-        mongodb.connect('mongodb://localhost', function(err, db) {
+        mongodb.connect(settings.mongodbPath, function(err, db) {
             if(err){
                 throw err;
             }
             console.log('connected');
-            var theDb = db.db('fedu');
+            var theDb = db.db(settings.dbName);
             collectionPosts = theDb.collection('posts');
             collectionTags = theDb.collection('tags');
             collectionNotifications = theDb.collection('notifications');
@@ -43,7 +44,7 @@ var init = {
     },
 
     allowedOrigin: function(url){
-        var array = ['http://localhost:9100', 'http://localhost:9000', 'http://localhost:10088', 'http://localhost'];
+        var array = settings.allowedHosts;
         if(array.indexOf(url) !== -1){
             return url;
         } else {
@@ -74,7 +75,7 @@ var init = {
         });
 
         // server listen on port X
-        app.listen(3100);
+        app.listen(settings.expressPort);
 
     },
 
@@ -83,7 +84,7 @@ var init = {
         var serverSocketIo = require('http').createServer(appSocketIo);
         socketIo = require('socket.io').listen(serverSocketIo);
         socketIo.set('log level', 1);
-        serverSocketIo.listen(4321);
+        serverSocketIo.listen(settings.socketIoPort);
     },
 
     serverIsReady: function(){

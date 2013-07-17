@@ -23,6 +23,7 @@ define([
 			'login-success' : 'loginSuccessView',
 			'login-error' : 'loginErrorView',
 			'favorites' : function(){ if(TheOption.isAuth()){ this.favorites(); } else { Backbone.history.navigate('', true); }},
+			'about': 'about',
 			'*actions': 'defaultAction'
 		},
 
@@ -50,10 +51,14 @@ define([
 			this.postsView.listFavorites();
 		},
 
+		about: function(){
+			this.appView.about();
+		},
+
 		defaultAction: function() {
 			Backbone.history.navigate('/404');
 			this.appView.errorDefault();
-		},
+		}
 
 	});
 
