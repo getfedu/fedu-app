@@ -154,7 +154,8 @@ define([
 			}
 			results[0].foreign.uploadDate = new Moment(results[0].foreign.uploadDate).format('l');
 			results[0].publishDate = new Moment(results[0].publishDate).format('l');
-			results[0].foreign.duration = new Moment.duration(results[0].foreign.duration, 'seconds').minutes();
+			results[0].foreign.duration = new Moment.duration(parseInt(results[0].foreign.duration, 10), 'seconds').asMinutes();
+			results[0].foreign.duration = results[0].foreign.duration.toFixed(0);
 			results[0].description = this.replaceURLWithHTMLLinks(results[0].description);
 
 			var tagsSpeakerArray = [];
@@ -428,10 +429,9 @@ define([
 		infiniteLoad: function(){
 			var that = this;
 			var newScrollPositionTop = $(window).scrollTop();
-			
+
 			// send request only if new data exists
 			if(newScrollPositionTop !== this.oldScrollPositionTop){
-				console.log('ddd');
 				this.collection.nextPage({
 					update: true, // add to collection
 					remove: false,
