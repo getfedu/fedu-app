@@ -64,10 +64,14 @@ define([
 			}
 		},
 
-		errorDefault: function(){
-			var errorView = '';
+		errorDefault: function(msg){
 			var errorHash = '';
-			errorHash = window.location.hash;
+			if(msg !== undefined){
+				errorHash = msg;
+			} else {
+				errorHash = window.location.hash;
+			}
+			var errorView = '';
 			errorView = _.template(The404Template, {errorHash: errorHash});
 
 			this.render(this.breadcrumb, ''); //clean breadcrumb
