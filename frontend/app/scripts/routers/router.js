@@ -60,9 +60,9 @@ define([
 			this.appView.contact();
 		},
 
-		defaultAction: function() {
+		defaultAction: function(msg) {
 			Backbone.history.navigate('/404');
-			this.appView.errorDefault();
+			this.appView.errorDefault(msg);
 		}
 
 	});

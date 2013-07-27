@@ -68,7 +68,6 @@ module.exports = function(app, collectionPosts, collectionTags){
         var top = parseInt(req.query.top, 0);
         var thePosts = [];
         var posts = collectionPosts.find(queryObj).skip(skip).limit(top).sort({ _id: -1}).stream();
-        console.log(queryObj);
         posts.on('data', function(item) {
             posts.pause(); // pause stream until data is manipulated
             collectionTags.find({ tagName: { $in: item.tags } }).toArray(function(err, tag_results){
