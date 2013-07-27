@@ -66,10 +66,13 @@ define([
 				that.scrolling();
 		    });
 		    $('body').keydown(function(e){ that.keyDownHandler(e); });
+
+			if(window.innerWidth < 768){
+				that.setViewType(null, 'grid');
+			}
 		},
 
-		// Re-rendering the App just means refreshing the statistics -- the rest
-		// of the app doesn't change.
+		// Re-rendering the App just means refreshing the statistics -- the rest of the app doesn't change.
 		render: function(target, value) {
 			$(target).html(value);
 		},
@@ -403,10 +406,14 @@ define([
 			});
 		},
 
-		setViewType: function(e) {
-			$('.type').removeClass('active');
-			$(e.currentTarget).addClass('active');
-			this.viewType = $(e.currentTarget).attr('data-type');
+		setViewType: function(e, manual) {
+			if(manual !== undefined){
+				this.viewType = manual;
+			} else {
+				$('.type').removeClass('active');
+				$(e.currentTarget).addClass('active');
+				this.viewType = $(e.currentTarget).attr('data-type');
+			}
 			this.listPosts();
 		},
 
