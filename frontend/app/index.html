@@ -8,7 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>fedu - further education</title>
         <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <link rel="stylesheet" href="styles/styles.css">
         <!-- build:js scripts/vendor/modernizr.js -->
@@ -23,7 +23,13 @@
                 <div class="navbar navbar-fixed-top">
                     <div class="navbar-inner">
                         <div class="container">
-                            <div class="masthead">
+                            <button type="button" class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a href="#" class="brand"><img src="images/logo_fedu.png">FEDU<span class="logo_text">further education</span></a>
+                            <div class="nav-collapse collapse">
                                 <ul class="nav pull-right" id="user_menu">
                                     <li class="dropdown">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="username">Login</a>
@@ -38,14 +44,13 @@
                                     <li><a href="#about">About</a></li>
                                     <li><a href="#contact">Contact</a></li>
                                 </ul>
-                                <h3 class="muted"><a href="#"><img src="images/logo_fedu.png">FEDU<span>further education</span></a></h3>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="message"></div>
-                <div class="container container-fluid breadcrumb_container">
+                <div class="container container-fluid breadcrumb_container hidden-phone">
                     <p id="breadcrumb"></p>
                 </div>
                 <div class="container" id="app-wrapper">
@@ -53,13 +58,12 @@
                 </div>
             </div>
         </div>
-        <div id="footer">
+        <div id="footer" class="hidden-phone">
             <div class="container">
                 <div class="row-fluid">
                     <div class="span3">
                     </div>
                     <div class="span3">
-
                     </div>
                     <div class="span3">
                         <h4>Follow us</h4>
