@@ -423,6 +423,10 @@ define([
 			model.fetch({
 				success: function(model, response){
 					that.listPost(response);
+				},
+				error: function(model, error){
+					console.log('no data was fetched:', error.statusText);
+					Backbone.history.navigate('/' + window.location.hash, true);
 				}
 			});
 		},
