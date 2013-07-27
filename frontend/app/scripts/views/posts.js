@@ -133,6 +133,7 @@ define([
 		},
 
 		detailDefault: function(id){
+			$(window).scrollTop(0); // seems it has to be executed before rendering, due to Safari
 			this.getPost(id);
 		},
 
@@ -171,7 +172,6 @@ define([
 
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, isRated: isRated});
 
-			//window.scroll(0); // small screens start now on top of detailpage
 			this.render(this.breadcrumb, ''); //clean breadcrumb
 			this.render(this.el, templateDetailView);
 			this.postId = $('#post_id').attr('data-post-id');
