@@ -1,6 +1,6 @@
 <div class="over_view container-fluid">
   <div class="row-fluid">
-    <div class="span3">
+    <div class="span3 hidden-phone" id="sidebar_left">
         <div class="well sidebar-nav">
             <ul class="nav nav-list">
                 <li class="nav-header">Popular Tags</li>
@@ -10,7 +10,7 @@
         </div><!--/.well -->
         <div id="surprise_me"></div>
     </div><!--/span-->
-    <div class="span9">
+    <div class="span9" id="body_content">
       <!--Body content-->
         <header class="row-fluid">
             <form class="form-search span8" id="search">
@@ -26,7 +26,7 @@
                     <button type="submit" class="btn">Search</button>
                 </div>
             </form>
-            <div class="btn-group span4 text-right" id="view_control_panel">
+            <div class="btn-group span4 text-right hidden-phone" id="view_control_panel">
                 <button class="btn type" data-type="grid"><i class="icon-th-large"></i></button>
                 <button class="btn type" data-type="info"><i class="icon-list"></i></button>
                 <button class="btn type" data-type="player"><i class="icon-th-list"></i></button>
