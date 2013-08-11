@@ -8,3 +8,12 @@ Documenation
 
 Sorry, but at the moment we are focued on improoving fedu, but the docu will follow as soon as possible
 If you have a specific Question, tweet at us [@getfedu](https://twitter.com/getfedu)
+
+
+Developer notes
+--------
+
+Backend improvements
+--------
+
+* https://developers.google.com/youtube/v3/code_samples/ruby
