@@ -20,6 +20,19 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
         });
     });
 
+    // Increase click counter for a specific video
+    app.post('/counter-post', function(req, res) {
+        var BSON = mongodb.BSONPure;
+        var data = {
+            id: req.body.id,
+            oid: new BSON.ObjectID(req.body.id)
+        };
+        // update post by raising click counter
+        collectionPosts.update({'_id': data.oid }, {$inc: {click_counter: 1}}, function(){
+            res.json('ok');
+        });
+    });
+
     // Create Post and save into db
     app.post('/post', auth.isAuth, function(req, res) {
         collectionPosts.insert(req.body, function(err, docs) {

@@ -14,7 +14,8 @@
     "nodemailer": "~0.4.1",
     "passport-twitter": "~0.1.5",
     "passport-facebook": "~0.1.5",
-    "passport-google": "~0.3.0"
+    "passport-google": "~0.3.0",
+    "youtube-feeds": "~2.2.1"
     },
   "devDependencies": {
     "grunt": "~0.4.0",
