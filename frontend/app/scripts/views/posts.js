@@ -66,10 +66,13 @@ define([
 				that.scrolling();
 		    });
 		    $('body').keydown(function(e){ that.keyDownHandler(e); });
+
+			if(window.innerWidth < 768){
+				that.setViewType(null, 'grid');
+			}
 		},
 
-		// Re-rendering the App just means refreshing the statistics -- the rest
-		// of the app doesn't change.
+		// Re-rendering the App just means refreshing the statistics -- the rest of the app doesn't change.
 		render: function(target, value) {
 			$(target).html(value);
 		},
@@ -133,6 +136,7 @@ define([
 		},
 
 		detailDefault: function(id){
+			$(window).scrollTop(0); // seems it has to be executed before rendering, due to Safari
 			this.getPost(id);
 		},
 
@@ -154,7 +158,8 @@ define([
 			}
 			results[0].foreign.uploadDate = new Moment(results[0].foreign.uploadDate).format('l');
 			results[0].publishDate = new Moment(results[0].publishDate).format('l');
-			results[0].foreign.duration = new Moment.duration(results[0].foreign.duration, 'seconds').minutes();
+			results[0].foreign.duration = new Moment.duration(parseInt(results[0].foreign.duration, 10), 'seconds').asMinutes();
+			results[0].foreign.duration = results[0].foreign.duration.toFixed(0);
 			results[0].description = this.replaceURLWithHTMLLinks(results[0].description);
 
 			var tagsSpeakerArray = [];
@@ -170,7 +175,6 @@ define([
 
 			templateDetailView = _.template(DetailVideoContentTemplate, {attributes: results[0], iconStar: favoriteStar, isRated: isRated});
 
-			//window.scroll(0); // small screens start now on top of detailpage
 			this.render(this.breadcrumb, ''); //clean breadcrumb
 			this.render(this.el, templateDetailView);
 			this.postId = $('#post_id').attr('data-post-id');
@@ -402,10 +406,14 @@ define([
 			});
 		},
 
-		setViewType: function(e) {
-			$('.type').removeClass('active');
-			$(e.currentTarget).addClass('active');
-			this.viewType = $(e.currentTarget).attr('data-type');
+		setViewType: function(e, manual) {
+			if(manual !== undefined){
+				this.viewType = manual;
+			} else {
+				$('.type').removeClass('active');
+				$(e.currentTarget).addClass('active');
+				this.viewType = $(e.currentTarget).attr('data-type');
+			}
 			this.listPosts();
 		},
 
@@ -415,6 +423,10 @@ define([
 			model.fetch({
 				success: function(model, response){
 					that.listPost(response);
+				},
+				error: function(model, error){
+					console.log('no data was fetched:', error.statusText);
+					Backbone.history.navigate('/' + window.location.hash, true);
 				}
 			});
 		},
@@ -428,10 +440,9 @@ define([
 		infiniteLoad: function(){
 			var that = this;
 			var newScrollPositionTop = $(window).scrollTop();
-			
+
 			// send request only if new data exists
 			if(newScrollPositionTop !== this.oldScrollPositionTop){
-				console.log('ddd');
 				this.collection.nextPage({
 					update: true, // add to collection
 					remove: false,
