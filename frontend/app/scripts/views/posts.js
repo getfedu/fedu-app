@@ -138,17 +138,6 @@ define([
 		detailDefault: function(id){
 			$(window).scrollTop(0); // seems it has to be executed before rendering, due to Safari
 			this.getPost(id);
-
-			// raise click counter for this vid
-			$.ajax({
-				type: 'POST',
-				url: TheConfig.nodeUrl + '/counter-post',
-				data: {
-					id: id
-				}
-			}).done(function() {
-				// nothing to do here
-			});
 		},
 
 		listPost: function(results){
