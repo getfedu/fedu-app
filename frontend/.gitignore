@@ -6,3 +6,4 @@ dist
 app/components
 settings.json
 .DS_Store
+.DS_Store?
