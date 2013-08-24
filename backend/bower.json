@@ -16,7 +16,7 @@
     "typeahead.js": "~0.9.1",
     "backbone.paginator": "346bd1e90a0e2c00448acadcd422323bfe4ea2ee",
     "jquery.cookie": "~1.3.1",
-    "jshashes": "e8c8317b686c141d4efc84782b59de2185b2de6d"
+    "jshashes": "~1.0.3"
   },
   "devDependencies": {}
 }

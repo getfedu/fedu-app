@@ -2,6 +2,7 @@
 var express = require('express');
 var mongodb = require('mongodb');
 var passport = require('passport');
+var youtube = require('youtube-feeds');
 var settings = require('../settings.json');
 var auth = null;
 var tags = null;
@@ -21,6 +22,8 @@ var collectionTags = {};
 var collectionNotifications = {};
 var collectionUser = {};
 
+// youtube.developerKey = settings.youtubeApiKey;
+// youtube.feeds.videos({q:'jsconf'}, console.log);
 
 // init
 ///////////////////////////////////////////////////////////

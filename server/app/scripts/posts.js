@@ -54,6 +54,12 @@ module.exports = function(app, collectionPosts, collectionTags, collectionNotifi
         if(req.params.id.length === 24){
             var BSON = mongodb.BSONPure;
             var oId = new BSON.ObjectID(req.params.id);
+
+            // raise counter
+            collectionPosts.update({'_id': oId }, {$inc: {click_counter: 1}}, function(){
+                // nothing to do
+            });
+
             collectionPosts.find({'_id': oId }).toArray(function(err, results){
                 collectionTags.find({ tagName: { $in: results[0].tags } }).toArray(function(err, tag_results){
                     results[0].tags = tag_results;

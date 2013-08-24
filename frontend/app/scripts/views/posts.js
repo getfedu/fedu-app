@@ -383,8 +383,8 @@ define([
 
 			this.collection.fetch({
 			    success: function(collection) {
-					that.collection = collection;
-					that.listPosts();
+						that.collection = collection;
+						that.listPosts();
 			    },
 			    error: function(){
 			        console.log('error - no data was fetched');
