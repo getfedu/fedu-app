@@ -107,7 +107,7 @@ define([
 						$(that.viewControlPanel).hide();
 					}
 
-					value.attributes.foreign.uploadDate = new Moment(value.attributes.foreign.uploadDate).format('l');
+					value.attributes.foreign.uploadDate = new Moment(value.attributes.foreign.uploadDate).format('ll');
 
 					var tagsSpeakerArray = [];
 					var tagsArray = [];
@@ -156,8 +156,8 @@ define([
 			if(rating.indexOf(results[0]._id) !== -1){
 				isRated = 'rated';
 			}
-			results[0].foreign.uploadDate = new Moment(results[0].foreign.uploadDate).format('l');
-			results[0].publishDate = new Moment(results[0].publishDate).format('l');
+			results[0].foreign.uploadDate = new Moment(results[0].foreign.uploadDate).format('ll');
+			results[0].publishDate = new Moment(results[0].publishDate).format('ll');
 			results[0].foreign.duration = new Moment.duration(parseInt(results[0].foreign.duration, 10), 'seconds').asMinutes();
 			results[0].foreign.duration = results[0].foreign.duration.toFixed(0);
 			results[0].description = this.replaceURLWithHTMLLinks(results[0].description);

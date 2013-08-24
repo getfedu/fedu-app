@@ -5,3 +5,5 @@ dist
 .tern-port
 app/components
 settings.json
+.DS_Store
+.DS_Store?

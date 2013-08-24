@@ -40,6 +40,7 @@ define([
 		// actions
 		////////////////////////////////////////
 		listNotifications: function(){
+
 			this.render(this.inner, _.template(ListTemplate));
 			this.collection.server_api.filter = 'all';
 			this.collection.fetchData();
@@ -76,6 +77,8 @@ define([
 		getData: function(){
 			var templateItems = '';
 			_.each(this.collection.models, function(value){
+				value.attributes.publishDate = new Moment(value.attributes.publishDate).format('l');
+				value.attributes.updateDate = new Moment(value.attributes.updateDate).format('l');
 				templateItems += _.template(ListItemTemplate, {attributes: value.attributes, frontendUrl: TheConfig.frontendUrl, backendUrl: TheConfig.backendUrl });
 			});
 			this.render('#notifications_list', templateItems);
